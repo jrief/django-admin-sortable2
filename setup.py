@@ -18,7 +18,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name='Generic drag-and-drop ordering for objects in the Django admin interface',
+    name='django-admin-sortable2',
     version='0.0.1',
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
