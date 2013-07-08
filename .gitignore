@@ -1,4 +1,11 @@
 *.log
 *.pot
 *.pyc
+*.egg-info
+*.coverage
+*~
+.tmp*
 local_settings.py
+build
+docs/_build
+dist
