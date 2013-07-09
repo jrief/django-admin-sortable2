@@ -2,13 +2,11 @@
 import json
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import patterns, url
-from django.shortcuts import get_object_or_404
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
 from django.db import transaction
 from django.db.models import Max, F
-from django.http import (HttpResponse, HttpResponseRedirect, HttpResponseBadRequest,
-    HttpResponseNotAllowed, HttpResponseForbidden)
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -23,6 +21,10 @@ class SortableAdminMixin(object):
             '//code.jquery.com/ui/1.10.3/jquery-ui.js',
             'adminsortable/js/sortable.js',
         )
+    PREV = 0
+    NEXT = 1
+    FIRST = 2
+    LAST = 3
 
     def __init__(self, model, admin_site):
         if not isinstance(getattr(model._meta, 'ordering', None), (list, tuple)):
@@ -88,20 +90,20 @@ class SortableAdminMixin(object):
         obj.save()
 
     def move_to_prev_page(self, request, queryset):
-        self._bulk_move(request, queryset, 'prev')
-    move_to_prev_page.short_description = _('Move to previous page')
+        self._bulk_move(request, queryset, self.PREV)
+    move_to_prev_page.short_description = _('Move selected to previous page')
 
     def move_to_next_page(self, request, queryset):
-        self._bulk_move(request, queryset, 'next')
-    move_to_next_page.short_description = _('Move to next page')
+        self._bulk_move(request, queryset, self.NEXT)
+    move_to_next_page.short_description = _('Move selected to next page')
 
     def move_to_first_page(self, request, queryset):
-        self._bulk_move(request, queryset, 'first')
-    move_to_first_page.short_description = _('Move to first page')
+        self._bulk_move(request, queryset, self.FIRST)
+    move_to_first_page.short_description = _('Move selected to first page')
 
     def move_to_last_page(self, request, queryset):
-        self._bulk_move(request, queryset, 'last')
-    move_to_last_page.short_description = _('Move to last page')
+        self._bulk_move(request, queryset, self.LAST)
+    move_to_last_page.short_description = _('Move selected to last page')
 
     def _move_item(self, startorder, endorder):
         if startorder < endorder:
@@ -147,24 +149,26 @@ class SortableAdminMixin(object):
         paginator = self.paginator(objects, self.list_per_page)
         page = paginator.page(int(request.GET.get('p', 0)) + 1)
         try:
-            if method == 'prev':
+            if method == self.PREV:
                 page = paginator.page(page.previous_page_number())
                 endorder = getattr(objects[page.start_index() - 1], self._default_ordering) - 1
                 direction = +1
-            elif method == 'next':
+            elif method == self.NEXT:
                 page = paginator.page(page.next_page_number())
                 endorder = getattr(objects[page.start_index() - 1], self._default_ordering) + queryset.count()
                 queryset = queryset.reverse()
                 direction = -1
-            elif method == 'first':
+            elif method == self.FIRST:
                 page = paginator.page(1)
                 endorder = getattr(objects[page.start_index() - 1], self._default_ordering) - 1
                 direction = +1
-            else:
+            elif method == self.LAST:
                 page = paginator.page(paginator.num_pages)
                 endorder = getattr(objects[page.start_index() - 1], self._default_ordering) + queryset.count()
                 queryset = queryset.reverse()
                 direction = -1
+            else:
+                raise Exception('Invalid method')
         except EmptyPage:
             return
         for obj in queryset:
