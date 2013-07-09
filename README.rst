@@ -9,6 +9,7 @@ This plugin offers a simple mixin class which augments the functionality of an e
 interface. It thus makes it very easy to integrate with existing models and their model admin 
 interfaces.
 
+
 Installation
 ------------
 From github::
@@ -16,6 +17,7 @@ From github::
   pip install -e git+https://github.com/jrief/django-admin-sortable2#egg=django_admin_sortable2
 
 Add ``adminsortable`` to your INSTALLED_APPS.
+
 
 Integration
 -----------
@@ -33,13 +35,13 @@ model by adding two lines of code to the file ``models.py``::
   
   class MyModel(models.Model):
       ... other fields ...
-      position = models.PositiveIntegerField(blank=True, unique=True)  # unique=False for MySQL
+      position = models.PositiveIntegerField(blank=False, unique=True)  # unique=False for MySQL
       
       class Meta(object):
           ordering = ['position']
 
 You are free to use any name for the field named ``position`` here. Just make sure, that it is the
-first one in the list ``ordering`` in the class ``Meta``. Its data type shall be a number.
+first one in the list ``ordering`` in the class ``Meta``.
 
 In ``admin.py``, add a mixin class to augment the functionality for sorting::
 
@@ -65,9 +67,10 @@ unique fields. See https://code.djangoproject.com/ticket/20708 for details. Ther
 
 TODO
 ----
- * Tabular and stacked inlines have to be implemented.
+ * Tabular and stacked inlines.
  * Unit tests.
  * PyPI package.
+
 
 Why another plugin?
 -------------------
@@ -97,8 +100,13 @@ By using mixins, these problems can be avoided.
 
 Related projects
 ================
-https://github.com/iambrandontaylor/django-admin-sortable
-http://djangosnippets.org/snippets/2057/
-http://djangosnippets.org/snippets/2306/
-https://github.com/mtigas/django-orderable
-http://catherinetenajeros.blogspot.co.at/2013/03/sort-using-drag-and-drop.html
+ * https://github.com/iambrandontaylor/django-admin-sortable
+ * http://djangosnippets.org/snippets/2057/
+ * http://djangosnippets.org/snippets/2306/
+ * https://github.com/mtigas/django-orderable
+ * http://catherinetenajeros.blogspot.co.at/2013/03/sort-using-drag-and-drop.html
+
+
+Release history
+===============
+ * 0.0.1 first working release.
