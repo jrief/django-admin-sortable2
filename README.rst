@@ -13,7 +13,7 @@ Installation
 ------------
 From github::
 
-  https://github.com/jrief/django-admin-sortable2
+  pip install -e git+https://github.com/jrief/django-admin-sortable2#egg=django_admin_sortable2
 
 Add ``adminsortable`` to your INSTALLED_APPS.
 
@@ -65,8 +65,9 @@ unique fields. See https://code.djangoproject.com/ticket/20708 for details. Ther
 
 TODO
 ----
-Tabular and stacked inlines have to be implemented.
-
+ * Tabular and stacked inlines have to be implemented.
+ * Unit tests.
+ * PyPI package.
 
 Why another plugin?
 -------------------
