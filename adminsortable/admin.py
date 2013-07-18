@@ -140,7 +140,8 @@ class SortableAdminMixin(object):
         return self.model.objects.filter(**done_filter).order_by(self._default_ordering).values('pk', self._default_ordering)
 
     def _max_order(self):
-        return self.model.objects.aggregate(max_order=Max(self._default_ordering))['max_order']
+        max_order = self.model.objects.aggregate(max_order=Max(self._default_ordering))['max_order']
+        return max_order if isinstance(max_order, (int, float, long)) else 0
 
     def _bulk_move(self, request, queryset, method):
         if not self.enable_sorting:

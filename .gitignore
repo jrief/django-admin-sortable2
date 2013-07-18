@@ -2,6 +2,7 @@
 *.pot
 *.pyc
 *.egg-info
+*.sqlite
 *.coverage
 *~
 .tmp*

@@ -9,6 +9,9 @@ jQuery(function($) {
 		cursor: 'ns-resize',
 		containment: $('#result_list tbody'),
 		start: function(event, dragged_rows) {
+			$(this).find('thead tr th').each(function(index) {
+				$(dragged_rows.item.context.childNodes[index]).width($(this).width() - 8);
+			});
 			startorder = $(dragged_rows.item.context).find('div.drag').attr('order');
 		},
 		stop: function(event, dragged_rows) {
