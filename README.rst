@@ -58,6 +58,18 @@ clicking on that area, the user can move that row up or down. If he wants to mov
 page, he can do that as a bulk operation, using the admin actions.
 
 
+Initial data
+------------
+In case you just changed your model to contain an additional field named, say ``order``, which does
+not yet contain any values, then you may set initial ordering values by typing this code snipped
+into your Django managing shell::
+
+  val = 0
+  for obj in MySortableModel.objects.all():
+      val += 1
+      obj.order = val
+      obj.save()
+
 A note to MySQL users
 .....................
 MySQL has a feature (or bug?) which requires to use the ``ORDER BY`` clause in bulk updates on
@@ -68,7 +80,7 @@ unique fields. See https://code.djangoproject.com/ticket/20708 for details. Ther
 TODO
 ----
  * Tabular and stacked inlines.
- * Unit tests.
+ * Unit tests on bulk moves.
  * PyPI package.
 
 
@@ -80,7 +92,7 @@ contains a hard coded position field, additional methods and meta directives. Th
 approach is twofold. First, an IS-A relationship is abused to augment the functionality of a class.
 This is bad OOP practice. A base class shall only be used to reflect a real IS-A relation which
 specializes this base class. For instance: A mammal **is an** animal, a primate **is a** mammal,
-homo sapients **is a** primate, etc.
+homo sapiens **is a** primate, etc.
 
 But a sortable model **is not an** unsortable model. Making a model sortable, means to augment its
 functionality. This in OOP design does not qualify for an IS-A relationship.
