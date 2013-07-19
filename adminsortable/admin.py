@@ -80,7 +80,7 @@ class SortableAdminMixin(object):
         if not self.has_change_permission(request):
             return HttpResponseForbidden('Missing permissions to perform this request')
         startorder = int(request.POST.get('startorder'))
-        endorder = int(request.POST.get('endorder'))
+        endorder = int(request.POST.get('endorder', 0))
         moved_items = list(self._move_item(startorder, endorder))
         return HttpResponse(json.dumps(moved_items, cls=DjangoJSONEncoder), content_type='application/json;charset=UTF-8')
 
@@ -107,23 +107,24 @@ class SortableAdminMixin(object):
 
     def _move_item(self, startorder, endorder):
         if startorder < endorder:
-            mv_filter = {
+            move_filter = {
                 '%s__gt' % self._default_ordering: startorder,
                 '%s__lte' % self._default_ordering: endorder,
             }
             order_by = self._default_ordering
-            mv_update = { self._default_ordering: F(self._default_ordering) - 1 }
+            move_update = { self._default_ordering: F(self._default_ordering) - 1 }
             done_filter = {
-                '%s__gte' % self._default_ordering: startorder,
+                '%s__gt' % self._default_ordering: startorder,
                 '%s__lte' % self._default_ordering: endorder,
             }
         elif startorder > endorder + 1:
-            mv_filter = {
+            endorder += 1
+            move_filter = {
                 '%s__gte' % self._default_ordering: endorder,
                 '%s__lt' % self._default_ordering: startorder,
             }
             order_by = '-' + self._default_ordering
-            mv_update = { self._default_ordering: F(self._default_ordering) + 1 }
+            move_update = { self._default_ordering: F(self._default_ordering) + 1 }
             done_filter = {
                 '%s__gte' % self._default_ordering: endorder,
                 '%s__lte' % self._default_ordering: startorder,
@@ -134,7 +135,7 @@ class SortableAdminMixin(object):
             obj = self.model.objects.get(**{ self._default_ordering: startorder })
             setattr(obj, self._default_ordering, self._max_order() + 1)
             obj.save()
-            self.model.objects.filter(**mv_filter).order_by(order_by).update(**mv_update)
+            self.model.objects.filter(**move_filter).order_by(order_by).update(**move_update)
             setattr(obj, self._default_ordering, endorder)
             obj.save()
         return self.model.objects.filter(**done_filter).order_by(self._default_ordering).values('pk', self._default_ordering)

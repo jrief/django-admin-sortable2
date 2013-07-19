@@ -4,7 +4,7 @@ from django.db import models
 
 class SortableBook(models.Model):
     title = models.CharField('Title', null=True, blank=True, max_length=255)
-    order = models.PositiveIntegerField(blank=True, unique=True)
+    order = models.PositiveIntegerField(blank=False, null=False)
 
     class Meta(object):
         ordering = ['order']

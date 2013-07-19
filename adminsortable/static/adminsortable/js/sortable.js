@@ -10,7 +10,7 @@ jQuery(function($) {
 		containment: $('#result_list tbody'),
 		start: function(event, dragged_rows) {
 			$(this).find('thead tr th').each(function(index) {
-				$(dragged_rows.item.context.childNodes[index]).width($(this).width() - 8);
+				$(dragged_rows.item.context.childNodes[index]).width($(this).width() - 10);
 			});
 			startorder = $(dragged_rows.item.context).find('div.drag').attr('order');
 		},

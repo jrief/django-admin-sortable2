@@ -1,1 +1,414 @@
-[{"pk": 1, "model": "contenttypes.contenttype", "fields": {"model": "permission", "name": "permission", "app_label": "auth"}}, {"pk": 2, "model": "contenttypes.contenttype", "fields": {"model": "group", "name": "group", "app_label": "auth"}}, {"pk": 3, "model": "contenttypes.contenttype", "fields": {"model": "user", "name": "user", "app_label": "auth"}}, {"pk": 4, "model": "contenttypes.contenttype", "fields": {"model": "contenttype", "name": "content type", "app_label": "contenttypes"}}, {"pk": 5, "model": "contenttypes.contenttype", "fields": {"model": "session", "name": "session", "app_label": "sessions"}}, {"pk": 6, "model": "contenttypes.contenttype", "fields": {"model": "logentry", "name": "log entry", "app_label": "admin"}}, {"pk": 7, "model": "contenttypes.contenttype", "fields": {"model": "sortablebook", "name": "sortable book", "app_label": "testapp"}}, {"pk": "uc7njtbqca1e3l9jvh0x90bjswkbl49c", "model": "sessions.session", "fields": {"expire_date": "2013-08-01T02:48:01.808", "session_data": "NzY0ZjhmNzUxMTgwOTYwYTZhZDliYjk2MTBhOTAxZTdlODhhMzJkMDqAAn1xAShVEl9hdXRoX3VzZXJfYmFja2VuZHECVSlkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZHEDVQ1fYXV0aF91c2VyX2lkcQRLAXUu"}}, {"pk": 1, "model": "testapp.sortablebook", "fields": {"order": 4, "title": " The Mythical Man-Month"}}, {"pk": 2, "model": "testapp.sortablebook", "fields": {"order": 1, "title": "Design Patterns"}}, {"pk": 3, "model": "testapp.sortablebook", "fields": {"order": 2, "title": "The Pragmatic Programmer"}}, {"pk": 4, "model": "testapp.sortablebook", "fields": {"order": 3, "title": "Code Complete"}}, {"pk": 5, "model": "testapp.sortablebook", "fields": {"order": 5, "title": "Clean Code"}}, {"pk": 6, "model": "testapp.sortablebook", "fields": {"order": 6, "title": "Test Driven Development"}}, {"pk": 7, "model": "testapp.sortablebook", "fields": {"order": 7, "title": "Refactoring"}}, {"pk": 8, "model": "testapp.sortablebook", "fields": {"order": 8, "title": "Extreme Programming Explained"}}, {"pk": 9, "model": "testapp.sortablebook", "fields": {"order": 9, "title": "Succeeding with Agile"}}, {"pk": 10, "model": "testapp.sortablebook", "fields": {"order": 10, "title": "The Deadline"}}, {"pk": 11, "model": "testapp.sortablebook", "fields": {"order": 11, "title": "The Elements of Scrum"}}, {"pk": 12, "model": "testapp.sortablebook", "fields": {"order": 12, "title": "Effective Project Management"}}, {"pk": 13, "model": "testapp.sortablebook", "fields": {"order": 13, "title": "Effective Work Breakdown Structures"}}, {"pk": 14, "model": "testapp.sortablebook", "fields": {"order": 14, "title": "Strategic Project Management Made Simple"}}, {"pk": 15, "model": "testapp.sortablebook", "fields": {"order": 15, "title": "Learning Python"}}, {"pk": 16, "model": "testapp.sortablebook", "fields": {"order": 16, "title": "Django Design Patterns"}}, {"pk": 17, "model": "testapp.sortablebook", "fields": {"order": 17, "title": "Learning jQuery"}}, {"pk": 18, "model": "testapp.sortablebook", "fields": {"order": 18, "title": "JavaScript: The Good Parts"}}, {"pk": 19, "model": "testapp.sortablebook", "fields": {"order": 19, "title": "The C++ Programming Language"}}, {"pk": 20, "model": "testapp.sortablebook", "fields": {"order": 20, "title": "C Programming Language"}}, {"pk": 1, "model": "auth.permission", "fields": {"codename": "add_permission", "name": "Can add permission", "content_type": 1}}, {"pk": 2, "model": "auth.permission", "fields": {"codename": "change_permission", "name": "Can change permission", "content_type": 1}}, {"pk": 3, "model": "auth.permission", "fields": {"codename": "delete_permission", "name": "Can delete permission", "content_type": 1}}, {"pk": 4, "model": "auth.permission", "fields": {"codename": "add_group", "name": "Can add group", "content_type": 2}}, {"pk": 5, "model": "auth.permission", "fields": {"codename": "change_group", "name": "Can change group", "content_type": 2}}, {"pk": 6, "model": "auth.permission", "fields": {"codename": "delete_group", "name": "Can delete group", "content_type": 2}}, {"pk": 7, "model": "auth.permission", "fields": {"codename": "add_user", "name": "Can add user", "content_type": 3}}, {"pk": 8, "model": "auth.permission", "fields": {"codename": "change_user", "name": "Can change user", "content_type": 3}}, {"pk": 9, "model": "auth.permission", "fields": {"codename": "delete_user", "name": "Can delete user", "content_type": 3}}, {"pk": 10, "model": "auth.permission", "fields": {"codename": "add_contenttype", "name": "Can add content type", "content_type": 4}}, {"pk": 11, "model": "auth.permission", "fields": {"codename": "change_contenttype", "name": "Can change content type", "content_type": 4}}, {"pk": 12, "model": "auth.permission", "fields": {"codename": "delete_contenttype", "name": "Can delete content type", "content_type": 4}}, {"pk": 13, "model": "auth.permission", "fields": {"codename": "add_session", "name": "Can add session", "content_type": 5}}, {"pk": 14, "model": "auth.permission", "fields": {"codename": "change_session", "name": "Can change session", "content_type": 5}}, {"pk": 15, "model": "auth.permission", "fields": {"codename": "delete_session", "name": "Can delete session", "content_type": 5}}, {"pk": 16, "model": "auth.permission", "fields": {"codename": "add_logentry", "name": "Can add log entry", "content_type": 6}}, {"pk": 17, "model": "auth.permission", "fields": {"codename": "change_logentry", "name": "Can change log entry", "content_type": 6}}, {"pk": 18, "model": "auth.permission", "fields": {"codename": "delete_logentry", "name": "Can delete log entry", "content_type": 6}}, {"pk": 19, "model": "auth.permission", "fields": {"codename": "add_sortablebook", "name": "Can add sortable book", "content_type": 7}}, {"pk": 20, "model": "auth.permission", "fields": {"codename": "change_sortablebook", "name": "Can change sortable book", "content_type": 7}}, {"pk": 21, "model": "auth.permission", "fields": {"codename": "delete_sortablebook", "name": "Can delete sortable book", "content_type": 7}}, {"pk": 1, "model": "auth.user", "fields": {"username": "admin", "first_name": "", "last_name": "", "is_active": true, "is_superuser": true, "is_staff": true, "last_login": "2013-07-18T02:48:01.806", "groups": [], "user_permissions": [], "password": "pbkdf2_sha256$10000$QTVtt9IDE1aK$iP7W72AjLX4NOAB0L/1FdAFI0pyaQ1Tw9A6AcjJ+vJA=", "email": "admin@example.com", "date_joined": "2013-07-18T02:47:44.055"}}, {"pk": 1, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:04:25.824", "object_repr": " The Mythical Man-Month", "object_id": "1", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 2, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:05:05.472", "object_repr": "Design Patterns", "object_id": "2", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 3, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:05:27.514", "object_repr": "The Pragmatic Programmer", "object_id": "3", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 4, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:05:47.862", "object_repr": "Code Complete", "object_id": "4", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 5, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:06:35.251", "object_repr": "Clean Code", "object_id": "5", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 6, "model": "admin.logentry", "fields": {"action_flag": 2, "action_time": "2013-07-18T03:06:38.340", "object_repr": "Clean Code", "object_id": "5", "change_message": "No fields changed.", "user": 1, "content_type": 7}}, {"pk": 7, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:07:45.044", "object_repr": "Test Driven Development", "object_id": "6", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 8, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:08:01.279", "object_repr": "Refactoring", "object_id": "7", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 9, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:08:29.955", "object_repr": "Extreme Programming Explained", "object_id": "8", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 10, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:08:51.055", "object_repr": "Succeeding with Agile", "object_id": "9", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 11, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:09:32.454", "object_repr": "The Deadline", "object_id": "10", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 12, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:09:56.245", "object_repr": "The Elements of Scrum", "object_id": "11", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 13, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:10:23.875", "object_repr": "Effective Project Management", "object_id": "12", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 14, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:11:26.345", "object_repr": "Effective Work Breakdown Structures", "object_id": "13", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 15, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:11:56.189", "object_repr": "Strategic Project Management Made Simple", "object_id": "14", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 16, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:12:36.310", "object_repr": "Learning Python", "object_id": "15", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 17, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:13:35.657", "object_repr": "Django Design Patterns", "object_id": "16", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 18, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:14:38.333", "object_repr": "Learning jQuery", "object_id": "17", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 19, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:15:07.029", "object_repr": "JavaScript: The Good Parts", "object_id": "18", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 20, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:16:08.442", "object_repr": "The C++ Programming Language", "object_id": "19", "change_message": "", "user": 1, "content_type": 7}}, {"pk": 21, "model": "admin.logentry", "fields": {"action_flag": 1, "action_time": "2013-07-18T03:16:47.037", "object_repr": "C Programming Language", "object_id": "20", "change_message": "", "user": 1, "content_type": 7}}]
+[
+{
+    "pk": 1, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "permission", 
+        "name": "permission", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 2, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "group", 
+        "name": "group", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 3, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "user", 
+        "name": "user", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 4, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "contenttype", 
+        "name": "content type", 
+        "app_label": "contenttypes"
+    }
+},
+{
+    "pk": 5, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "session", 
+        "name": "session", 
+        "app_label": "sessions"
+    }
+},
+{
+    "pk": 6, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "logentry", 
+        "name": "log entry", 
+        "app_label": "admin"
+    }
+},
+{
+    "pk": 7, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "sortablebook", 
+        "name": "sortable book", 
+        "app_label": "testapp"
+    }
+},
+{
+    "pk": 1, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 1, 
+        "title": "The Mythical Man-Month"
+    }
+},
+{
+    "pk": 2, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 4, 
+        "title": "Design Patterns"
+    }
+},
+{
+    "pk": 3, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 2, 
+        "title": "The Pragmatic Programmer"
+    }
+},
+{
+    "pk": 4, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 7, 
+        "title": "Code Complete"
+    }
+},
+{
+    "pk": 6, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 6, 
+        "title": "Test Driven Development"
+    }
+},
+{
+    "pk": 7, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 5, 
+        "title": "Refactoring"
+    }
+},
+{
+    "pk": 8, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 3, 
+        "title": "Extreme Programming Explained"
+    }
+},
+{
+    "pk": 9, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 8, 
+        "title": "Succeeding with Agile"
+    }
+},
+{
+    "pk": 10, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 9, 
+        "title": "The Deadline"
+    }
+},
+{
+    "pk": 11, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 10, 
+        "title": "The Elements of Scrum"
+    }
+},
+{
+    "pk": 12, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 11, 
+        "title": "Effective Project Management"
+    }
+},
+{
+    "pk": 13, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 12, 
+        "title": "Effective Work Breakdown Structures"
+    }
+},
+{
+    "pk": 14, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 13, 
+        "title": "Strategic Project Management Made Simple"
+    }
+},
+{
+    "pk": 15, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 14, 
+        "title": "Learning Python"
+    }
+},
+{
+    "pk": 16, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 20, 
+        "title": "Django Design Patterns"
+    }
+},
+{
+    "pk": 17, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 15, 
+        "title": "Learning jQuery"
+    }
+},
+{
+    "pk": 18, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 16, 
+        "title": "JavaScript: The Good Parts"
+    }
+},
+{
+    "pk": 19, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 17, 
+        "title": "The C++ Programming Language"
+    }
+},
+{
+    "pk": 20, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 19, 
+        "title": "C Programming Language"
+    }
+},
+{
+    "pk": 21, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 18, 
+        "title": "Clean Code"
+    }
+},
+{
+    "pk": 1, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_permission", 
+        "name": "Can add permission", 
+        "content_type": 1
+    }
+},
+{
+    "pk": 2, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_permission", 
+        "name": "Can change permission", 
+        "content_type": 1
+    }
+},
+{
+    "pk": 3, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_permission", 
+        "name": "Can delete permission", 
+        "content_type": 1
+    }
+},
+{
+    "pk": 4, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_group", 
+        "name": "Can add group", 
+        "content_type": 2
+    }
+},
+{
+    "pk": 5, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_group", 
+        "name": "Can change group", 
+        "content_type": 2
+    }
+},
+{
+    "pk": 6, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_group", 
+        "name": "Can delete group", 
+        "content_type": 2
+    }
+},
+{
+    "pk": 7, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_user", 
+        "name": "Can add user", 
+        "content_type": 3
+    }
+},
+{
+    "pk": 8, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_user", 
+        "name": "Can change user", 
+        "content_type": 3
+    }
+},
+{
+    "pk": 9, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_user", 
+        "name": "Can delete user", 
+        "content_type": 3
+    }
+},
+{
+    "pk": 10, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_contenttype", 
+        "name": "Can add content type", 
+        "content_type": 4
+    }
+},
+{
+    "pk": 11, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_contenttype", 
+        "name": "Can change content type", 
+        "content_type": 4
+    }
+},
+{
+    "pk": 12, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_contenttype", 
+        "name": "Can delete content type", 
+        "content_type": 4
+    }
+},
+{
+    "pk": 13, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_session", 
+        "name": "Can add session", 
+        "content_type": 5
+    }
+},
+{
+    "pk": 14, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_session", 
+        "name": "Can change session", 
+        "content_type": 5
+    }
+},
+{
+    "pk": 15, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_session", 
+        "name": "Can delete session", 
+        "content_type": 5
+    }
+},
+{
+    "pk": 16, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_logentry", 
+        "name": "Can add log entry", 
+        "content_type": 6
+    }
+},
+{
+    "pk": 17, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_logentry", 
+        "name": "Can change log entry", 
+        "content_type": 6
+    }
+},
+{
+    "pk": 18, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_logentry", 
+        "name": "Can delete log entry", 
+        "content_type": 6
+    }
+},
+{
+    "pk": 19, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_sortablebook", 
+        "name": "Can add sortable book", 
+        "content_type": 7
+    }
+},
+{
+    "pk": 20, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_sortablebook", 
+        "name": "Can change sortable book", 
+        "content_type": 7
+    }
+},
+{
+    "pk": 21, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_sortablebook", 
+        "name": "Can delete sortable book", 
+        "content_type": 7
+    }
+}
+]
