@@ -12,7 +12,8 @@ from testapp.models import SortableBook
 class SortableBookTestCase(TestCase):
     fixtures = ['data.json']
     admin_password = 'secret'
-    update_url = reverse('admin:sortable_update')
+    ajax_update_url = reverse('admin:sortable_update')
+    bulk_update_url = reverse('admin:testapp_sortablebook_changelist')
     client = Client()
     http_headers = { 'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest' }
 
@@ -48,7 +49,7 @@ class SortableBookTestCase(TestCase):
     def test_moveUp(self):
         self.assertEqual(SortableBook.objects.get(title='Code Complete').order, 7)
         in_data = { 'startorder': 7, 'endorder': 2 }
-        response = self.client.post(self.update_url, in_data, **self.http_headers)
+        response = self.client.post(self.ajax_update_url, in_data, **self.http_headers)
         self.assertEqual(response.status_code, 200)
         self.assertOrderSequence(in_data, response.content)
         self.assertUniqueOrderValues()
@@ -57,7 +58,7 @@ class SortableBookTestCase(TestCase):
     def test_moveDown(self):
         self.assertEqual(SortableBook.objects.get(title='Code Complete').order, 7)
         in_data = { 'startorder': 7, 'endorder': 12 }
-        response = self.client.post(self.update_url, in_data, **self.http_headers)
+        response = self.client.post(self.ajax_update_url, in_data, **self.http_headers)
         self.assertEqual(response.status_code, 200)
         self.assertOrderSequence(in_data, response.content)
         self.assertUniqueOrderValues()
@@ -66,7 +67,7 @@ class SortableBookTestCase(TestCase):
     def test_moveFirst(self):
         self.assertEqual(SortableBook.objects.get(title='The Pragmatic Programmer').order, 2)
         in_data = { 'startorder': 2 }
-        response = self.client.post(self.update_url, in_data, **self.http_headers)
+        response = self.client.post(self.ajax_update_url, in_data, **self.http_headers)
         self.assertEqual(response.status_code, 200)
         self.assertOrderSequence(in_data, response.content)
         self.assertUniqueOrderValues()
@@ -75,11 +76,53 @@ class SortableBookTestCase(TestCase):
     def test_dontMove(self):
         self.assertEqual(SortableBook.objects.get(title='Code Complete').order, 7)
         in_data = { 'startorder': 7, 'endorder': 6 }
-        response = self.client.post(self.update_url, in_data, **self.http_headers)
+        response = self.client.post(self.ajax_update_url, in_data, **self.http_headers)
         self.assertEqual(response.status_code, 200)
         self.assertOrderSequence(in_data, response.content)
         self.assertUniqueOrderValues()
         self.assertEqual(SortableBook.objects.get(title='Code Complete').order, 7)
+
+    def test_bulkMovePrevFromFirstPage(self):
+        self.assertEqual(SortableBook.objects.get(pk=15).order, 14)
+        self.assertEqual(SortableBook.objects.get(pk=17).order, 15)
+        post_data = { 'action': ['move_to_prev_page'], '_selected_action': [15, 17] }
+        self.client.post(self.bulk_update_url, post_data)
+        self.assertEqual(SortableBook.objects.get(pk=15).order, 14)
+        self.assertEqual(SortableBook.objects.get(pk=17).order, 15)
+
+    def test_bulkMovePreviousPage(self):
+        self.assertEqual(SortableBook.objects.get(pk=19).order, 17)
+        self.assertEqual(SortableBook.objects.get(pk=21).order, 18)
+        self.assertEqual(SortableBook.objects.get(pk=20).order, 19)
+        post_data = { 'p': 1, 'action': ['move_to_prev_page'], '_selected_action': [19, 21, 20] }
+        self.client.post(self.bulk_update_url, post_data)
+        self.assertEqual(SortableBook.objects.get(pk=19).order, 1)
+        self.assertEqual(SortableBook.objects.get(pk=21).order, 2)
+        self.assertEqual(SortableBook.objects.get(pk=20).order, 3)
+
+    def test_bulkMoveNextPage(self):
+        self.assertEqual(SortableBook.objects.get(pk=12).order, 11)
+        self.assertEqual(SortableBook.objects.get(pk=13).order, 12)
+        post_data = { 'action': ['move_to_next_page'], '_selected_action': [12, 13] }
+        self.client.post(self.bulk_update_url, post_data)
+        self.assertEqual(SortableBook.objects.get(pk=12).order, 16)
+        self.assertEqual(SortableBook.objects.get(pk=13).order, 17)
+
+    def test_bulkMoveLastPage(self):
+        self.assertEqual(SortableBook.objects.get(pk=1).order, 1)
+        self.assertEqual(SortableBook.objects.get(pk=10).order, 9)
+        post_data = { 'action': ['move_to_last_page'], '_selected_action': [1, 10] }
+        self.client.post(self.bulk_update_url, post_data)
+        self.assertEqual(SortableBook.objects.get(pk=1).order, 16)
+        self.assertEqual(SortableBook.objects.get(pk=10).order, 17)
+
+    def test_bulkMoveFirstPage(self):
+        self.assertEqual(SortableBook.objects.get(pk=18).order, 16)
+        self.assertEqual(SortableBook.objects.get(pk=16).order, 20)
+        post_data = { 'p': 1, 'action': ['move_to_first_page'], '_selected_action': [18, 16] }
+        self.client.post(self.bulk_update_url, post_data)
+        self.assertEqual(SortableBook.objects.get(pk=18).order, 1)
+        self.assertEqual(SortableBook.objects.get(pk=16).order, 2)
 
     def testFilledBookShelf(self):
         self.assertEqual(SortableBook.objects.count(), 20, 'Check fixtures/data.json: Book shelf shall have 20 items')

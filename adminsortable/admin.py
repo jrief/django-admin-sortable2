@@ -149,11 +149,11 @@ class SortableAdminMixin(object):
             return
         objects = self.model.objects.order_by(self.order_by)
         paginator = self.paginator(objects, self.list_per_page)
-        page = paginator.page(int(request.GET.get('p', 0)) + 1)
+        page = paginator.page(int(request.REQUEST.get('p', 0)) + 1)
         try:
             if method == self.PREV:
                 page = paginator.page(page.previous_page_number())
-                endorder = getattr(objects[page.start_index() - 1], self._default_ordering) - 1
+                endorder = getattr(objects[page.start_index() - 1], self._default_ordering)
                 direction = +1
             elif method == self.NEXT:
                 page = paginator.page(page.next_page_number())
@@ -162,7 +162,7 @@ class SortableAdminMixin(object):
                 direction = -1
             elif method == self.FIRST:
                 page = paginator.page(1)
-                endorder = getattr(objects[page.start_index() - 1], self._default_ordering) - 1
+                endorder = getattr(objects[page.start_index() - 1], self._default_ordering)
                 direction = +1
             elif method == self.LAST:
                 page = paginator.page(paginator.num_pages)
@@ -173,7 +173,8 @@ class SortableAdminMixin(object):
                 raise Exception('Invalid method')
         except EmptyPage:
             return
+        endorder -= 1
         for obj in queryset:
             startorder = getattr(obj, self._default_ordering)
-            endorder += direction
             self._move_item(startorder, endorder)
+            endorder += direction
