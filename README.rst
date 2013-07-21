@@ -9,6 +9,10 @@ This plugin offers a simple mixin class which augments the functionality of an e
 interface. It thus makes it very easy to integrate with existing models and their model admin 
 interfaces.
 
+Build status
+------------
+.. image:: https://travis-ci.org/jrief/django-admin-sortable2.png
+   :target: https://travis-ci.org/jrief/django-admin-sortable2
 
 Installation
 ------------
