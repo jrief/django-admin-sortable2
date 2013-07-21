@@ -9,14 +9,14 @@ This plugin offers a simple mixin class which augments the functionality of an e
 interface. It thus makes it very easy to integrate with existing models and their model admin 
 interfaces.
 
-The admin interface slightly modifies the list view of a sortable model. Next to the select action
-box, a draggable area is added to each entry line. The user than my click on an item and drag that
-item vertically to a new position.
+The admin interface slightly modifies the list view of a sortable model. Next to the action checkbox,
+a draggable area is added to each entry line. The user than may click on any item and vertically drag
+that item to a new position.
 
 .. image:: docs/listview.png
 
-If an item shall be moved to another page, this can easily been done by selecting them though the
-action box and using a predefined action on the drop down menu.
+If one or more items shall be moved to another page, this can easily been done by selecting them though the
+action checkbox, followed by using a predefined action from the pull down menu on the top of the list view.
 
 Build status
 ------------
@@ -123,7 +123,7 @@ Someone who wants to use both functional augmentations, now is in trouble. Or he
 between one of the two, or if he derives from both, his model class inherits the base class
 ``models.Model`` twice.
 
-By using a mixin class rather than deriving from another special abstract base class, these problems
+By using a mixin class rather than deriving from a special abstract base class, these problems
 can be avoided!
 
 
