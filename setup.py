@@ -15,6 +15,7 @@ CLASSIFIERS = [
 ]
 
 def read(fname):
+    # read the contents of a text file
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
@@ -30,6 +31,6 @@ setup(
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
     install_requires=['Django>=1.4'],
-    packages=find_packages(exclude=["example", "docs"]),
+    packages=find_packages(exclude=['example', 'docs']),
     include_package_data=True,
 )
