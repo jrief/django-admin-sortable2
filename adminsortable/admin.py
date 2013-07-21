@@ -49,7 +49,7 @@ class SortableAdminMixin(object):
         return my_urls + super(SortableAdminMixin, self).get_urls()
 
     def get_changelist(self, request, **kwargs):
-        order = request.GET.get('o', '').split('.')[0]
+        order = self._get_order_direction(request)
         if not order or order == '1':
             self.enable_sorting = True
             self.order_by = self._default_ordering
@@ -81,7 +81,7 @@ class SortableAdminMixin(object):
             return HttpResponseForbidden('Missing permissions to perform this request')
         startorder = int(request.POST.get('startorder'))
         endorder = int(request.POST.get('endorder', 0))
-        moved_items = list(self._move_item(startorder, endorder))
+        moved_items = list(self._move_item(request, startorder, endorder))
         return HttpResponse(json.dumps(moved_items, cls=DjangoJSONEncoder), content_type='application/json;charset=UTF-8')
 
     def save_model(self, request, obj, form, change):
@@ -105,30 +105,30 @@ class SortableAdminMixin(object):
         self._bulk_move(request, queryset, self.LAST)
     move_to_last_page.short_description = _('Move selected to last page')
 
-    def _move_item(self, startorder, endorder):
-        if startorder < endorder:
+    def _get_order_direction(self, request):
+        return request.REQUEST.get('o', '').split('.')[0]
+
+    def _move_item(self, request, startorder, endorder):
+        if self._get_order_direction(request) != '-1':
+            order_up, order_down = 0, 1
+        else:
+            order_up, order_down = 1, 0
+        if startorder < endorder - order_up:
+            finalorder = endorder - order_up
             move_filter = {
-                '%s__gt' % self._default_ordering: startorder,
-                '%s__lte' % self._default_ordering: endorder,
+                '%s__gte' % self._default_ordering: startorder,
+                '%s__lte' % self._default_ordering: finalorder,
             }
             order_by = self._default_ordering
             move_update = { self._default_ordering: F(self._default_ordering) - 1 }
-            done_filter = {
-                '%s__gt' % self._default_ordering: startorder,
-                '%s__lte' % self._default_ordering: endorder,
-            }
-        elif startorder > endorder + 1:
-            endorder += 1
+        elif startorder > endorder + order_down:
+            finalorder = endorder + order_down
             move_filter = {
-                '%s__gte' % self._default_ordering: endorder,
-                '%s__lt' % self._default_ordering: startorder,
+                '%s__gte' % self._default_ordering: finalorder,
+                '%s__lte' % self._default_ordering: startorder,
             }
             order_by = '-' + self._default_ordering
             move_update = { self._default_ordering: F(self._default_ordering) + 1 }
-            done_filter = {
-                '%s__gte' % self._default_ordering: endorder,
-                '%s__lte' % self._default_ordering: startorder,
-            }
         else:
             return self.model.objects.none()
         with transaction.commit_on_success():
@@ -136,9 +136,9 @@ class SortableAdminMixin(object):
             setattr(obj, self._default_ordering, self._max_order() + 1)
             obj.save()
             self.model.objects.filter(**move_filter).order_by(order_by).update(**move_update)
-            setattr(obj, self._default_ordering, endorder)
+            setattr(obj, self._default_ordering, finalorder)
             obj.save()
-        return self.model.objects.filter(**done_filter).order_by(self._default_ordering).values('pk', self._default_ordering)
+        return self.model.objects.filter(**move_filter).order_by(self._default_ordering).values('pk', self._default_ordering)
 
     def _max_order(self):
         max_order = self.model.objects.aggregate(max_order=Max(self._default_ordering))['max_order']
@@ -176,5 +176,5 @@ class SortableAdminMixin(object):
         endorder -= 1
         for obj in queryset:
             startorder = getattr(obj, self._default_ordering)
-            self._move_item(startorder, endorder)
+            self._move_item(request, startorder, endorder)
             endorder += direction

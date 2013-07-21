@@ -1,3 +1,20 @@
+
+jQuery.extend({
+	getQueryParams: function() {
+		var vars = [], hash, i;
+		var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		for (i = 0; i < hashes.length; i++) {
+			hash = hashes[i].split('=');
+			vars.push(hash[0]);
+			vars[hash[0]] = hash[1];
+		}
+		return vars;
+	},
+	getQueryParam: function(name) {
+		return jQuery.getQueryParams()[name];
+	}
+});
+
 jQuery(function($) {
 	var sortable_update_url = $('#adminsortable_update_url').attr('href');
 	var startorder, endorder;
@@ -28,6 +45,7 @@ jQuery(function($) {
 			$.ajax(sortable_update_url, {
 				type: 'POST',
 				data: {
+					o: $.getQueryParam('o'),
 					startorder: startorder,
 					endorder: endorder
 				},

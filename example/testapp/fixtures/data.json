@@ -74,7 +74,7 @@
     "pk": 2, 
     "model": "testapp.sortablebook", 
     "fields": {
-        "order": 4, 
+        "order": 2, 
         "title": "Design Patterns"
     }
 },
@@ -82,7 +82,7 @@
     "pk": 3, 
     "model": "testapp.sortablebook", 
     "fields": {
-        "order": 2, 
+        "order": 3, 
         "title": "The Pragmatic Programmer"
     }
 },
@@ -90,8 +90,16 @@
     "pk": 4, 
     "model": "testapp.sortablebook", 
     "fields": {
-        "order": 7, 
+        "order": 4, 
         "title": "Code Complete"
+    }
+},
+{
+    "pk": 5, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 5, 
+        "title": "Test Driven Development"
     }
 },
 {
@@ -99,27 +107,19 @@
     "model": "testapp.sortablebook", 
     "fields": {
         "order": 6, 
-        "title": "Test Driven Development"
+        "title": "Refactoring"
     }
 },
 {
     "pk": 7, 
     "model": "testapp.sortablebook", 
     "fields": {
-        "order": 5, 
-        "title": "Refactoring"
-    }
-},
-{
-    "pk": 8, 
-    "model": "testapp.sortablebook", 
-    "fields": {
-        "order": 3, 
+        "order": 7, 
         "title": "Extreme Programming Explained"
     }
 },
 {
-    "pk": 9, 
+    "pk": 8, 
     "model": "testapp.sortablebook", 
     "fields": {
         "order": 8, 
@@ -127,7 +127,7 @@
     }
 },
 {
-    "pk": 10, 
+    "pk": 9, 
     "model": "testapp.sortablebook", 
     "fields": {
         "order": 9, 
@@ -135,7 +135,7 @@
     }
 },
 {
-    "pk": 11, 
+    "pk": 10, 
     "model": "testapp.sortablebook", 
     "fields": {
         "order": 10, 
@@ -143,7 +143,7 @@
     }
 },
 {
-    "pk": 12, 
+    "pk": 11, 
     "model": "testapp.sortablebook", 
     "fields": {
         "order": 11, 
@@ -151,7 +151,7 @@
     }
 },
 {
-    "pk": 13, 
+    "pk": 12, 
     "model": "testapp.sortablebook", 
     "fields": {
         "order": 12, 
@@ -159,7 +159,7 @@
     }
 },
 {
-    "pk": 14, 
+    "pk": 13, 
     "model": "testapp.sortablebook", 
     "fields": {
         "order": 13, 
@@ -167,7 +167,7 @@
     }
 },
 {
-    "pk": 15, 
+    "pk": 14, 
     "model": "testapp.sortablebook", 
     "fields": {
         "order": 14, 
@@ -175,39 +175,39 @@
     }
 },
 {
+    "pk": 15, 
+    "model": "testapp.sortablebook", 
+    "fields": {
+        "order": 15, 
+        "title": "Django Design Patterns"
+    }
+},
+{
     "pk": 16, 
     "model": "testapp.sortablebook", 
     "fields": {
-        "order": 20, 
-        "title": "Django Design Patterns"
+        "order": 16, 
+        "title": "Learning jQuery"
     }
 },
 {
     "pk": 17, 
     "model": "testapp.sortablebook", 
     "fields": {
-        "order": 15, 
-        "title": "Learning jQuery"
+        "order": 17, 
+        "title": "JavaScript: The Good Parts"
     }
 },
 {
     "pk": 18, 
     "model": "testapp.sortablebook", 
     "fields": {
-        "order": 16, 
-        "title": "JavaScript: The Good Parts"
-    }
-},
-{
-    "pk": 19, 
-    "model": "testapp.sortablebook", 
-    "fields": {
-        "order": 17, 
+        "order": 18, 
         "title": "The C++ Programming Language"
     }
 },
 {
-    "pk": 20, 
+    "pk": 19, 
     "model": "testapp.sortablebook", 
     "fields": {
         "order": 19, 
@@ -215,10 +215,10 @@
     }
 },
 {
-    "pk": 21, 
+    "pk": 20, 
     "model": "testapp.sortablebook", 
     "fields": {
-        "order": 18, 
+        "order": 20, 
         "title": "Clean Code"
     }
 },
