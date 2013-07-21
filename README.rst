@@ -9,6 +9,14 @@ This plugin offers a simple mixin class which augments the functionality of an e
 interface. It thus makes it very easy to integrate with existing models and their model admin 
 interfaces.
 
+The admin interface slightly modifies the list view of a sortable model. Next to the select action
+box, a draggable area is added to each entry line. The user than my click on an item and drag that
+item vertically to a new position.
+
+.. image:: docs/listview.png
+
+If an item shall be moved to another page, this can be easily be done by selecting them though the
+action box and using a predefined action on the drop down menu.
 
 Build status
 ------------
