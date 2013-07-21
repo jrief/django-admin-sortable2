@@ -15,7 +15,7 @@ item vertically to a new position.
 
 .. image:: docs/listview.png
 
-If an item shall be moved to another page, this can be easily be done by selecting them though the
+If an item shall be moved to another page, this can easily been done by selecting them though the
 action box and using a predefined action on the drop down menu.
 
 Build status
