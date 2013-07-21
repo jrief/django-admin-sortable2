@@ -53,7 +53,7 @@ model by adding two lines of code to the file ``models.py``::
   
   class MyModel(models.Model):
       ... other fields ...
-      position = models.PositiveIntegerField(blank=False, unique=True)  # unique=False for MySQL
+      position = models.PositiveIntegerField(db_index=True, blank=False, null=False)
       
       class Meta(object):
           ordering = ['position']
