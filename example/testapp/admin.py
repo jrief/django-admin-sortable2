@@ -6,5 +6,5 @@ from models import SortableBook
 
 class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_per_page = 15
-    list_display = ('title', 'order', 'pk',)
+    list_display = ('title',)
 admin.site.register(SortableBook, SortableBookAdmin)
