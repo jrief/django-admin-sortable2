@@ -9,6 +9,7 @@ This plugin offers a simple mixin class which augments the functionality of an e
 interface. It thus makes it very easy to integrate with existing models and their model admin 
 interfaces.
 
+
 Build status
 ------------
 .. image:: https://travis-ci.org/jrief/django-admin-sortable2.png
@@ -16,6 +17,10 @@ Build status
 
 Installation
 ------------
+From PyPI::
+
+  pip install django-admin-sortable2
+
 From github::
 
   pip install -e git+https://github.com/jrief/django-admin-sortable2#egg=django_admin_sortable2
@@ -23,16 +28,17 @@ From github::
 Add ``adminsortable`` to your INSTALLED_APPS.
 
 
-Integration
------------
+Integrate your models
+---------------------
 Each database model you want to sort, requires a position value in its model description. Rather
-than defining a base class, which contains a hard coded field for this position value, this plugin
-lets reuse any existing field. Therefore this plugin can be applied in situations, where your model
-is derived from an existing abstract model, which already contains any kind of position value.
-The only requirement is, that this position value is specified as the default ordering.
+than defining a base class, which contains such a positional value in a hard coded field, this
+plugin lets reuse existing fields or attempts to delegate this responsibility to the programmer.
+Therefore this plugin can be applied in situations, where your model is derived from an existing
+abstract model, which already contains any kind of position value. The only requirement for this 
+plugin is, that this position value is specified as the default ordering.
 
 If you specify a database model, make sure it contains an integer field to store the position value.
-This field must be set as the default ordering. An existing model can be turned into a sortable
+This field must be set as the default ordering. Any existing model can be turned into a sortable
 model by adding two lines of code to the file ``models.py``::
 
   from django.db import models
@@ -84,8 +90,6 @@ unique fields. See https://code.djangoproject.com/ticket/20708 for details. Ther
 TODO
 ----
  * Tabular and stacked inlines.
- * Unit tests on bulk moves.
- * PyPI package.
 
 
 Why another plugin?
@@ -111,7 +115,8 @@ Someone who wants to use both functional augmentations, now is in trouble. Or he
 between one of the two, or if he derives from both, his model class inherits the base class
 ``models.Model`` twice.
 
-By using mixins, these problems can be avoided.
+By using a mixin class rather than deriving from another special abstract base class, these problems
+can be avoided!
 
 
 Related projects
@@ -126,3 +131,4 @@ Related projects
 Release history
 ===============
  * 0.0.1 first working release.
+ * 0.1.0 first version published on PyPI.
