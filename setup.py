@@ -19,7 +19,7 @@ def read(fname):
 
 setup(
     name='django-admin-sortable2',
-    version='0.0.1',
+    version='0.1.0',
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     description=DESCRIPTION,
@@ -29,7 +29,7 @@ setup(
     keywords = ['django'],
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
-    install_requires=['Django>=1.5'],
+    install_requires=['Django>=1.4'],
     packages=find_packages(),
     include_package_data=True,
 )
