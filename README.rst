@@ -80,24 +80,53 @@ Initial data
 ------------
 In case you just changed your model to contain an additional field named, say ``order``, which does
 not yet contain any values, then you may set initial ordering values by typing this code snipped
-into your Django managing shell::
+into your Django shell::
 
-  val = 0
+  shell> ./manage.py shell
+  Python 2.7.3 (default, Jul 24 2012, 10:05:38)
+  >>>
+  from synthesa.models import *
+  order = 0
   for obj in MySortableModel.objects.all():
-      val += 1
-      obj.order = val
+      order += 1
+      obj.position = order
       obj.save()
 
-A note to MySQL users
-.....................
+or by using South migrations::
+
+  shell> ./manage.py datamigration myapp set_order
+
+this creates an empty migration named something like ``myapp/migrations/0123_set_order.py``. Edit
+this file and create a data migration::
+
+  class Migration(DataMigration):
+      def forwards(self, orm):
+          order = 0
+          for obj in orm.MyModel.objects.all():
+              order += 1
+              obj.position = order
+              obj.save()
+
+Should I add a unique index to the position field?
+..................................................
 MySQL has a feature (or bug?) which requires to use the ``ORDER BY`` clause in bulk updates on
-unique fields. See https://code.djangoproject.com/ticket/20708 for details. Therefore do set
-``unique=False`` on your position field.
+unique fields.
+
+SQLite has the same feature (or bug?) which is even worse, because it does not allow you to use the
+``ORDER BY`` clause in bulk updates.
+
+Only Postgres does it "right" in the sense, that it updates all fields in one transaction and then
+rebuilds the unique index.
+
+See https://code.djangoproject.com/ticket/20708 for details.
+
+Therefore I strongly advise against setting ``unique=True`` on the position field, unless you want
+unportable code, which only works with Postgres databases.
 
 
 TODO
 ----
- * Tabular and stacked inlines.
+* Tabular and stacked inlines.
 
 
 Why another plugin?
@@ -108,9 +137,10 @@ contains a hard coded position field, additional methods and meta directives. Th
 approach is twofold. First, an IS-A relationship is abused to augment the functionality of a class.
 This is bad OOP practice. A base class shall only be used to reflect a real IS-A relation which
 specializes this base class. For instance: A mammal **is an** animal, a primate **is a** mammal,
-homo sapiens **is a** primate, etc.
+homo sapiens **is a** primate, etc. Here the inheritance model is appropriate, but it would be wrong
+to derive from homo sapiens to reflect a human which is able to hunt using bows and arrows.
 
-But a sortable model **is not an** unsortable model. Making a model sortable, means to augment its
+So, a sortable model **is not an** unsortable model. Making a model sortable, means to augment its
 functionality. This in OOP design does not qualify for an IS-A relationship.
 
 Fortunately, Python makes it very easy, to distinguish between IS-A relationships and augmenting
@@ -130,9 +160,9 @@ can be avoided!
 Related projects
 ================
  * https://github.com/iambrandontaylor/django-admin-sortable
+ * https://github.com/mtigas/django-orderable
  * http://djangosnippets.org/snippets/2057/
  * http://djangosnippets.org/snippets/2306/
- * https://github.com/mtigas/django-orderable
  * http://catherinetenajeros.blogspot.co.at/2013/03/sort-using-drag-and-drop.html
 
 
