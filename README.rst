@@ -115,8 +115,9 @@ unique fields.
 SQLite has the same feature (or bug?) which is even worse, because it does not allow you to use the
 ``ORDER BY`` clause in bulk updates.
 
-Only Postgres does it "right" in the sense, that it updates all fields in one transaction and then
-rebuilds the unique index.
+Only Postgres does it "right" in the sense, that it updates all fields in one transaction and
+afterwards rebuilds the unique index. Here one can not use the ``ORDER BY`` clause in bulk updates,
+which is senseless anyway.
 
 See https://code.djangoproject.com/ticket/20708 for details.
 
