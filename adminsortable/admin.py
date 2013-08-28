@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 import json
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from django.conf.urls import patterns, url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
@@ -16,11 +17,17 @@ class SortableAdminMixin(object):
         css = {
             'all': ('adminsortable/css/sortable.css',)
         }
-        js = (
-            '//code.jquery.com/jquery-1.9.1.js',
-            '//code.jquery.com/ui/1.10.3/jquery-ui.js',
-            'adminsortable/js/sortable.js',
-        )
+        js = ('cms' in settings.INSTALLED_APPS and (
+            'cms/js/plugins/admincompat.js',
+            'cms/js/libs/jquery.query.js',
+            'cms/js/libs/jquery.ui.core.js',
+            'cms/js/libs/jquery.ui.sortable.js',
+        ) or (
+            'adminsortable/js/plugins/admincompat.js',
+            'adminsortable/js/libs/jquery.query.js',
+            'adminsortable/js/libs/jquery.ui.core.js',
+            'adminsortable/js/libs/jquery.ui.sortable.js',
+        )) + ('adminsortable/js/sortable.js',)
     PREV = 0
     NEXT = 1
     FIRST = 2
