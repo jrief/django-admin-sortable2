@@ -1,5 +1,6 @@
 import os
 from setuptools import setup, find_packages
+import adminsortable
 
 DESCRIPTION = 'Generic drag-and-drop ordering for objects in the Django admin interface'
 
@@ -20,7 +21,7 @@ def read(fname):
 
 setup(
     name='django-admin-sortable2',
-    version='0.1.0',
+    version=adminsortable.__version__,
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     description=DESCRIPTION,
