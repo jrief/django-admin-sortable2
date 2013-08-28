@@ -42,7 +42,8 @@ jQuery(function($) {
 					endorder = $(this).find('div.drag').attr('order');
 				}
 			});
-			$.ajax(sortable_update_url, {
+			$.ajax({
+				url: sortable_update_url,
 				type: 'POST',
 				data: {
 					o: $.getQueryParam('o'),
@@ -55,6 +56,9 @@ jQuery(function($) {
 							$(this).find('div.drag').attr('order', item.order);
 						});
 					});
+				},
+				error: function(response) {
+					console.error('The server responded: ' + response.responseText);
 				}
 			});
 		}

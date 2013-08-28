@@ -74,7 +74,7 @@ class SortableAdminMixin(object):
         if self.enable_sorting:
             html = '<div class="drag" order="%s">&nbsp;</div>' % item.order
         return html
-    reorder.short_description = _('Order')
+    reorder.short_description = _('Sort')
     reorder.allow_tags = True
     reorder.admin_order_field = 'order'
 
