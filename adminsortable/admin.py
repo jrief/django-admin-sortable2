@@ -17,8 +17,10 @@ class SortableAdminMixin(object):
             'all': ('adminsortable/css/sortable.css',)
         }
         js = (
-            '//code.jquery.com/jquery-1.9.1.js',
-            '//code.jquery.com/ui/1.10.3/jquery-ui.js',
+            'cms/js/plugins/admincompat.js',
+            'cms/js/libs/jquery.query.js',
+            'cms/js/libs/jquery.ui.core.js',
+            'cms/js/libs/jquery.ui.sortable.js',
             'adminsortable/js/sortable.js',
         )
     PREV = 0
