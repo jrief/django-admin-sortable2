@@ -11,11 +11,11 @@ class Author(models.Model):
 
 class SortableBook(models.Model):
     title = models.CharField('Title', null=True, blank=True, max_length=255)
-    order = models.PositiveIntegerField(blank=False, null=False)
+    my_order = models.PositiveIntegerField(blank=False, null=False)
     author = models.ForeignKey(Author, null=True)
 
     class Meta(object):
-        ordering = ('order',)
+        ordering = ('my_order',)
 
     def __unicode__(self):
         return self.title
@@ -24,7 +24,7 @@ class SortableBook(models.Model):
 class Chapter(models.Model):
     title = models.CharField('Title', null=True, blank=True, max_length=255)
     book = models.ForeignKey(SortableBook, null=True)
-    order = models.PositiveIntegerField(blank=False, null=False)
+    my_order = models.PositiveIntegerField(blank=False, null=False)
 
     class Meta(object):
-        ordering = ('order',)
+        ordering = ('my_order',)

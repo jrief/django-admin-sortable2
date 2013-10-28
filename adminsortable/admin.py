@@ -50,7 +50,7 @@ class SortableAdminMixin(SortableAdminBase):
         if not self.list_display_links:
             self.list_display_links = self.list_display[0]
         self.list_display = ['_reorder'] + list(self.list_display)
-        self.Media.js += ('adminsortable/js/sortable.js',)
+        self.Media.js += ('adminsortable/js/list-sortable.js',)
 
     def get_urls(self):
         my_urls = patterns('',
@@ -75,7 +75,7 @@ class SortableAdminMixin(SortableAdminBase):
     def _reorder(self, item):
         html = ''
         if self.enable_sorting:
-            html = '<div class="drag" order="%s">&nbsp;</div>' % item.order
+            html = '<div class="drag" order="{0}">&nbsp;</div>'.format(getattr(item, self._default_ordering))
         return html
     _reorder.short_description = _('Sort')
     _reorder.allow_tags = True
@@ -203,9 +203,6 @@ def save_model(self, force_insert=False, force_update=False, using=None):
 
 
 class SortableInlineAdminMixin(SortableAdminBase):
-    class Media:
-        js = ('adminsortable/js/sortable-not-found.js',)
-
     def __init__(self, model, admin_site):
         try:
             self._default_ordering = self.model._meta.ordering[0]
@@ -215,3 +212,4 @@ class SortableInlineAdminMixin(SortableAdminBase):
         super(SortableInlineAdminMixin, self).__init__(model, admin_site)
         self.readonly_fields += (self._default_ordering,)
         setattr(self.model, 'save', save_model)
+        self.Media.js += ('adminsortable/js/inline-sortable.js',)
