@@ -15,7 +15,16 @@ class SortableBook(models.Model):
     author = models.ForeignKey(Author, null=True)
 
     class Meta(object):
-        ordering = ['order']
+        ordering = ('order',)
 
     def __unicode__(self):
         return self.title
+
+
+class Chapter(models.Model):
+    title = models.CharField('Title', null=True, blank=True, max_length=255)
+    book = models.ForeignKey(SortableBook, null=True)
+    order = models.PositiveIntegerField(blank=False, null=False)
+
+    class Meta(object):
+        ordering = ('order',)

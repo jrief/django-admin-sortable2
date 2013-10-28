@@ -1,6 +1,6 @@
 
 #result_list thead th:nth-child(2) {
-	width: 1px;
+	width: 50px;
 }
 
 #result_list div.drag {

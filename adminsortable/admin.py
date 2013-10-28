@@ -11,12 +11,9 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAll
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 
-
-class SortableAdminMixin(object):
+class SortableAdminBase(object):
     class Media:
-        css = {
-            'all': ('adminsortable/css/sortable.css',)
-        }
+        css = { 'all': ('adminsortable/css/sortable.css',) }
         js = ('cms' in settings.INSTALLED_APPS and (
             'cms/js/plugins/admincompat.js',
             'cms/js/libs/jquery.query.js',
@@ -27,27 +24,33 @@ class SortableAdminMixin(object):
             'adminsortable/js/libs/jquery.query.js',
             'adminsortable/js/libs/jquery.ui.core.js',
             'adminsortable/js/libs/jquery.ui.sortable.js',
-        )) + ('adminsortable/js/sortable.js',)
+        ))
+
+
+class SortableAdminMixin(SortableAdminBase):
     PREV = 0
     NEXT = 1
     FIRST = 2
     LAST = 3
+    CHANGE_LIST_TEMPLATE = 'adminsortable/change_list.html'
 
     def __init__(self, model, admin_site):
-        if not isinstance(getattr(model._meta, 'ordering', None), (list, tuple)):
-            raise ImproperlyConfigured('Your model %s.%s contains no list "ordering" in its Meta class'
-                % (model.__module__, model.__name__))
-        self._default_ordering = model._meta.ordering[0]
+        try:
+            self._default_ordering = model._meta.ordering[0]
+        except (AttributeError, IndexError):
+            raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
+                                       % model.__module__, model.__name__)
+        super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(getattr(self, 'exclude', None), (list, tuple)):
             self.exclude = [self._default_ordering]
         elif not self.exclude or self._default_ordering != self.exclude[0]:
             self.exclude = [self._default_ordering] + self.exclude
         if not getattr(self, 'change_list_template', None):
-            self.change_list_template = 'adminsortable/change_list.html'
-        super(SortableAdminMixin, self).__init__(model, admin_site)
+            self.change_list_template = self.CHANGE_LIST_TEMPLATE
         if not self.list_display_links:
             self.list_display_links = self.list_display[0]
-        self.list_display = ['reorder'] + list(self.list_display)
+        self.list_display = ['_reorder'] + list(self.list_display)
+        self.Media.js += ('adminsortable/js/sortable.js',)
 
     def get_urls(self):
         my_urls = patterns('',
@@ -69,14 +72,14 @@ class SortableAdminMixin(object):
             self.actions += ['move_to_prev_page', 'move_to_next_page', 'move_to_first_page', 'move_to_last_page']
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
 
-    def reorder(self, item):
+    def _reorder(self, item):
         html = ''
         if self.enable_sorting:
             html = '<div class="drag" order="%s">&nbsp;</div>' % item.order
         return html
-    reorder.short_description = _('Sort')
-    reorder.allow_tags = True
-    reorder.admin_order_field = 'order'
+    _reorder.short_description = _('Sort')
+    _reorder.allow_tags = True
+    _reorder.admin_order_field = 'order'
 
     @csrf_exempt
     def update(self, request):
@@ -93,7 +96,7 @@ class SortableAdminMixin(object):
 
     def save_model(self, request, obj, form, change):
         if not change:
-            obj.order = self._max_order() + 1
+            setattr(obj, self._default_ordering, self._max_order() + 1)
         obj.save()
 
     def move_to_prev_page(self, request, queryset):
@@ -185,3 +188,30 @@ class SortableAdminMixin(object):
             startorder = getattr(obj, self._default_ordering)
             self._move_item(request, startorder, endorder)
             endorder += direction
+
+
+def save_model(self, force_insert=False, force_update=False, using=None):
+    """
+    Pseudo method to be dynamically bound to SortableInlineAdminMixin.model
+    """
+    model = self.__class__
+    if not self.order:
+        default_ordering = model._meta.ordering[0]
+        max_order = model.objects.filter().aggregate(max_order=Max(default_ordering))['max_order']
+        self.order = isinstance(max_order, (int, float, long)) and max_order + 1 or 0
+    return super(model, self).save(force_insert=force_insert, force_update=force_update, using=using)
+
+
+class SortableInlineAdminMixin(SortableAdminBase):
+    class Media:
+        js = ('adminsortable/js/sortable-not-found.js',)
+
+    def __init__(self, model, admin_site):
+        try:
+            self._default_ordering = self.model._meta.ordering[0]
+        except (AttributeError, IndexError):
+            raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
+                                       % self.model.__module__, self.model.__name__)
+        super(SortableInlineAdminMixin, self).__init__(model, admin_site)
+        self.readonly_fields += (self._default_ordering,)
+        setattr(self.model, 'save', save_model)
