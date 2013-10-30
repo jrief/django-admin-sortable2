@@ -1,3 +1,4 @@
+"use strict";
 
 jQuery.extend({
 	getQueryParams: function() {
@@ -30,19 +31,22 @@ jQuery(function($) {
 			$(this).find('thead tr th').each(function(index) {
 				$(dragged_rows.item.context.childNodes[index]).width($(this).width() - 10);
 			});
-			startorder = $(dragged_rows.item.context).find('div.drag').attr('order');
+			startorder = parseInt($(dragged_rows.item.context).find('div.drag').attr('order'));
 		},
 		stop: function(event, dragged_rows) {
 			var $result_list = $(this);
 			$result_list.find('tbody tr').each(function(index) {
 				$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
 			}).each(function() {
-				if (startorder === $(this).find('div.drag').attr('order')) {
+				var untilorder = parseInt($(this).find('div.drag').attr('order'));
+				if (startorder === untilorder) {
 					return false;
 				} else {
-					endorder = $(this).find('div.drag').attr('order');
+					endorder = untilorder;
 				}
 			});
+			if (startorder === endorder + 1)
+				return;
 			$.ajax({
 				url: sortable_update_url,
 				type: 'POST',

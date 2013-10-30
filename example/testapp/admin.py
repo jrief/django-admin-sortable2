@@ -6,6 +6,7 @@ from models import Author, SortableBook, Chapter
 
 class ChapterInline(SortableInlineAdminMixin, admin.TabularInline):
     model = Chapter
+    #fields = ('my_order', 'title',)
     extra = 1
 
 
