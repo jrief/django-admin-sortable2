@@ -169,6 +169,7 @@ Related projects
 
 Release history
 ===============
-* 0.0.1 first working release.
-* 0.1.0 first version published on PyPI.
+* 0.1.2 Fixed: All field names other than "order" are now allowed.
 * 0.1.1 Fixed compatibility issue when used together with django-cms.
+* 0.1.0 first version published on PyPI.
+* 0.0.1 first working release.
