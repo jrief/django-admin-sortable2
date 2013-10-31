@@ -154,8 +154,8 @@ class SortableAdminMixin(SortableAdminBase):
         return [dict(pk=pk, order=order) for pk, order in query_set]
 
     def get_max_order(self):
-        max_order = self.model.objects.aggregate(max_order=Max(self.default_order_field))['max_order']
-        return max_order if isinstance(max_order, (int, float, long)) else 0
+        max_order = self.model.objects.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
+        return max_order
 
     def _bulk_move(self, request, queryset, method):
         if not self.enable_sorting:
@@ -193,18 +193,6 @@ class SortableAdminMixin(SortableAdminBase):
             endorder += direction
 
 
-def save_model(self, force_insert=False, force_update=False, using=None):
-    """
-    Pseudo method to be dynamically bound to SortableInlineAdminMixin.model
-    """
-    model = self.__class__
-    default_ordering = model._meta.ordering[0]
-    if not isinstance(getattr(self, default_ordering, None), int):
-        max_order = model._meta._inline_admin_obj.get_max_order(self) + 1
-        setattr(self, default_ordering, max_order)
-    return super(model, self).save(force_insert=force_insert, force_update=force_update, using=using)
-
-
 class CustomInlineFormSet(BaseInlineFormSet):
     def clean(self):
         """
@@ -215,31 +203,39 @@ class CustomInlineFormSet(BaseInlineFormSet):
         for err in self._errors:
             err.pop(self.default_order_field, None)
 
+    def save_new(self, form, commit=True):
+        obj = super(CustomInlineFormSet, self).save_new(form, commit=False)
+        if not isinstance(getattr(obj, self.default_order_field, None), int):
+            query_set = self.model.objects.filter(**{ self.fk.get_attname(): self.instance.pk })
+            max_order = query_set.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
+            setattr(obj, self.default_order_field, max_order + 1)
+        if commit:
+            obj.save()
+        # form.save_m2m() can be called via the formset later on if commit=False
+        if commit and hasattr(form, 'save_m2m'):
+            form.save_m2m()
+        return obj
+
 
 class SortableInlineAdminMixin(SortableAdminBase):
     def __init__(self, parent_model, admin_site):
-        try:
-            self.default_order_field = self.model._meta.ordering[0]
-        except (AttributeError, IndexError):
-            raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
-                                       % self.model.__module__, self.model.__name__)
         if isinstance(self, admin.StackedInline):
             self.template = 'adminsortable/stacked.html'
             self.Media.js += ('adminsortable/js/inline-sortable.js',)
         elif isinstance(self, admin.TabularInline):
             self.template = 'adminsortable/tabular.html'
             self.Media.js += ('adminsortable/js/inline-sortable.js',)
+        else:
+            raise ImproperlyConfigured(u'Class %s.%s must also derive from admin.TabularInline or admin.StackedInline'
+                                       % (self.__module__, self.__class__))
+        try:
+            self.default_order_field = self.model._meta.ordering[0]
+        except (AttributeError, IndexError):
+            raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
+                                       % self.model.__module__, self.model.__name__)
         super(SortableInlineAdminMixin, self).__init__(parent_model, admin_site)
         # isn't there any simpler way to find out the referring field?
         self._parent_relation = [f[0] for f in self.model._meta.get_fields_with_model() 
                 if hasattr(f[0], 'related') and f[0].related.parent_model == parent_model][0]
-        setattr(self.model, 'save', save_model)
-        setattr(self.model._meta, '_inline_admin_obj', self)
         self.formset = inlineformset_factory(parent_model, self.model, formset=CustomInlineFormSet)
         setattr(self.formset, 'default_order_field', self.default_order_field)
-
-    def get_max_order(self, obj):
-        related_id =  self._parent_relation.get_attname()
-        query_set = self.model.objects.filter(**{ related_id: getattr(obj, related_id, obj.id) })
-        max_order = query_set.aggregate(max_order=Max(self.default_order_field))['max_order']
-        return isinstance(max_order, (int, float, long)) and max_order or 0
