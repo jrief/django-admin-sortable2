@@ -7,7 +7,9 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
 from django.db import transaction
 from django.db.models import Max, F
-from django.forms.models import inlineformset_factory, BaseInlineFormSet
+from django.forms.models import modelform_factory, inlineformset_factory, BaseInlineFormSet
+from django.forms.widgets import HiddenInput
+from django import forms
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
@@ -200,18 +202,16 @@ class CustomInlineFormSet(BaseInlineFormSet):
         except (AttributeError, IndexError):
             raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (self.model.__module__, self.model.__name__))
+        form = modelform_factory(self.model, widgets={ self.default_order_field: HiddenInput() })
+        form.base_fields[self.default_order_field].required = False
+        self.form = form
         super(CustomInlineFormSet, self).__init__(*args, **kwargs)
 
-    def clean(self):
-        """
-        Since the field used for storing ordering information might be empty,
-        remove complains about the missing value.
-        """
-        super(CustomInlineFormSet, self).clean()
-        for err in self._errors:
-            err.pop(self.default_order_field, None)
-
     def save_new(self, form, commit=True):
+        """
+        New objects do not have a valid value in their ordering field. On object save, add an order
+        bigger than all other order fields for the current parent_model.
+        """
         obj = super(CustomInlineFormSet, self).save_new(form, commit=False)
         if not isinstance(getattr(obj, self.default_order_field, None), int):
             query_set = self.model.objects.filter(**{ self.fk.get_attname(): self.instance.pk })
@@ -237,5 +237,4 @@ class SortableInlineAdminMixin(SortableAdminBase):
             raise ImproperlyConfigured(u'Class %s.%s must also derive from admin.TabularInline or admin.StackedInline'
                                        % (self.__module__, self.__class__))
         super(SortableInlineAdminMixin, self).__init__(parent_model, admin_site)
-        # isn't there any simpler way to find out the referring field?
         self.formset = inlineformset_factory(parent_model, self.model, formset=CustomInlineFormSet)

@@ -3,9 +3,6 @@ jQuery(function($) {
 	$('div.inline-group').each(function() {
 		var default_order_field = $(this).nextUntil('div.default_order_field').next().attr('default_order_field');
 		var order_input_field = 'input[name$="' + default_order_field + '"]';
-		$(this).find(order_input_field).each(function() {
-			$(this).clone().attr('type', 'hidden').insertAfter($(this)).prev().remove();
-		});
 		$(this).find('div.tabular table').sortable({
 			items: 'tr.form-row.has_original',
 			axis: 'y',

@@ -28,3 +28,6 @@ class Chapter(models.Model):
 
     class Meta(object):
         ordering = ('my_order',)
+
+    def __unicode__(self):
+        return u'Chapter: %s' % self.title
