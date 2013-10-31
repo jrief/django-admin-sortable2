@@ -41,7 +41,7 @@ class SortableAdminMixin(SortableAdminBase):
             self.default_order_field = model._meta.ordering[0]
         except (AttributeError, IndexError):
             raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
-                                       % model.__module__, model.__name__)
+                                       % (model.__module__, model.__name__))
         super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(getattr(self, 'exclude', None), (list, tuple)):
             self.exclude = [self.default_order_field]
@@ -194,6 +194,14 @@ class SortableAdminMixin(SortableAdminBase):
 
 
 class CustomInlineFormSet(BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        try:
+            self.default_order_field = self.model._meta.ordering[0]
+        except (AttributeError, IndexError):
+            raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
+                                       % (self.model.__module__, self.model.__name__))
+        super(CustomInlineFormSet, self).__init__(*args, **kwargs)
+
     def clean(self):
         """
         Since the field used for storing ordering information might be empty,
@@ -228,14 +236,6 @@ class SortableInlineAdminMixin(SortableAdminBase):
         else:
             raise ImproperlyConfigured(u'Class %s.%s must also derive from admin.TabularInline or admin.StackedInline'
                                        % (self.__module__, self.__class__))
-        try:
-            self.default_order_field = self.model._meta.ordering[0]
-        except (AttributeError, IndexError):
-            raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
-                                       % self.model.__module__, self.model.__name__)
         super(SortableInlineAdminMixin, self).__init__(parent_model, admin_site)
         # isn't there any simpler way to find out the referring field?
-        self._parent_relation = [f[0] for f in self.model._meta.get_fields_with_model() 
-                if hasattr(f[0], 'related') and f[0].related.parent_model == parent_model][0]
         self.formset = inlineformset_factory(parent_model, self.model, formset=CustomInlineFormSet)
-        setattr(self.formset, 'default_order_field', self.default_order_field)
