@@ -202,6 +202,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
             raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (self.model.__module__, self.model.__name__))
         form = modelform_factory(self.model, widgets={ self.default_order_field: HiddenInput() })
+        form.base_fields[self.default_order_field].widget.is_hidden = False  # TODO: try to hide the whole column for order
         form.base_fields[self.default_order_field].required = False
         self.form = form
         super(CustomInlineFormSet, self).__init__(*args, **kwargs)
@@ -235,5 +236,6 @@ class SortableInlineAdminMixin(SortableAdminBase):
         else:
             raise ImproperlyConfigured(u'Class %s.%s must also derive from admin.TabularInline or admin.StackedInline'
                                        % (self.__module__, self.__class__))
+        self.Media.css['all'] += ('adminsortable/css/sortable.css',)
         super(SortableInlineAdminMixin, self).__init__(parent_model, admin_site)
         self.formset = inlineformset_factory(parent_model, self.model, formset=CustomInlineFormSet)

@@ -7,3 +7,11 @@
 	background: url(../icons/drag.png) repeat 0px 0px;
 	cursor: pointer;
 }
+div.inline-group table.ui-sortable tr.form-row.has_original {
+	cursor: pointer;
+	background-image: url(../icons/drag.png);
+	background-repeat: repeat 0px 0px;
+}
+div.inline-group.ui-sortable div.inline-related.has_original h3:hover {
+	cursor: pointer;
+}

@@ -4,9 +4,8 @@ from adminsortable.admin import SortableAdminMixin, SortableInlineAdminMixin
 from models import Author, SortableBook, Chapter
 
 
-class ChapterInline(SortableInlineAdminMixin, admin.TabularInline):
+class ChapterInline(SortableInlineAdminMixin, admin.StackedInline):
     model = Chapter
-    #fields = ('my_order', 'title',)
     extra = 1
 
 
