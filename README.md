@@ -19,15 +19,18 @@ Build status
 
 Installation
 ------------
-From PyPI::
+From PyPI:
+	pip install django-admin-sortable2
 
-  pip install django-admin-sortable2
+From github:
+	pip install -e git+https://github.com/jrief/django-admin-sortable2#egg=django_admin_sortable2
 
-From github::
-
-  pip install -e git+https://github.com/jrief/django-admin-sortable2#egg=django_admin_sortable2
-
-Add ``adminsortable`` to your INSTALLED_APPS.
+In ``settings.py`` add:
+	INSTALLED_APPS = (
+	    ....
+	    'adminsortable',
+	    ...
+ 	)
 
 Integrate your models
 ---------------------
@@ -38,14 +41,13 @@ Therefore this plugin can be applied in situations, where your model is derived 
 abstract model, which already contains any kind of position value. The only requirement for this 
 plugin is, that this position value is specified as the default ordering.
 
-Example **models.py**:
-
- class SortableBook(models.Model):
-     title = models.CharField('Title', null=True, blank=True, max_length=255)
-     my_order = models.PositiveIntegerField(blank=False, null=False)
- 
-     class Meta(object):
-         ordering = ('my_order',)
+Example ``models.py``:
+	class SortableBook(models.Model):
+	    title = models.CharField('Title', null=True, blank=True, max_length=255)
+	    my_order = models.PositiveIntegerField(blank=False, null=False)
+	
+	class Meta(object):
+	    ordering = ('my_order',)
 
 Name your ordering field using any name you like. The only requirement is, that this field is the
 first one in class Meta - ordering. Note, that these settings are required anyway by Django for
@@ -92,56 +94,55 @@ page, he can do that as a bulk operation, using the admin actions.
 
 Make a stacked or tabular inline view sortable
 ----------------------------------------------
-The interface for a sortable stacked inline view looks exactly the same. However, if you click on
-an inline's field title, this field may be moved up and down.
+The interface for a sortable stacked inline view looks exactly the same. If you click on an
+stacked inline's field title, this whole inline form can be moved up and down.
 
 The interface for a sortable tabular inline view add a sensitive area to each draggable row. These
 rows then can be moved up and down.
 
 ![Sortable Tabular Inlines](docs/tabular-inline.png)
 
+After moving a tabular or stacked inline, save the model form to persist its sorting order.
+
 ### Integrate into a detail view:
- from django.contrib import admin
- from adminsortable.admin import SortableInlineAdminMixin
- from models import MySubModel, MyModel
- 
- class MySubModelInline(SortableInlineAdminMixin, admin.TabularInline):  # or admin.StackedInline
-     model = MySubModel
- 
- class MyModelAdmin(admin.ModelAdmin):
-     inlines = (MySubModelInline,)
- admin.site.register(MyModel, MyModelAdmin)
+	from django.contrib import admin
+	from adminsortable.admin import SortableInlineAdminMixin
+	from models import MySubModel, MyModel
+	
+	class MySubModelInline(SortableInlineAdminMixin, admin.TabularInline):  # or admin.StackedInline
+	    model = MySubModel
+	
+	class MyModelAdmin(admin.ModelAdmin):
+	    inlines = (MySubModelInline,)
+	admin.site.register(MyModel, MyModelAdmin)
 
 Initial data
 ------------
 In case you just changed your model to contain an additional field named, say ``order``, which does
 not yet contain any values, then you may set initial ordering values by pasting this code snipped
-into the Django shell::
+into the Django shell:
+	shell> ./manage.py shell
+	Python ...
+	>>>
+	from synthesa.models import *
+	order = 0
+	for obj in MySortableModel.objects.all():
+	    order += 1
+	    obj.position = order
+	    obj.save()
 
-  shell> ./manage.py shell
-  Python ...
-  >>>
-  from synthesa.models import *
-  order = 0
-  for obj in MySortableModel.objects.all():
-      order += 1
-      obj.position = order
-      obj.save()
-
-or by using South migrations::
-
-  shell> ./manage.py datamigration myapp set_order
+or by using South migrations:
+	shell> ./manage.py datamigration myapp set_order
 
 this creates an empty migration named something like ``myapp/migrations/0123_set_order.py``. Edit
-this file and create a data migration::
-
-  class Migration(DataMigration):
-      def forwards(self, orm):
-          order = 0
-          for obj in orm.MyModel.objects.all():
-              order += 1
-              obj.position = order
-              obj.save()
+the file and create a data migration:
+	class Migration(DataMigration):
+	    def forwards(self, orm):
+	        order = 0
+	        for obj in orm.MyModel.objects.all():
+	            order += 1
+	            obj.position = order
+	            obj.save()
 
 Unique indices on the position field?
 -------------------------------------
