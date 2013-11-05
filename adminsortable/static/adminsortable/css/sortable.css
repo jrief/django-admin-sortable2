@@ -1,4 +1,4 @@
-
+/* styles for list view */
 #result_list thead th:nth-child(2) {
 	width: 50px;
 }
@@ -7,11 +7,23 @@
 	background: url(../icons/drag.png) repeat 0px 0px;
 	cursor: pointer;
 }
-div.inline-group table.ui-sortable tr.form-row.has_original {
+/* styles for tabular inlines */
+div.inline-group table.ui-sortable tr.form-row.has_original td.drag {
 	cursor: pointer;
 	background-image: url(../icons/drag.png);
 	background-repeat: repeat 0px 0px;
+	width: 20px;
 }
+div.inline-group table.ui-sortable tr.form-row.has_original td.original {
+	position: relative;
+}
+div.inline-group table.ui-sortable tr.form-row td.is_hidden {
+	display: none;
+}
+/* styles for stacked inlines */
 div.inline-group.ui-sortable div.inline-related.has_original h3:hover {
 	cursor: pointer;
+}
+div.inline-group.ui-sortable div.form-row.is_hidden {
+	display: none;
 }
