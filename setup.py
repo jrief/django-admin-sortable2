@@ -25,7 +25,7 @@ setup(
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     description=DESCRIPTION,
-    long_description=read('README.rst'),
+    long_description=read('README.md'),
     url='https://github.com/jrief/django-admin-sortable2',
     license='MIT',
     keywords = ['django'],
