@@ -5,23 +5,17 @@ Another generic drag-and-drop ordering for sorting objects in the list view of t
 interface. It is a rewrite of https://github.com/iambrandontaylor/django-admin-sortable
 using another approach.
 
-This plugin offers a simple mixin class which augments the functionality of an existing admin
-interface. It thus makes it very easy to integrate with existing models and their model admin 
-interfaces.
+This plugin offers simple mixin classes which augment the functionality of *any* existing class
+derived from **admin.ModelAdmin**, **admin.StackedInline** or **admin.TabluarInline**. It thus
+makes it very easy to integrate with existing models and their model admin interfaces.
 
-The admin interface slightly modifies the list view of a sortable model. Next to the action checkbox,
-a draggable area is added to each entry line. The user than may click on any item and vertically drag
-that item to a new position.
-
-.. image:: docs/listview.png
-
-If one or more items shall be moved to another page, this can easily been done by selecting them though the
-action checkbox, followed by using a predefined action from the pull down menu on the top of the list view.
+These admin mixin classes slightly modify the admin views of a sortable model. There is no need
+to derive your model class from a special base model class, nor you have to add a hard coded
+ordering field to your model. Use your existing ordered models, just as you always did.
 
 Build status
 ------------
-.. image:: https://travis-ci.org/jrief/django-admin-sortable2.png
-   :target: https://travis-ci.org/jrief/django-admin-sortable2
+[![Build Status](https://travis-ci.org/jrief/django-admin-sortable2.png?branch=master)](https://travis-ci.org/jrief/django-admin-sortable2)
 
 Installation
 ------------
@@ -35,7 +29,6 @@ From github::
 
 Add ``adminsortable`` to your INSTALLED_APPS.
 
-
 Integrate your models
 ---------------------
 Each database model you want to sort, requires a position value in its model description. Rather
@@ -45,45 +38,88 @@ Therefore this plugin can be applied in situations, where your model is derived 
 abstract model, which already contains any kind of position value. The only requirement for this 
 plugin is, that this position value is specified as the default ordering.
 
-If you specify a database model, make sure it contains an integer field to store the position value.
-This field must be set as the default ordering. Any existing model can be turned into a sortable
-model by adding two lines of code to the file ``models.py``::
+Example **models.py**:
 
-  from django.db import models
-  
-  class MyModel(models.Model):
-      ... other fields ...
-      position = models.PositiveIntegerField(db_index=True, blank=False, null=False)
-      
-      class Meta(object):
-          ordering = ['position']
+ class SortableBook(models.Model):
+     title = models.CharField('Title', null=True, blank=True, max_length=255)
+     my_order = models.PositiveIntegerField(blank=False, null=False)
+ 
+     class Meta(object):
+         ordering = ('my_order',)
 
-You are free to use any name for the field named ``position`` here. Just make sure, that it is the
-first one in the list ``ordering`` in the class ``Meta``.
+Name your ordering field using any name you like. The only requirement is, that this field is the
+first one in class Meta - ordering. Note, that these settings are required anyway by Django for
+each model which shall be ordered. They are not a special requirement my this module.
 
-In ``admin.py``, add a mixin class to augment the functionality for sorting::
+The field used to store the ordering position may be any kind of numeric model field offered by
+Django. Use one of these models fields:
+* models.BigIntegerField
+* models.IntegerField
+* models.PositiveIntegerField (recommended)
+* models.PositiveSmallIntegerField (recommended for small sets)
+* models.SmallIntegerField
 
-  from django.contrib import admin
-  from adminsortable.admin import SortableAdminMixin
-  from myapp.models import MyModel
-  
-  class MyModelAdmin(SortableAdminMixin, admin.ModelAdmin):
-      pass
-  admin.site.register(MyModel, MyModelAdmin)
+These model fields also work, but are not recommended:
+* models.DecimalField
+* models.FloatField
+
+Do not make this field unique!
+
+Make a list view sortable
+-------------------------
+Next to the action checkbox, a draggable area is added to each entry line. The user than may click
+on any item and vertically drag that item to a new position.
+
+![Sortable List View](docs/list-view.png)
+
+If one or more items shall be moved to another page, this can easily been done by selecting them
+though the action checkbox. Then the user shall click on a predefined action from the pull down
+menu on the top of the list view.
+
+### Integrate into a list view
+In ``admin.py``, add a mixin class to augment the functionality for sorting:
+ from django.contrib import admin
+ from adminsortable.admin import SortableAdminMixin
+ from models import MyModel
+ 
+ class MyModelAdmin(SortableAdminMixin, admin.ModelAdmin):
+     pass
+ admin.site.register(MyModel, MyModelAdmin)
 
 that's it! The list view of the model admin interface now adds a column with a sensitive area. By
 clicking on that area, the user can move that row up or down. If he wants to move it to another
 page, he can do that as a bulk operation, using the admin actions.
 
+Make a stacked or tabular inline view sortable
+----------------------------------------------
+The interface for a sortable stacked inline view looks exactly the same. However, if you click on
+an inline's field title, this field may be moved up and down.
+
+The interface for a sortable tabular inline view add a sensitive area to each draggable row. These
+rows then can be moved up and down.
+
+![Sortable Tabular Inlines](docs/tabular-inline.png)
+
+### Integrate into a detail view:
+ from django.contrib import admin
+ from adminsortable.admin import SortableInlineAdminMixin
+ from models import MySubModel, MyModel
+ 
+ class MySubModelInline(SortableInlineAdminMixin, admin.TabularInline):  # or admin.StackedInline
+     model = MySubModel
+ 
+ class MyModelAdmin(admin.ModelAdmin):
+     inlines = (MySubModelInline,)
+ admin.site.register(MyModel, MyModelAdmin)
 
 Initial data
 ------------
 In case you just changed your model to contain an additional field named, say ``order``, which does
-not yet contain any values, then you may set initial ordering values by typing this code snipped
-into your Django shell::
+not yet contain any values, then you may set initial ordering values by pasting this code snipped
+into the Django shell::
 
   shell> ./manage.py shell
-  Python 2.7.3 (default, Jul 24 2012, 10:05:38)
+  Python ...
   >>>
   from synthesa.models import *
   order = 0
@@ -107,8 +143,8 @@ this file and create a data migration::
               obj.position = order
               obj.save()
 
-Should I add a unique index to the position field?
-..................................................
+Unique indices on the position field?
+-------------------------------------
 MySQL has a feature (or bug?) which requires to use the ``ORDER BY`` clause in bulk updates on
 unique fields.
 
@@ -121,14 +157,8 @@ which is senseless anyway.
 
 See https://code.djangoproject.com/ticket/20708 for details.
 
-Therefore I strongly advise against setting ``unique=True`` on the position field, unless you want
+Therefore I strongly advise against setting *unique=True* on the position field, unless you want
 unportable code, which only works with Postgres databases.
-
-
-TODO
-----
-* Tabular and stacked inlines.
-
 
 Why another plugin?
 -------------------
@@ -157,7 +187,6 @@ between one of the two, or if he derives from both, his model class inherits the
 By using a mixin class rather than deriving from a special abstract base class, these problems
 can be avoided!
 
-
 Related projects
 ================
  * https://github.com/iambrandontaylor/django-admin-sortable
@@ -166,9 +195,9 @@ Related projects
  * http://djangosnippets.org/snippets/2306/
  * http://catherinetenajeros.blogspot.co.at/2013/03/sort-using-drag-and-drop.html
 
-
 Release history
 ===============
+* 0.2.0 Added sortable stacked and tabular inlines.
 * 0.1.2 Fixed: All field names other than "order" are now allowed.
 * 0.1.1 Fixed compatibility issue when used together with django-cms.
 * 0.1.0 first version published on PyPI.

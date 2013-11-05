@@ -4,7 +4,7 @@ from adminsortable.admin import SortableAdminMixin, SortableInlineAdminMixin
 from models import Author, SortableBook, Chapter
 
 
-class ChapterInline(SortableInlineAdminMixin, admin.StackedInline):
+class ChapterInline(SortableInlineAdminMixin, admin.TabularInline):
     model = Chapter
     extra = 1
 

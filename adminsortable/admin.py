@@ -202,7 +202,6 @@ class CustomInlineFormSet(BaseInlineFormSet):
             raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (self.model.__module__, self.model.__name__))
         form = modelform_factory(self.model, widgets={ self.default_order_field: HiddenInput() })
-        # Problem in Django: If this line is commented out, the formfield is rendered wired
         form.base_fields[self.default_order_field].is_hidden = True
         form.base_fields[self.default_order_field].required = False
         self.form = form
