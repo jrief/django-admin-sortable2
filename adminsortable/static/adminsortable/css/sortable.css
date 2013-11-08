@@ -11,7 +11,7 @@
 div.inline-group table.ui-sortable tr.form-row.has_original td.drag {
 	cursor: pointer;
 	background-image: url(../icons/drag.png);
-	background-repeat: repeat 0px 0px;
+	background-repeat: repeat;
 	width: 20px;
 }
 div.inline-group table.ui-sortable tr.form-row.has_original td.original {

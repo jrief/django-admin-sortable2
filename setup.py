@@ -1,6 +1,5 @@
-import os
 from setuptools import setup, find_packages
-import adminsortable
+from adminsortable import __version__
 
 DESCRIPTION = 'Generic drag-and-drop ordering for objects in the Django admin interface'
 
@@ -15,17 +14,13 @@ CLASSIFIERS = [
     'Development Status :: 4 - Beta',
 ]
 
-def read(fname):
-    # read the contents of a text file
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
-
 setup(
     name='django-admin-sortable2',
-    version=adminsortable.__version__,
+    version=__version__,
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     description=DESCRIPTION,
-    long_description=read('README.md'),
+    long_description=open('README.md').read(),
     url='https://github.com/jrief/django-admin-sortable2',
     license='MIT',
     keywords = ['django'],
