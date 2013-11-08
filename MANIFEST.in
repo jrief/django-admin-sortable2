@@ -1,4 +1,4 @@
-include README.rst
+include README.md
 include setup.py
 recursive-include adminsortable/ *
 recursive-include adminsortable/static *
