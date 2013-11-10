@@ -123,18 +123,18 @@ After moving a tabular or stacked inline, save the model form to persist its sor
 
 Initial data
 ------------
-In case you just changed your model to contain an additional field named, say ``order``, which does
-not yet contain any values, then you may set initial ordering values by pasting this code snipped
-into the Django shell:
+In case you just changed your model to contain an additional field named, say ``my_order``, which
+does not yet contain any values, then you may set initial ordering values by pasting this code
+snipped into the Django shell:
 
 	shell> ./manage.py shell
 	Python ...
 	>>>
-	from synthesa.models import *
+	from myapp.models import *
 	order = 0
 	for obj in MySortableModel.objects.all():
 	    order += 1
-	    obj.position = order
+	    obj.my_order = order
 	    obj.save()
 
 or using South migrations:
@@ -149,7 +149,7 @@ the file and change it into a data migration:
 	        order = 0
 	        for obj in orm.MyModel.objects.all():
 	            order += 1
-	            obj.position = order
+	            obj.my_order = order
 	            obj.save()
 
 then apply the changes to the database using:
