@@ -156,16 +156,19 @@ then apply the changes to the database using:
 
 	shell> ./manage.py migrate myapp
 
-Unique indices on the position field?
--------------------------------------
+Note on unique indices on the position field
+--------------------------------------------
+From a design consideration, one might be tempted to add a unique index on the ordering field. But
+in practice this has serious drawbacks:
+
 MySQL has a feature (or bug?) which requires to use the ``ORDER BY`` clause in bulk updates on
 unique fields.
 
-SQLite has the same feature (or bug?) which is even worse, because it does not allow you to use the
-``ORDER BY`` clause in bulk updates.
+SQLite has the same bug which is even worse, because it does neither update all the fields in one
+transaction, nor does it allow to use the ``ORDER BY`` clause in bulk updates.
 
-Only Postgres does it "right" in the sense, that it updates all fields in one transaction and
-afterwards rebuilds the unique index. Here one can not use the ``ORDER BY`` clause in bulk updates,
+Only PostgreSQL does it "right" in the sense, that it updates all fields in one transaction and
+afterwards rebuilds the unique index. Here one can not use the ``ORDER BY`` clause during updates,
 which is senseless anyway.
 
 See https://code.djangoproject.com/ticket/20708 for details.
