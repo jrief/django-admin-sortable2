@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 import json
+from django import VERSION
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.conf.urls import patterns, url
@@ -18,17 +19,27 @@ from django.contrib import admin
 class SortableAdminBase(object):
     class Media:
         css = { 'all': ('adminsortable/css/sortable.css',) }
-        js = ('cms' in settings.INSTALLED_APPS and (
-            'cms/js/plugins/admincompat.js',
-            'cms/js/libs/jquery.query.js',
-            'cms/js/libs/jquery.ui.core.js',
-            'cms/js/libs/jquery.ui.sortable.js',
-        ) or (
-            'adminsortable/js/plugins/admincompat.js',
-            'adminsortable/js/libs/jquery.query.js',
-            'adminsortable/js/libs/jquery.ui.core.js',
-            'adminsortable/js/libs/jquery.ui.sortable.js',
-        ))
+        if 'cms' in settings.INSTALLED_APPS:
+            js = (
+                'cms/js/plugins/admincompat.js',
+                'cms/js/libs/jquery.query.js',
+                'cms/js/libs/jquery.ui.core.js',
+                'cms/js/libs/jquery.ui.sortable.js',
+            )
+        elif VERSION[0] == 1 and VERSION[1] <= 5:
+            js = (
+                'adminsortable/js/plugins/admincompat.js',
+                'adminsortable/js/libs/jquery.ui.core-1.7.1.js',
+                'adminsortable/js/libs/jquery.ui.sortable-1.7.1.js',
+            )
+        else:
+            js = (
+                'adminsortable/js/plugins/admincompat.js',
+                'adminsortable/js/libs/jquery.ui.core-1.10.3.js',
+                'adminsortable/js/libs/jquery.ui.widget-1.10.3.js',
+                'adminsortable/js/libs/jquery.ui.mouse-1.10.3.js',
+                'adminsortable/js/libs/jquery.ui.sortable-1.10.3.js',
+            )
 
 
 class SortableAdminMixin(SortableAdminBase):
@@ -227,11 +238,12 @@ class CustomInlineFormSet(BaseInlineFormSet):
 
 class SortableInlineAdminMixin(SortableAdminBase):
     def __init__(self, parent_model, admin_site):
+        version = (VERSION[0] == 1 and VERSION[1] <= 5) and '1.5' or '1.6'
         if isinstance(self, admin.StackedInline):
-            self.template = 'adminsortable/stacked.html'
+            self.template = 'adminsortable/stacked-%s.html' % version
             self.Media.js += ('adminsortable/js/inline-sortable.js',)
         elif isinstance(self, admin.TabularInline):
-            self.template = 'adminsortable/tabular.html'
+            self.template = 'adminsortable/tabular-%s.html' % version
             self.Media.js += ('adminsortable/js/inline-sortable.js',)
         else:
             raise ImproperlyConfigured(u'Class %s.%s must also derive from admin.TabularInline or admin.StackedInline'
