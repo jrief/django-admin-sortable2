@@ -39,11 +39,9 @@ jQuery(function($) {
 				$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
 			}).each(function() {
 				var untilorder = parseInt($(this).find('div.drag').attr('order'));
-				if (startorder === untilorder) {
+				if (startorder === untilorder)
 					return false;
-				} else {
-					endorder = untilorder;
-				}
+				endorder = untilorder;
 			});
 			if (startorder === endorder + 1)
 				return;
