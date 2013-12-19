@@ -204,6 +204,8 @@ be avoided under all circumstances.
 By using a mixin class rather than deriving from a special abstract base class, these problems
 can be avoided!
 
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jrief/django-admin-sortable2/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 Related projects
 ================
  * https://github.com/iambrandontaylor/django-admin-sortable
