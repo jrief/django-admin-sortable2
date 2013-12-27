@@ -216,6 +216,7 @@ Related projects
 
 Release history
 ===============
+* 0.2.2 Distinction between different versions of jQuery in case django-cms is installed side by side.
 * 0.2.0 Added sortable stacked and tabular inlines.
 * 0.1.2 Fixed: All field names other than "order" are now allowed.
 * 0.1.1 Fixed compatibility issue when used together with django-cms.
