@@ -13,7 +13,7 @@ SITE_ID = 1
 
 ROOT_URLCONF = 'testapp.urls'
 
-SECRET_KEY = 'SSponU8sDrOMjaSCjmQ0D04PlrLugv3vJDjzEipb'
+SECRET_KEY = 'secret'
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
