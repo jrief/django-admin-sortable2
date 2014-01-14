@@ -19,14 +19,7 @@ from django.contrib import admin
 class SortableAdminBase(object):
     class Media:
         css = { 'all': ('adminsortable/css/sortable.css',) }
-        if 'cms' in settings.INSTALLED_APPS:
-            js = (
-                'cms/js/plugins/admincompat.js',
-                'cms/js/libs/jquery.query.js',
-                'cms/js/libs/jquery.ui.core.js',
-                'cms/js/libs/jquery.ui.sortable.js',
-            )
-        elif VERSION[0] == 1 and VERSION[1] <= 5:
+        if VERSION[0] == 1 and VERSION[1] <= 5:
             js = (
                 'adminsortable/js/plugins/admincompat.js',
                 'adminsortable/js/libs/jquery.ui.core-1.7.1.js',
@@ -40,6 +33,17 @@ class SortableAdminBase(object):
                 'adminsortable/js/libs/jquery.ui.mouse-1.10.3.js',
                 'adminsortable/js/libs/jquery.ui.sortable-1.10.3.js',
             )
+        if 'cms' in settings.INSTALLED_APPS:
+            # for DjangoCMS < 3, override jQuery files for inclusion from the CMS
+            from cms import __version__
+            cms_version = __version__.split('.')
+            if cms_version[0] < 3:
+                js = (
+                    'cms/js/plugins/admincompat.js',
+                    'cms/js/libs/jquery.query.js',
+                    'cms/js/libs/jquery.ui.core.js',
+                    'cms/js/libs/jquery.ui.sortable.js',
+                )
 
 
 class SortableAdminMixin(SortableAdminBase):
