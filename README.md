@@ -1,9 +1,15 @@
 django-admin-sortable2
 ======================
 
-Another generic drag-and-drop ordering for sorting objects in the list view of the Django admin
-interface. It is a rewrite of https://github.com/iambrandontaylor/django-admin-sortable
-using another approach.
+Project home: https://github.com/jrief/django-admin-sortable2
+
+Ask questions and report bugs on: https://github.com/jrief/django-admin-sortable2/issues
+
+Generic drag-and-drop ordering for objects in the Django admin interface
+------------------------------------------------------------------------
+This is another generic drag-and-drop ordering module for sorting objects in the list view
+of the Django admin interface. It is a rewrite of https://github.com/iambrandontaylor/django-admin-sortable
+using an unintrusive approach.
 
 This plugin offers simple mixin classes which augment the functionality of *any* existing class
 derived from ``admin.ModelAdmin``, ``admin.StackedInline`` or ``admin.TabluarInline``. It thus

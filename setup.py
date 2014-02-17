@@ -14,13 +14,17 @@ CLASSIFIERS = [
     'Development Status :: 4 - Beta',
 ]
 
+def read(fname):
+    readme_file = os.path.join(os.path.dirname(__file__), fname)
+    return os.popen('pandoc -t rst {0}'.format(readme_file)).read()
+
 setup(
     name='django-admin-sortable2',
     version=__version__,
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     description=DESCRIPTION,
-    long_description=open('README.md').read(),
+    long_description=read('README.md'),
     url='https://github.com/jrief/django-admin-sortable2',
     license='MIT',
     keywords = ['django'],
