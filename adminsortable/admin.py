@@ -216,11 +216,10 @@ class CustomInlineFormSet(BaseInlineFormSet):
         except (AttributeError, IndexError):
             raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (self.model.__module__, self.model.__name__))
-        form = modelform_factory(self.model, widgets={ self.default_order_field: HiddenInput() })
-        form.base_fields[self.default_order_field].is_hidden = True
-        form.base_fields[self.default_order_field].required = False
-        self.form = form
         super(CustomInlineFormSet, self).__init__(*args, **kwargs)
+        self.form.base_fields[self.default_order_field].is_hidden = True
+        self.form.base_fields[self.default_order_field].required = False
+        self.form.base_fields[self.default_order_field].widget = HiddenInput()
 
     def save_new(self, form, commit=True):
         """
