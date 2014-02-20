@@ -174,8 +174,8 @@ example webserver:
 	./manage.py loaddata testapp/fixtures/data.json
 	./manage.py runserver
 
-Point a browser onto http://localhost:8000/admin/ , log in and go to *Sortable books*. There you can
-test the behaviour.
+Point a browser onto [http://localhost:8000/admin/](http://localhost:8000/admin/), log in and
+go to *Sortable books*. There you can test the behaviour.
 
 Note on unique indices on the position field
 --------------------------------------------
