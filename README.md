@@ -162,6 +162,21 @@ then apply the changes to the database using:
 
 	shell> ./manage.py migrate myapp
 
+Run Example Code
+----------------
+To get a quick first impression of this plugin, clone this repositoty from GitHub and run an
+example webserver:
+
+	git clone https://github.com/jrief/django-admin-sortable2.git
+	cd django-admin-sortable2/example/
+	./manage.py syncdb
+	# add an admin user
+	./manage.py loaddata testapp/fixtures/data.json
+	./manage.py runserver
+
+Point a browser onto http://localhost:8000/admin/ , log in and go to *Sortable books*. There you can
+test the behaviour.
+
 Note on unique indices on the position field
 --------------------------------------------
 From a design consideration, one might be tempted to add a unique index on the ordering field. But
