@@ -20,8 +20,8 @@ derived from ```admin.ModelAdmin```, ```admin.StackedInline``` or ```admin.Tablu
 makes it very easy to integrate with existing models and their model admin interfaces.
 
 These admin mixin classes slightly modify the admin views of a sortable model. There is no need
-to derive your model class from a special base model class, nor you have to add a hard coded
-ordering field to your model. Use your existing ordered models, just as you always did.
+to derive your model class from a special base model class. You can use your existing ordered field,
+just as you always did, or add a new one with any name you like, if needed.
 
 Build status
 ------------
@@ -49,27 +49,30 @@ INSTALLED_APPS = (
 
 Integrate your models
 ---------------------
-Each database model which shall be sortable, requires a position value in its model description.
+Each database model which shall be sortable requires a position value in its model description.
 Rather than defining a base class, which contains such a positional value in a hard coded field,
-this plugin lets reuse existing fields or attempts to delegate this responsibility to the
-programmer.
-Therefore this plugin can be applied in situations, where your model is derived from an existing
-abstract model, which already contains any kind of position value. The only requirement for this 
-plugin is, that this position value is specified as the primary field used for sorting. This in
-Django is declared through the model Meta class. Example ``models.py``:
+this plugin lets you reuse existing sort fields or define a new field for the sort value.
+Therefore this plugin can be applied in situations where your model is derived from an existing
+abstract model which already contains any kind of position value. The only requirement for this
+plugin is that this position value be specified as the primary field used for sorting. This in
+Django is declared through the model's Meta class. Example ``models.py``:
 
 ```python
 class SortableBook(models.Model):
     title = models.CharField('Title', null=True, blank=True, max_length=255)
-    my_order = models.PositiveIntegerField(blank=False, null=False)
+    my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
 
     class Meta(object):
         ordering = ('my_order',)
 ```
 
-Here the ordering field is named ```my_order```, but any other name is valid as well. The only
-requirement is, that ```my_order``` is the first field in ```ordering``` in the model's Meta
-class.
+Here the ordering field is named ```my_order```, but any other name is valid. There are only
+two requirements:
+
+1) ```my_order``` is the first field in the ```ordering``` tuple of the model's Meta class.
+2) ```my_order```'s default value must be 0. The javascript which performs the sorting is
+1-indexed, so this will not interfere with the order of your items, even if you're already
+using 0-indexed ordering fields.
 
 The field used to store the ordering position may be any kind of numeric model field offered by
 Django. Use one of these models fields:
@@ -98,7 +101,8 @@ menu on the top of the list view.
 
 Integrate into a list view
 --------------------------
-In ```admin.py```, add a mixin class to augment the functionality for sorting:
+In ```admin.py```, add a mixin class to augment the functionality for sorting (be sure to put the
+mixin class before model.ModelAdmin):
 
 ```python
 from django.contrib import admin
@@ -110,7 +114,7 @@ class MyModelAdmin(SortableAdminMixin, admin.ModelAdmin):
 admin.site.register(MyModel, MyModelAdmin)
 ```
 
-that's it! The list view of the model admin interface now adds a column with a sensitive area. By
+That's it! The list view of the model admin interface now adds a column with a sensitive area. By
 clicking on that area, the user can move that row up or down. If he wants to move it to another
 page, he can do that as a bulk operation, using the admin actions.
 
@@ -144,9 +148,9 @@ admin.site.register(MyModel, MyModelAdmin)
 
 Initial data
 ------------
-In case you just changed your model to contain an additional field named, say ``my_order``, which
+In case you just changed your model to contain an additional sorting field (e.g. ``my_order``), which
 does not yet contain any values, then you may set initial ordering values by pasting this code
-snipped into the Django shell:
+snippet into the Django shell:
 
 ```python
 shell> ./manage.py shell
@@ -226,26 +230,26 @@ Why another plugin?
 -------------------
 All available plugins which add functionality to make list views for the Django admin interface
 sortable, offer a base class to be used instead of ```models.Model```. This abstract base class then
-contains a hard coded position field, additional methods and meta directives. The problem with such
+contains a hard coded position field, additional methods, and meta directives. The problem with such
 an approach is twofold. First, an IS-A relationship is abused to augment the functionality of a class.
 This is bad OOP practice. A base class shall only be used to reflect a real IS-A relation which
 specializes this class. For instance: A mammal **is an** animal, a primate **is a** mammal,
 homo sapiens **is a** primate, etc. Here the inheritance model is appropriate, but it would be wrong
 to derive from homo sapiens to reflect a human which is able to hunt using bows and arrows.
 
-So, a sortable model **is not an** unsortable model. Making a model sortable, means to augment its
-functionality. This in OOP design does not qualify for an IS-A relationship.
+So, a sortable model **is not an** unsortable model. Making a model sortable augments its
+functionality. In OOP design this does not qualify for an IS-A relationship.
 
-Fortunately, Python makes it very easy, to distinguish between real IS-A relationships and augmenting
-functionalities. The latter cases are handled by mixin classes. They offer additional functionality
-for a class, without deriving from the base class.
+Fortunately, Python makes it very easy to distinguish between real IS-A relationships and augmenting
+functionalities. The latter are handled by mixin classes. They offer additional functionality
+for a class without deriving from the base class.
 
-Also consider the case, when someone wants to augment some other functionality of a model class.
+Also consider the case when someone wants to augment some other functionality of a model class.
 If he also derives from ```models.Model```, he would create another abstract intermediate class.
-Someone who wants to use both functional augmentations, now is in trouble. Or he has to choose
-between one of the two, or if he derives from both. In the latter case, his model class inherits
-the base class ```models.Model``` twice. This results in a diamond shape inheritance, which shall
-be avoided under all circumstances.
+Someone who wants to use **both** functional augmentations is now in trouble. He has to choose
+between one of the two, as he cannot dervie from them both, because his model class would inherit
+the base class ```models.Model``` twice. This kind of diamond-shaped inheritance is to be avoided
+under all circumstances.
 
 By using a mixin class rather than deriving from a special abstract base class, these problems
 can be avoided!
