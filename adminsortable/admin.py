@@ -240,6 +240,8 @@ class CustomInlineFormSet(BaseInlineFormSet):
 
 
 class SortableInlineAdminMixin(SortableAdminBase):
+    formset = CustomInlineFormSet
+    
     def __init__(self, parent_model, admin_site):
         version = (VERSION[0] == 1 and VERSION[1] <= 5) and '1.5' or '1.6'
         if isinstance(self, admin.StackedInline):
@@ -253,4 +255,3 @@ class SortableInlineAdminMixin(SortableAdminBase):
                                        % (self.__module__, self.__class__))
         self.Media.css['all'] += ('adminsortable/css/sortable.css',)
         super(SortableInlineAdminMixin, self).__init__(parent_model, admin_site)
-        self.formset = inlineformset_factory(parent_model, self.model, formset=CustomInlineFormSet)
