@@ -96,7 +96,7 @@ class SortableAdminMixin(SortableAdminBase):
     def _reorder(self, item):
         html = ''
         if self.enable_sorting:
-            html = '<div class="drag" order="{0}">&nbsp;</div>'.format(getattr(item, self.default_order_field))
+            html = '<div class="drag" order="{0}">&nbsp;</div>'.format(getattr(item, self.default_order_field.lstrip('-')))
         return html
     _reorder.short_description = _('Sort')
     _reorder.allow_tags = True
