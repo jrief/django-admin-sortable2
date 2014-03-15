@@ -35,15 +35,18 @@ class SortableAdminBase(object):
             )
         if 'cms' in settings.INSTALLED_APPS:
             # for DjangoCMS < 3, override jQuery files for inclusion from the CMS
-            from cms import __version__
-            cms_version = __version__.split('.')
-            if cms_version[0] < 3:
-                js = (
-                    'cms/js/plugins/admincompat.js',
-                    'cms/js/libs/jquery.query.js',
-                    'cms/js/libs/jquery.ui.core.js',
-                    'cms/js/libs/jquery.ui.sortable.js',
-                )
+            try:
+                from cms import __version__
+                cms_version = __version__.split('.')
+                if cms_version[0] < 3:
+                    js = (
+                        'cms/js/plugins/admincompat.js',
+                        'cms/js/libs/jquery.query.js',
+                        'cms/js/libs/jquery.ui.core.js',
+                        'cms/js/libs/jquery.ui.sortable.js',
+                    )
+            except ImportError:
+                pass
 
 
 class SortableAdminMixin(SortableAdminBase):
