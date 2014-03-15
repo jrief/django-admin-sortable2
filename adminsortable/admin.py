@@ -57,7 +57,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def __init__(self, model, admin_site):
         try:
-            self.default_order_field = model._meta.ordering[0]
+            self.default_order_field = model._meta.ordering[0].lstrip('-')
         except (AttributeError, IndexError):
             raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (model.__module__, model.__name__))
@@ -96,7 +96,7 @@ class SortableAdminMixin(SortableAdminBase):
     def _reorder(self, item):
         html = ''
         if self.enable_sorting:
-            html = '<div class="drag" order="{0}">&nbsp;</div>'.format(getattr(item, self.default_order_field.lstrip('-')))
+            html = '<div class="drag" order="{0}">&nbsp;</div>'.format(getattr(item, self.default_order_field))
         return html
     _reorder.short_description = _('Sort')
     _reorder.allow_tags = True
