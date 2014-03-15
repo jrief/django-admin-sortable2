@@ -35,15 +35,18 @@ class SortableAdminBase(object):
             )
         if 'cms' in settings.INSTALLED_APPS:
             # for DjangoCMS < 3, override jQuery files for inclusion from the CMS
-            from cms import __version__
-            cms_version = __version__.split('.')
-            if cms_version[0] < 3:
-                js = (
-                    'cms/js/plugins/admincompat.js',
-                    'cms/js/libs/jquery.query.js',
-                    'cms/js/libs/jquery.ui.core.js',
-                    'cms/js/libs/jquery.ui.sortable.js',
-                )
+            try:
+                from cms import __version__
+                cms_version = __version__.split('.')
+                if cms_version[0] < 3:
+                    js = (
+                        'cms/js/plugins/admincompat.js',
+                        'cms/js/libs/jquery.query.js',
+                        'cms/js/libs/jquery.ui.core.js',
+                        'cms/js/libs/jquery.ui.sortable.js',
+                    )
+            except ImportError:
+                pass
 
 
 class SortableAdminMixin(SortableAdminBase):
@@ -54,7 +57,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def __init__(self, model, admin_site):
         try:
-            self.default_order_field = model._meta.ordering[0]
+            self.default_order_field = model._meta.ordering[0].lstrip('-')
         except (AttributeError, IndexError):
             raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (model.__module__, model.__name__))
@@ -86,7 +89,7 @@ class SortableAdminMixin(SortableAdminBase):
             self.order_by = '-' + self.default_order_field
         else:
             self.enable_sorting = False
-        if self.enable_sorting:
+        if self.enable_sorting and not getattr(self, 'disable_sorting_actions', False):
             self.actions += ['move_to_prev_page', 'move_to_next_page', 'move_to_first_page', 'move_to_last_page']
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
 
