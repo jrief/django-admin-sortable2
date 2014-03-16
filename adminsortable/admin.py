@@ -220,11 +220,10 @@ class CustomInlineFormSet(BaseInlineFormSet):
         except (AttributeError, IndexError):
             raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (self.model.__module__, self.model.__name__))
-        form = modelform_factory(self.model, widgets={ self.default_order_field: HiddenInput() })
-        form.base_fields[self.default_order_field].is_hidden = True
-        form.base_fields[self.default_order_field].required = False
-        self.form = form
         super(CustomInlineFormSet, self).__init__(*args, **kwargs)
+        self.form.base_fields[self.default_order_field].is_hidden = True
+        self.form.base_fields[self.default_order_field].required = False
+        self.form.base_fields[self.default_order_field].widget = HiddenInput()
 
     def save_new(self, form, commit=True):
         """
@@ -232,7 +231,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
         bigger than all other order fields for the current parent_model.
         """
         obj = super(CustomInlineFormSet, self).save_new(form, commit=False)
-        if not isinstance(getattr(obj, self.default_order_field, None), int):
+        if getattr(obj, self.default_order_field, None) == 0:
             query_set = self.model.objects.filter(**{ self.fk.get_attname(): self.instance.pk })
             max_order = query_set.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
             setattr(obj, self.default_order_field, max_order + 1)
@@ -245,6 +244,8 @@ class CustomInlineFormSet(BaseInlineFormSet):
 
 
 class SortableInlineAdminMixin(SortableAdminBase):
+    formset = CustomInlineFormSet
+    
     def __init__(self, parent_model, admin_site):
         version = (VERSION[0] == 1 and VERSION[1] <= 5) and '1.5' or '1.6'
         if isinstance(self, admin.StackedInline):
@@ -258,4 +259,3 @@ class SortableInlineAdminMixin(SortableAdminBase):
                                        % (self.__module__, self.__class__))
         self.Media.css['all'] += ('adminsortable/css/sortable.css',)
         super(SortableInlineAdminMixin, self).__init__(parent_model, admin_site)
-        self.formset = inlineformset_factory(parent_model, self.model, formset=CustomInlineFormSet)

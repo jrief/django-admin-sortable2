@@ -6,7 +6,7 @@ jQuery(function($) {
 		// tabluar inlines
 		var tabular_inlines = $(this).find('div.tabular table');
 		tabular_inlines.sortable({
-			items: 'tr.form-row.has_original',
+			items: 'tr.form-row',
 			axis: 'y',
 			scroll: true,
 			cursor: 'ns-resize',
@@ -16,7 +16,7 @@ jQuery(function($) {
 				$result_list.find('tbody tr').each(function(index) {
 					$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
 				});
-				$result_list.find('tbody tr.has_original').each(function(index) {
+				$result_list.find('tbody tr').each(function(index) {
 					$(this).find(order_input_field).val(index + 1);
 				});
 			}
@@ -26,14 +26,14 @@ jQuery(function($) {
 		// else, try with stacked inlines
 		$(this).sortable({
 			handle: 'h3',
-			items: 'div.inline-related.has_original',
+			items: 'div.inline-related',
 			axis: 'y',
 			scroll: true,
 			cursor: 'ns-resize',
 			containment: $(this),
 			stop: function(event, dragged_rows) {
 				var $result_list = $(this);
-				$result_list.find('div.inline-related.has_original').each(function(index) {
+				$result_list.find('div.inline-related').each(function(index) {
 					$(this).find(order_input_field).val(index + 1);
 				});
 			}
