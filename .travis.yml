@@ -3,11 +3,10 @@ python:
   - "2.7"
 
 env:
-  - DJANGO=1.4.9
-  - DJANGO=1.5.5
-  - DJANGO=1.6
+  - DJANGO=1.5.5 TEST=testapp
+  - DJANGO=1.6.2 TEST=testapp.tests
 
 install:
   - pip install -q Django==$DJANGO --use-mirrors
   - python setup.py -q install
-script: cd example/ && ./manage.py test testapp
+script: cd example/ && ./manage.py test $TEST
