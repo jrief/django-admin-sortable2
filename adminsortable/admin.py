@@ -90,7 +90,7 @@ class SortableAdminMixin(SortableAdminBase):
             self.order_by = '-' + self.default_order_field
         else:
             self.enable_sorting = False
-        if self.enable_sorting:
+        if self.enable_sorting and not getattr(self, 'disable_sorting_actions', False):
             self.actions += ['move_to_prev_page', 'move_to_next_page', 'move_to_first_page', 'move_to_last_page']
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
 
