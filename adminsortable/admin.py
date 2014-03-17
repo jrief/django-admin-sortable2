@@ -92,24 +92,31 @@ class SortableAdminMixin(SortableAdminBase):
             self.order_by = '-' + self.default_order_field
         else:
             self.enable_sorting = False
+        qs = self.get_queryset(request)
         if self.enable_sorting:
-            self.actions += ['move_to_prev_page', 'move_to_next_page', 'move_to_first_page', 'move_to_last_page']
+            if qs.count() > self.list_per_page:
+                self.actions.extend(['move_to_prev_page', 'move_to_next_page'])
+                if qs.count() > 2 * self.list_per_page:
+                    self.actions.extend(['move_to_first_page', 'move_to_last_page'])
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
 
     def _add_reorder_method(self):
         """
-        Adds a bound method, named '_reorder' to the current instance of this class
+        Adds a bound method, named '_reorder' to the current instance of this class, with attributes
+        allow_tags, short_description and admin_order_field.
+        This can only be done using a function, since it is not possible to add dynamic attributes
+        to bound methods.
         """
-        def bound_method(this, item):
+        def func(this, item):
             html = ''
             if this.enable_sorting:
                 html = '<div class="drag" order="{0}">&nbsp;</div>'.format(getattr(item, this.default_order_field))
             return html
 
-        setattr(bound_method, 'allow_tags', True)
-        setattr(bound_method, 'short_description', _('Sort'))
-        setattr(bound_method, 'admin_order_field', self.default_order_field)
-        setattr(self, '_reorder', MethodType(bound_method, self, type(self)))
+        setattr(func, 'allow_tags', True)
+        setattr(func, 'short_description', _('Sort'))
+        setattr(func, 'admin_order_field', self.default_order_field)
+        setattr(self, '_reorder', MethodType(func, self, type(self)))
 
     @csrf_exempt
     def update(self, request):
