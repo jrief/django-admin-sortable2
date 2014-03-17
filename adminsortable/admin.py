@@ -8,7 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
 from django.db import transaction
 from django.db.models import Max, F
-from django.forms.models import modelform_factory, inlineformset_factory, BaseInlineFormSet
+from django.forms.models import BaseInlineFormSet
 from django.forms.widgets import HiddenInput
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
