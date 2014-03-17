@@ -58,7 +58,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def __init__(self, model, admin_site):
         try:
-            self.default_order_field = model._meta.ordering[0]
+            self.default_order_field = model._meta.ordering[0].lstrip('-')
         except (AttributeError, IndexError):
             raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
                                        % (model.__module__, model.__name__))
