@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 import json
+from types import MethodType
 from django import VERSION
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -71,6 +72,7 @@ class SortableAdminMixin(SortableAdminBase):
             self.change_list_template = 'adminsortable/change_list.html'
         if not self.list_display_links:
             self.list_display_links = self.list_display[0]
+        self._add_reorder_method()
         self.list_display = ['_reorder'] + list(self.list_display)
         self.Media.js += ('adminsortable/js/list-sortable.js',)
 
@@ -94,14 +96,20 @@ class SortableAdminMixin(SortableAdminBase):
             self.actions += ['move_to_prev_page', 'move_to_next_page', 'move_to_first_page', 'move_to_last_page']
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
 
-    def _reorder(self, item):
-        html = ''
-        if self.enable_sorting:
-            html = '<div class="drag" order="{0}">&nbsp;</div>'.format(getattr(item, self.default_order_field))
-        return html
-    _reorder.short_description = _('Sort')
-    _reorder.allow_tags = True
-    _reorder.admin_order_field = 'order'
+    def _add_reorder_method(self):
+        """
+        Adds a bound method, named '_reorder' to the current instance of this class
+        """
+        def bound_method(this, item):
+            html = ''
+            if this.enable_sorting:
+                html = '<div class="drag" order="{0}">&nbsp;</div>'.format(getattr(item, this.default_order_field))
+            return html
+
+        setattr(bound_method, 'allow_tags', True)
+        setattr(bound_method, 'short_description', _('Sort'))
+        setattr(bound_method, 'admin_order_field', self.default_order_field)
+        setattr(self, '_reorder', MethodType(bound_method, self, type(self)))
 
     @csrf_exempt
     def update(self, request):
