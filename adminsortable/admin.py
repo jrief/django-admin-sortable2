@@ -81,7 +81,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_actions(self, request):
         actions = super(SortableAdminMixin, self).get_actions(request)
-        paginator = self.get_paginator(request, self.get_queryset(request), self.list_per_page)
+        paginator = self.get_paginator(request, self.queryset(request), self.list_per_page)
         move_actions = []
         if len(paginator.page_range) > 1:
             # add actions for moving items to other pages
