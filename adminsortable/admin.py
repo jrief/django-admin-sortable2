@@ -52,10 +52,7 @@ class SortableAdminBase(object):
 
 
 class SortableAdminMixin(SortableAdminBase):
-    PREV = 0
-    NEXT = 1
-    FIRST = 2
-    LAST = 3
+    PREV, NEXT, FIRST, LAST = range(4)
 
     def __init__(self, model, admin_site):
         try:
@@ -82,6 +79,25 @@ class SortableAdminMixin(SortableAdminBase):
         )
         return my_urls + super(SortableAdminMixin, self).get_urls()
 
+    def get_actions(self, request):
+        actions = super(SortableAdminMixin, self).get_actions(request)
+        paginator = self.get_paginator(request, self.get_queryset(request), self.list_per_page)
+        move_actions = []
+        if len(paginator.page_range) > 1:
+            # add actions for moving items to other pages
+            cur_page = int(request.REQUEST.get('p', 0)) + 1
+            if len(paginator.page_range) > 2 and cur_page > paginator.page_range[1]:
+                move_actions.append('move_to_first_page')
+            if cur_page > paginator.page_range[0]:
+                move_actions.append('move_to_prev_page')
+            if cur_page < paginator.page_range[-1]:
+                move_actions.append('move_to_next_page')
+            if len(paginator.page_range) > 2 and cur_page < paginator.page_range[-2]:
+                move_actions.append('move_to_last_page')
+        for fname in move_actions:
+            actions.update({fname: self.get_action(fname)})
+        return actions
+
     def get_changelist(self, request, **kwargs):
         order = self._get_order_direction(request)
         if not order or order == '1':
@@ -92,12 +108,6 @@ class SortableAdminMixin(SortableAdminBase):
             self.order_by = '-' + self.default_order_field
         else:
             self.enable_sorting = False
-        qs = self.get_queryset(request)
-        if self.enable_sorting:
-            if qs.count() > self.list_per_page:
-                self.actions.extend(['move_to_prev_page', 'move_to_next_page'])
-                if qs.count() > 2 * self.list_per_page:
-                    self.actions.extend(['move_to_first_page', 'move_to_last_page'])
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
 
     def _add_reorder_method(self):

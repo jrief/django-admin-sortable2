@@ -10,7 +10,7 @@ class ChapterInline(SortableInlineAdminMixin, admin.StackedInline):
 
 
 class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
-    list_per_page = 15
+    list_per_page = 8
     list_display = ('title', 'my_order',)
     inlines = (ChapterInline,)
 admin.site.register(SortableBook, SortableBookAdmin)
