@@ -266,6 +266,9 @@ Related projects
 
 Release history
 ===============
+* 0.2.5
+ * Bulk actions are added only when they make sense.
+ * Fixed bug when clicking on table header for ordering field.
 * 0.2.4 Fix CustomInlineFormSet to allow customization. Thanks **yakky**.
 * 0.2.2 Distinction between different versions of jQuery in case django-cms is installed side by side.
 * 0.2.0 Added sortable stacked and tabular inlines.
