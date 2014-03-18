@@ -82,9 +82,9 @@ class SortableAdminMixin(SortableAdminBase):
     def get_actions(self, request):
         actions = super(SortableAdminMixin, self).get_actions(request)
         paginator = self.get_paginator(request, self.queryset(request), self.list_per_page)
-        move_actions = []
         if len(paginator.page_range) > 1:
             # add actions for moving items to other pages
+            move_actions = []
             cur_page = int(request.REQUEST.get('p', 0)) + 1
             if len(paginator.page_range) > 2 and cur_page > paginator.page_range[1]:
                 move_actions.append('move_to_first_page')
@@ -94,8 +94,8 @@ class SortableAdminMixin(SortableAdminBase):
                 move_actions.append('move_to_next_page')
             if len(paginator.page_range) > 2 and cur_page < paginator.page_range[-2]:
                 move_actions.append('move_to_last_page')
-        for fname in move_actions:
-            actions.update({fname: self.get_action(fname)})
+            for fname in move_actions:
+                actions.update({fname: self.get_action(fname)})
         return actions
 
     def get_changelist(self, request, **kwargs):
