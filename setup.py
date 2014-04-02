@@ -31,7 +31,7 @@ setup(
     keywords = ['django'],
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
-    install_requires=['Django>=1.4'],
+    install_requires=[],
     packages=find_packages(exclude=['example', 'docs']),
     include_package_data=True,
 )
