@@ -15,9 +15,10 @@ CLASSIFIERS = [
     'Development Status :: 4 - Beta',
 ]
 
+
 def read(fname):
     readme_file = os.path.join(os.path.dirname(__file__), fname)
-    return os.popen('pandoc -t rst {0}'.format(readme_file)).read()
+    return os.popen('which -s pandoc && pandoc -t rst {0} || cat {0}'.format(readme_file)).read()
 
 setup(
     name='django-admin-sortable2',
@@ -28,10 +29,10 @@ setup(
     long_description=read('README.md'),
     url='https://github.com/jrief/django-admin-sortable2',
     license='MIT',
-    keywords = ['django'],
+    keywords=['django'],
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
-    install_requires=['Django>=1.4'],
+    install_requires=[],
     packages=find_packages(exclude=['example', 'docs']),
     include_package_data=True,
 )
