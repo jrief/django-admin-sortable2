@@ -270,7 +270,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
 
 class SortableInlineAdminMixin(SortableAdminBase):
     formset = CustomInlineFormSet
-    
+
     def __init__(self, parent_model, admin_site):
         version = (VERSION[0] == 1 and VERSION[1] <= 5) and '1.5' or '1.6'
         if isinstance(self, admin.StackedInline):
