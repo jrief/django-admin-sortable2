@@ -254,8 +254,6 @@ under all circumstances.
 By using a mixin class rather than deriving from a special abstract base class, these problems
 can be avoided!
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jrief/django-admin-sortable2/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
 Related projects
 ================
 * https://github.com/iambrandontaylor/django-admin-sortable
@@ -276,3 +274,7 @@ Release history
 * 0.1.1 Fixed compatibility issue when used together with django-cms.
 * 0.1.0 first version published on PyPI.
 * 0.0.1 first working release.
+
+License
+-------
+Copyright &copy; 2014 Jacob Rief. Licensed under the MIT license.
