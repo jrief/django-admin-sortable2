@@ -1,6 +1,6 @@
 // make tabular- and stacked inlines sortable
 jQuery(function($) {
-	$('div.inline-group').each(function() {
+	$('div.inline-group.sortable').each(function() {
 		var default_order_field = $(this).nextUntil('div.default_order_field').next().attr('default_order_field');
 		var order_input_field = 'input[name$="' + default_order_field + '"]';
 		// tabluar inlines
