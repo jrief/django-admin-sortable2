@@ -5,6 +5,7 @@
 *.sqlite
 *.coverage
 *~
+.DS_Store
 .tmp*
 local_settings.py
 build
