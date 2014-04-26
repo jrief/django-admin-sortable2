@@ -264,6 +264,7 @@ Related projects
 
 Release history
 ===============
+* 0.2.7 Fixed: MethodType takes only two attributes
 * 0.2.6 Fixed: Unsortable inline models become draggable when there is a sortable inline model
 * 0.2.5
  * Bulk actions are added only when they make sense.
