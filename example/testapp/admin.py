@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 from django.contrib import admin
 from adminsortable.admin import SortableAdminMixin, SortableInlineAdminMixin
-from models import Author, SortableBook, Chapter
+from models import Author, SortableBook, Chapter, Notes
 
 
 class ChapterInline(SortableInlineAdminMixin, admin.StackedInline):
@@ -9,10 +9,15 @@ class ChapterInline(SortableInlineAdminMixin, admin.StackedInline):
     extra = 1
 
 
+class NotesInline(admin.TabularInline):
+    model = Notes
+    extra = 1
+
+
 class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_per_page = 8
     list_display = ('title', 'my_order',)
-    inlines = (ChapterInline,)
+    inlines = (ChapterInline, NotesInline,)
 admin.site.register(SortableBook, SortableBookAdmin)
 
 

@@ -31,3 +31,11 @@ class Chapter(models.Model):
 
     def __unicode__(self):
         return u'Chapter: %s' % self.title
+
+
+class Notes(models.Model):
+    note = models.CharField('Note', null=True, blank=True, max_length=255)
+    book = models.ForeignKey(SortableBook, null=True)
+
+    def __unicode__(self):
+        return u'Note: %s' % self.note
