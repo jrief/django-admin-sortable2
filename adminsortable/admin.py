@@ -126,7 +126,7 @@ class SortableAdminMixin(SortableAdminBase):
         setattr(func, 'allow_tags', True)
         setattr(func, 'short_description', _('Sort'))
         setattr(func, 'admin_order_field', self.default_order_field)
-        setattr(self, '_reorder', MethodType(func, self, type(self)))
+        setattr(self, '_reorder', MethodType(func, self))
 
     @csrf_exempt
     def update(self, request):
