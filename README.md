@@ -26,7 +26,8 @@ All available plugins which add functionality to make list views for the Django 
 sortable, offer a base class to be used instead of ``models.Model``. This abstract base class then
 contains a hard coded position field, additional methods, and meta directives.
 
-This inhibits to create sortable abstract models.
+This inhibits to create sortable abstract models. **django-admin-sortable2** does not have these
+restrictions.
 
 License
 -------
