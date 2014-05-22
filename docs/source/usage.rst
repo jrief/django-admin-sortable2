@@ -126,33 +126,28 @@ Integrate into a detail view
 	    inlines = (MySubModelInline,)
 	admin.site.register(MyModel, MyModelAdmin)
 
-Initial data
-------------
 
+Initial data
+============
 In case you just changed your model to contain an additional sorting
 field (e.g. ``my_order``), which does not yet contain any values, then
-you may set initial ordering values by pasting this code snippet into
-the Django shell:
+you **must** set initial ordering values.
+
+**django-admin-sortable2** is shipping with a management command which can be used to prepopulate
+the ordering field:
 
 .. code:: python
 
-	shell> ./manage.py shell
-	Python ...
-	>>>
-	from myapp.models import *
-	order = 0
-	for obj in MySortableModel.objects.all():
-	    order += 1
-	    obj.my_order = order
-	    obj.save()
+	shell> ./manage.py reorder my_app.models.MyModel
 
-or using South migrations:
+If you prefer to do a one-time database migration, just after having added the ordering field 
+to the model, then create a datamigration:
 
 .. code:: python
 
-	shell> ./manage.py datamigration myapp set_order
+	shell> ./manage.py datamigration myapp preset_order
 
-this creates an empty migration named something like ``migrations/0123_set_order.py``. Edit the
+this creates an empty migration named something like ``migrations/0123_preset_order.py``. Edit the
 file and change it into a data migration:
 
 .. code:: python
@@ -170,6 +165,10 @@ then apply the changes to the database using:
 .. code:: bash
 
 	shell> ./manage.py migrate myapp
+
+.. note:: If you omit to prepopulate the ordering field with unique values, after adding this field
+          to an existing model, then attempting to reorder field manually will fail.
+
 
 Note on unique indices on the position field
 ============================================

@@ -4,6 +4,11 @@
 Release history
 ===============
 
+0.2.9
+-----
+* Fixed: StackedInlines do not add an empty field after saving the model.
+* Added management command to preset initial ordering.
+
 0.2.8
 -----
 * Refactored documentation for Read-The-Docs
