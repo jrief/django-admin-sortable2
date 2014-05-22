@@ -13,6 +13,10 @@ model admin interfaces.
 
 .. _django-admin-sortable: https://github.com/iambrandontaylor/django-admin-sortable
 
+Project home: https://github.com/jrief/django-admin-sortable2
+
+Please ask questions and report bugs on: https://github.com/jrief/django-admin-sortable2/issues
+
 Why another adminsortable plugin?
 =================================
 All available plugins which add functionality to make list views for the Django admin interface
