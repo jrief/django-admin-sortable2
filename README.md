@@ -10,11 +10,11 @@ It thus makes it very easy to integrate with existing models and their model adm
 
 Project's home
 --------------
-https://github.com/jrief/django-admin-sortable2
+https://github.com/jrief/django-admin-sortable2.
 
-Detailled documentation on: http://django-admin-sortable2.readthedocs.org/en/latest/
+Detailled documentation on [ReadTheDocs](http://django-admin-sortable2.readthedocs.org/en/latest/).
 
-Please ask questions and report bugs on: https://github.com/jrief/django-admin-sortable2/issues
+To ask questions or reporting bugs, please use the [issue tracker](https://github.com/jrief/django-admin-sortable2/issues).
 
 Build status
 ------------
@@ -26,7 +26,8 @@ All available plugins which add functionality to make list views for the Django 
 sortable, offer a base class to be used instead of ``models.Model``. This abstract base class then
 contains a hard coded position field, additional methods, and meta directives.
 
-This inhibits to create sortable abstract models.
+This inhibits to create sortable abstract models. **django-admin-sortable2** does not have these
+restrictions.
 
 License
 -------

@@ -30,10 +30,10 @@ class. For instance: A mammal **is an** animal, a primate **is a** mammal, homo 
 primate, etc. Here the inheritance model is appropriate, but it would be wrong to derive from
 homo sapiens to reflect a human which is able to hunt using bows and arrows.
 
-So, a sortable model **is not an** unsortable model. Making a model sortable augments its
+So, a sortable model **is not an** unsortable model. Making a model sortable enriches its
 functionality. In OOP design this does not qualify for an IS-A relationship.
 
-Fortunately, Python makes it very easy to distinguish between real IS-A relationships and augmenting
+Fortunately, Python makes it very easy to distinguish between real IS-A relationships and enrich
 functionalities. The latter are handled by so named mixin classes. They offer additional
 functionality for a class without deriving from the base class.
 

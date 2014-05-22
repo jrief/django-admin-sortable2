@@ -8,7 +8,7 @@ admin:
 
 * ``admin.ModelAdmin``
 * ``admin.StackedInline``
-* ``admin.TabluarInline``
+* ``admin.TabularInline``
 
 They slightly modify the admin views of a sortable model. There is no need to derive your model
 class from a special base model class. You can use your existing ordered field, just as you always
