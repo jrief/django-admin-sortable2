@@ -1,5 +1,6 @@
 include README.md
 recursive-include adminsortable *.py
+recursive-include adminsortable/locale *
 recursive-include adminsortable/static *
 recursive-include adminsortable/templates *
 recursive-exclude * *.pyc
