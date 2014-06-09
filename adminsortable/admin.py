@@ -71,7 +71,6 @@ class SortableAdminMixin(SortableAdminBase):
             self.list_display_links = self.list_display[0]
         self._add_reorder_method()
         self.list_display = ['_reorder'] + list(self.list_display)
-        self.Media.js += ('adminsortable/js/list-sortable.js',)
 
     def get_urls(self):
         my_urls = patterns('',
@@ -108,6 +107,8 @@ class SortableAdminMixin(SortableAdminBase):
             self.order_by = '-' + self.default_order_field
         else:
             self.enable_sorting = False
+        if self.enable_sorting:
+            self.Media.js += ('adminsortable/js/list-sortable.js',)
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
 
     def _add_reorder_method(self):
