@@ -17,8 +17,8 @@ matrix:
     env: DJANGO=1.5.8
 
 install:
-  - pip install -q Django==$DJANGO --use-mirrors
+  - pip install -q Django==$DJANGO
   - python setup.py -q install
 
 script:
-  - cd example/ && ./manage.py test testapp
+  - cd example/ && ./manage.py test testapp --settings=testapp.settings
