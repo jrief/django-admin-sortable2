@@ -15,11 +15,11 @@ class Command(BaseCommand):
             except exceptions.ImproperlyConfigured:
                 raise CommandError('Unable to load model "%s"' % modelname)
             if not hasattr(Model._meta, 'ordering') or len(Model._meta.ordering) == 0:
-                raise CommandError('Model "%s" does not define field "ordering" in its Meta class' % modelname)
+                raise CommandError('Model "{0}" does not define field "ordering" in its Meta class'.format(modelname))
             orderfield = Model._meta.ordering[0]
             order = 0
             for obj in Model.objects.all():
                 order += 1
                 setattr(obj, orderfield, order)
                 obj.save()
-            self.stdout.write('Successfully reordered model "%s"' % modelname)
+            self.stdout.write('Successfully reordered model "{0}"'.format(modelname))

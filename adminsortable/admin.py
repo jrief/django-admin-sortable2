@@ -19,7 +19,7 @@ from django.contrib import admin
 
 class SortableAdminBase(object):
     class Media:
-        css = { 'all': ('adminsortable/css/sortable.css',) }
+        css = {'all': ('adminsortable/css/sortable.css',)}
         if VERSION[0] == 1 and VERSION[1] <= 5:
             js = (
                 'adminsortable/js/plugins/admincompat.js',
@@ -58,8 +58,7 @@ class SortableAdminMixin(SortableAdminBase):
         try:
             self.default_order_field = model._meta.ordering[0].lstrip('-')
         except (AttributeError, IndexError):
-            raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
-                                       % (model.__module__, model.__name__))
+            raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
         super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(getattr(self, 'exclude', None), (list, tuple)):
             self.exclude = [self.default_order_field]
@@ -243,8 +242,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
         try:
             self.default_order_field = self.model._meta.ordering[0]
         except (AttributeError, IndexError):
-            raise ImproperlyConfigured(u'Model %s.%s requires a list or tuple "ordering" in its Meta class'
-                                       % (self.model.__module__, self.model.__name__))
+            raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(self.model.__module__, self.model.__name__))
         super(CustomInlineFormSet, self).__init__(*args, **kwargs)
         self.form.base_fields[self.default_order_field].is_hidden = True
         self.form.base_fields[self.default_order_field].required = False
@@ -280,7 +278,6 @@ class SortableInlineAdminMixin(SortableAdminBase):
             self.template = 'adminsortable/tabular-%s.html' % version
             self.Media.js += ('adminsortable/js/inline-sortable.js',)
         else:
-            raise ImproperlyConfigured(u'Class %s.%s must also derive from admin.TabularInline or admin.StackedInline'
-                                       % (self.__module__, self.__class__))
+            raise ImproperlyConfigured('Class {0}.{1} must also derive from admin.TabularInline or admin.StackedInline'.format(self.__module__, self.__class__))
         self.Media.css['all'] += ('adminsortable/css/sortable.css',)
         super(SortableInlineAdminMixin, self).__init__(parent_model, admin_site)

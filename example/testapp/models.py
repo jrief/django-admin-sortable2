@@ -30,7 +30,7 @@ class Chapter(models.Model):
         ordering = ('my_order',)
 
     def __unicode__(self):
-        return u'Chapter: %s' % self.title
+        return 'Chapter: {0}'.format(self.title)
 
 
 class Notes(models.Model):
@@ -38,4 +38,4 @@ class Notes(models.Model):
     book = models.ForeignKey(SortableBook, null=True)
 
     def __unicode__(self):
-        return u'Note: %s' % self.note
+        return 'Note: {0}'.format(self.note)
