@@ -8,6 +8,10 @@ admin interface. This plugin offers simple mixin classes which augment the funct
 existing class derived from ``admin.ModelAdmin``, ``admin.StackedInline`` or ``admin.TabluarInline``.
 It thus makes it very easy to integrate with existing models and their model admin interfaces.
 
+NEW in version 0.3.0
+--------------------
+Support for Python-3.3
+
 Project's home
 --------------
 https://github.com/jrief/django-admin-sortable2.
