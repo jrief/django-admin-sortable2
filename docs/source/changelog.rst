@@ -4,6 +4,11 @@
 Release history
 ===============
 
+0.3.0
+-----
+* Support for Python-3.3.
+* Fixed: Add list-sortable.js on changelist only. Issue #31.
+
 0.2.9
 -----
 * Fixed: StackedInlines do not add an empty field after saving the model.
