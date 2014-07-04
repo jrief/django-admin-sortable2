@@ -39,7 +39,7 @@ class SortableAdminBase(object):
                 # for DjangoCMS < 3, override jQuery files for inclusion from the CMS
                 from cms import __version__
                 cms_version = __version__.split('.')
-                if cms_version[0] < 3:
+                if int(cms_version[0]) < 3:
                     js = (
                         'cms/js/plugins/admincompat.js',
                         'cms/js/libs/jquery.query.js',
