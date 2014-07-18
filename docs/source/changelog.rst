@@ -4,6 +4,12 @@
 Release history
 ===============
 
+0.3.1
+-----
+* Fixed issue #25: admin.TabularInline problem in django 1.5.x
+* Fixed problem when adding new Inline Form Fields.
+* PEP8 cleanup.
+
 0.3.0
 -----
 * Support for Python-3.3.
