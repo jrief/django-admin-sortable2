@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import json
 from types import MethodType
 from django import VERSION
@@ -177,7 +177,7 @@ class SortableAdminMixin(SortableAdminBase):
                 '%s__lte' % self.default_order_field: finalorder,
             }
             order_by = self.default_order_field
-            move_update = { self.default_order_field: F(self.default_order_field) - 1 }
+            move_update = {self.default_order_field: F(self.default_order_field) - 1}
         elif startorder > endorder + order_down:
             finalorder = endorder + order_down
             move_filter = {
@@ -185,11 +185,11 @@ class SortableAdminMixin(SortableAdminBase):
                 '%s__lte' % self.default_order_field: startorder,
             }
             order_by = '-' + self.default_order_field
-            move_update = { self.default_order_field: F(self.default_order_field) + 1 }
+            move_update = {self.default_order_field: F(self.default_order_field) + 1}
         else:
             return self.model.objects.none()
         with transaction.commit_on_success():
-            obj = self.model.objects.get(**{ self.default_order_field: startorder })
+            obj = self.model.objects.get(**{self.default_order_field: startorder})
             setattr(obj, self.default_order_field, self.get_max_order() + 1)
             obj.save()
             self.model.objects.filter(**move_filter).order_by(order_by).update(**move_update)
@@ -244,10 +244,10 @@ class CustomInlineFormSet(BaseInlineFormSet):
             self.default_order_field = self.model._meta.ordering[0]
         except (AttributeError, IndexError):
             raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(self.model.__module__, self.model.__name__))
-        super(CustomInlineFormSet, self).__init__(*args, **kwargs)
         self.form.base_fields[self.default_order_field].is_hidden = True
         self.form.base_fields[self.default_order_field].required = False
         self.form.base_fields[self.default_order_field].widget = HiddenInput()
+        super(CustomInlineFormSet, self).__init__(*args, **kwargs)
 
     def save_new(self, form, commit=True):
         """
@@ -256,7 +256,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
         """
         obj = super(CustomInlineFormSet, self).save_new(form, commit=False)
         if getattr(obj, self.default_order_field, None) == 0:
-            query_set = self.model.objects.filter(**{ self.fk.get_attname(): self.instance.pk })
+            query_set = self.model.objects.filter(**{self.fk.get_attname(): self.instance.pk})
             max_order = query_set.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
             setattr(obj, self.default_order_field, max_order + 1)
         if commit:

@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.module_loading import import_by_path
 from django.core import exceptions
