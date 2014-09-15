@@ -107,7 +107,10 @@ class SortableAdminMixin(SortableAdminBase):
         else:
             self.enable_sorting = False
         if self.enable_sorting:
-            self.Media.js += ('adminsortable/js/list-sortable.js',)
+            try:
+                self.Media.js += ('adminsortable/js/list-sortable.js',)
+            except AttributeError:
+                self.Media.js = ('adminsortable/js/list-sortable.js',)
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
 
     def _add_reorder_method(self):
