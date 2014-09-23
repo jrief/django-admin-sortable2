@@ -1,12 +1,12 @@
 django-admin-sortable2
 ======================
 
-This Django module is as a replacement for django-admin-sortable using an unintrusive approach.
+A replacement for django-admin-sortable using an unintrusive approach.
 
-It is a generic drag-and-drop ordering module for sorting objects in the list view of the Django
-admin interface. This plugin offers simple mixin classes which augment the functionality of any
+This plugin is a generic drag-and-drop ordering module for sorting objects in the list view of the Django
+admin interface. It offers simple mixin classes which enrich the functionality of any
 existing class derived from ``admin.ModelAdmin``, ``admin.StackedInline`` or ``admin.TabluarInline``.
-It thus makes it very easy to integrate with existing models and their model admin interfaces.
+Thus it makes it very easy to integrate with existing models and their model admin interfaces.
 
 NEW in version 0.3.1
 --------------------
