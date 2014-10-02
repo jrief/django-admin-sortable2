@@ -35,4 +35,5 @@ setup(
     install_requires=[],
     packages=find_packages(exclude=['example', 'docs']),
     include_package_data=True,
+    zip_safe=False,
 )
