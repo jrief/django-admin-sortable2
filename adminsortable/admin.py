@@ -50,6 +50,16 @@ class SortableAdminBase(object):
                 # other packages may pollute the import search path with 'cms'
                 pass
 
+    def order_field_verbose_name(self):
+
+        model = self.model
+        try:
+            default_order_field = self.model._meta.ordering[0].lstrip('-')
+        except (AttributeError, IndexError):
+            raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
+
+        return model._meta.get_field_by_name(default_order_field)[0].verbose_name
+
 
 class SortableAdminMixin(SortableAdminBase):
     PREV, NEXT, FIRST, LAST = range(4)
@@ -127,7 +137,7 @@ class SortableAdminMixin(SortableAdminBase):
             return html
 
         setattr(func, 'allow_tags', True)
-        setattr(func, 'short_description', _('Sort'))
+        setattr(func, 'short_description', self.order_field_verbose_name())
         setattr(func, 'admin_order_field', self.default_order_field)
         setattr(self, '_reorder', MethodType(func, self))
 

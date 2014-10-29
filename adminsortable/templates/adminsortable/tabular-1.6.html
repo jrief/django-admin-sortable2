@@ -6,7 +6,7 @@
    <h2>{{ inline_admin_formset.opts.verbose_name_plural|capfirst }}</h2>
    {{ inline_admin_formset.formset.non_form_errors }}
    <table>
-     <thead><tr><th>{% trans "Sort" %}</th>
+     <thead><tr><th>{{ inline_admin_formset.opts.order_field_verbose_name|capfirst }}</th>
      {% for field in inline_admin_formset.fields %}
        {% if not field.widget.is_hidden %}
          <th{% if forloop.first %} colspan="2"{% endif %}{% if field.required %} class="required"{% endif %}>{{ field.label|capfirst }}
