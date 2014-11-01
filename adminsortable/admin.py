@@ -17,7 +17,22 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
 
 
-class SortableAdminBase(object):
+class SortableDefaultOrderFieldMixin(object):
+
+    def __init__(self, *args, **kwargs):
+        super(SortableDefaultOrderFieldMixin, self).__init__(*args, **kwargs)
+        try:
+            self.default_order_field = self.model._meta.ordering[0].lstrip('-')
+        except (AttributeError, IndexError):
+            raise ImproperlyConfigured(
+                'Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(
+                    self.model.__module__, self.model.__name__))
+
+    def order_field_verbose_name(self):
+        return self.model._meta.get_field_by_name(self.default_order_field)[0].verbose_name
+
+
+class SortableAdminBase(SortableDefaultOrderFieldMixin):
     class Media:
         css = {'all': ('adminsortable/css/sortable.css',)}
         if VERSION[0] == 1 and VERSION[1] <= 5:
@@ -50,25 +65,11 @@ class SortableAdminBase(object):
                 # other packages may pollute the import search path with 'cms'
                 pass
 
-    def order_field_verbose_name(self):
-
-        model = self.model
-        try:
-            default_order_field = self.model._meta.ordering[0].lstrip('-')
-        except (AttributeError, IndexError):
-            raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
-
-        return model._meta.get_field_by_name(default_order_field)[0].verbose_name
-
 
 class SortableAdminMixin(SortableAdminBase):
     PREV, NEXT, FIRST, LAST = range(4)
 
     def __init__(self, model, admin_site):
-        try:
-            self.default_order_field = model._meta.ordering[0].lstrip('-')
-        except (AttributeError, IndexError):
-            raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
         super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(getattr(self, 'exclude', None), (list, tuple)):
             self.exclude = [self.default_order_field]
@@ -251,16 +252,12 @@ class SortableAdminMixin(SortableAdminBase):
             endorder += direction
 
 
-class CustomInlineFormSet(BaseInlineFormSet):
+class CustomInlineFormSet(SortableDefaultOrderFieldMixin, BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
-        try:
-            self.default_order_field = self.model._meta.ordering[0]
-        except (AttributeError, IndexError):
-            raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(self.model.__module__, self.model.__name__))
+        super(CustomInlineFormSet, self).__init__(*args, **kwargs)
         self.form.base_fields[self.default_order_field].is_hidden = True
         self.form.base_fields[self.default_order_field].required = False
         self.form.base_fields[self.default_order_field].widget = HiddenInput()
-        super(CustomInlineFormSet, self).__init__(*args, **kwargs)
 
     def save_new(self, form, commit=True):
         """
