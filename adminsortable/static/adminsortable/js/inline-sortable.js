@@ -10,7 +10,7 @@ jQuery(function($) {
 			axis: 'y',
 			scroll: true,
 			cursor: 'ns-resize',
-			containment: $('tbody'),
+			containment: $(this).find('tbody'),
 			stop: function(event, dragged_rows) {
 				var $result_list = $(this);
 				$result_list.find('tbody tr').each(function(index) {
