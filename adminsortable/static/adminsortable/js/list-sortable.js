@@ -18,7 +18,7 @@ jQuery.extend({
 
 // make list view sortable
 jQuery(function($) {
-	var sortable_update_url = $('#adminsortable_update_url').attr('href');
+	var sortable_update_url = window.location.pathname + 'adminsortable_update/';
 	var startorder, endorder;
 	$('#result_list').sortable({
 		handle: 'div.drag',
