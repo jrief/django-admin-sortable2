@@ -10,14 +10,15 @@ from django.core.paginator import EmptyPage
 from django.db import transaction
 from django.db.models import Max, F
 from django.forms.models import BaseInlineFormSet
-from django.forms.widgets import HiddenInput
+from django.forms import widgets
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
 
 
 class SortableAdminBase(object):
-    class Media:
+    @property
+    def media(self):
         css = {'all': ('adminsortable/css/sortable.css',)}
         if VERSION[:2] <= (1, 5):
             js = (
@@ -48,6 +49,7 @@ class SortableAdminBase(object):
             except ImportError:
                 # other packages may pollute the import search path with 'cms'
                 pass
+        return super(SortableAdminBase, self).media + widgets.Media(css=css, js=js)
 
 
 class SortableAdminMixin(SortableAdminBase):
@@ -105,12 +107,14 @@ class SortableAdminMixin(SortableAdminBase):
             self.order_by = '-' + self.default_order_field
         else:
             self.enable_sorting = False
-        if self.enable_sorting:
-            try:
-                self.Media.js += ('adminsortable/js/list-sortable.js',)
-            except AttributeError:
-                self.Media.js = ('adminsortable/js/list-sortable.js',)
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
+
+    @property
+    def media(self):
+        m = super(SortableAdminMixin, self).media
+        if self.enable_sorting:
+            m = m + widgets.Media(js=('adminsortable/js/list-sortable.js',))
+        return m
 
     def _add_reorder_method(self):
         """
@@ -259,7 +263,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
             raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(self.model.__module__, self.model.__name__))
         self.form.base_fields[self.default_order_field].is_hidden = True
         self.form.base_fields[self.default_order_field].required = False
-        self.form.base_fields[self.default_order_field].widget = HiddenInput()
+        self.form.base_fields[self.default_order_field].widget = widgets.HiddenInput()
         super(CustomInlineFormSet, self).__init__(*args, **kwargs)
 
     def save_new(self, form, commit=True):
@@ -287,11 +291,12 @@ class SortableInlineAdminMixin(SortableAdminBase):
         version = VERSION[:2] <= (1, 5) and '1.5' or '1.6'
         if isinstance(self, admin.StackedInline):
             self.template = 'adminsortable/stacked-%s.html' % version
-            self.Media.js += ('adminsortable/js/inline-sortable.js',)
         elif isinstance(self, admin.TabularInline):
             self.template = 'adminsortable/tabular-%s.html' % version
-            self.Media.js += ('adminsortable/js/inline-sortable.js',)
         else:
             raise ImproperlyConfigured('Class {0}.{1} must also derive from admin.TabularInline or admin.StackedInline'.format(self.__module__, self.__class__))
-        self.Media.css['all'] += ('adminsortable/css/sortable.css',)
         super(SortableInlineAdminMixin, self).__init__(parent_model, admin_site)
+
+    @property
+    def media(self):
+        return super(SortableInlineAdminMixin, self).media + widgets.Media(js=('adminsortable/js/inline-sortable.js',))
