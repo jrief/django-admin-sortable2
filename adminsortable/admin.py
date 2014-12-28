@@ -12,7 +12,6 @@ from django.db.models import Max, F
 from django.forms.models import BaseInlineFormSet
 from django.forms.widgets import HiddenInput
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
-from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
 
@@ -131,7 +130,6 @@ class SortableAdminMixin(SortableAdminBase):
         setattr(func, 'admin_order_field', self.default_order_field)
         setattr(self, '_reorder', MethodType(func, self))
 
-    @csrf_exempt
     def update(self, request):
         if not request.is_ajax() or request.method != 'POST':
             return HttpResponseBadRequest('Not an XMLHttpRequest')
