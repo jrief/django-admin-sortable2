@@ -19,7 +19,7 @@ from django.contrib import admin
 class SortableAdminBase(object):
     class Media:
         css = {'all': ('adminsortable/css/sortable.css',)}
-        if VERSION[0] == 1 and VERSION[1] <= 5:
+        if VERSION[:2] <= (1, 5):
             js = (
                 'adminsortable/js/plugins/admincompat.js',
                 'adminsortable/js/libs/jquery.ui.core-1.7.1.js',
@@ -197,7 +197,7 @@ class SortableAdminMixin(SortableAdminBase):
             move_update = {self.default_order_field: F(self.default_order_field) + 1}
         else:
             return self.model.objects.none()
-        if VERSION[0] == 1 and VERSION[1] <= 5:
+        if VERSION[:2] <= (1, 5):
             atomic_context_manager = transaction.commit_on_success
         else:
             atomic_context_manager = transaction.atomic
@@ -284,7 +284,7 @@ class SortableInlineAdminMixin(SortableAdminBase):
     formset = CustomInlineFormSet
 
     def __init__(self, parent_model, admin_site):
-        version = (VERSION[0] == 1 and VERSION[1] <= 5) and '1.5' or '1.6'
+        version = VERSION[:2] <= (1, 5) and '1.5' or '1.6'
         if isinstance(self, admin.StackedInline):
             self.template = 'adminsortable/stacked-%s.html' % version
             self.Media.js += ('adminsortable/js/inline-sortable.js',)
