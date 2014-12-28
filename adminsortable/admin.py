@@ -126,7 +126,15 @@ class SortableAdminMixin(SortableAdminBase):
             return html
 
         setattr(func, 'allow_tags', True)
-        setattr(func, 'short_description', _('Sort'))
+        # if the field used for ordering has a verbose name use it, otherwise default to "Sort"
+        for order_field in self.model._meta.fields:
+            if order_field.name == self.default_order_field:
+                short_description = getattr(order_field, 'verbose_name', None)
+                if short_description:
+                    setattr(func, 'short_description', short_description)
+                    break
+        else:
+            setattr(func, 'short_description', _('Sort'))
         setattr(func, 'admin_order_field', self.default_order_field)
         setattr(self, '_reorder', MethodType(func, self))
 
