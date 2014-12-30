@@ -285,16 +285,15 @@ class CustomInlineFormSet(BaseInlineFormSet):
 class SortableInlineAdminMixin(SortableAdminBase):
     formset = CustomInlineFormSet
 
-    def __init__(self, parent_model, admin_site):
-        version = VERSION[:2] <= (1, 5) and '1.5' or '1.6'
-        if isinstance(self, admin.StackedInline):
-            self.template = 'adminsortable/stacked-%s.html' % version
-        elif isinstance(self, admin.TabularInline):
-            self.template = 'adminsortable/tabular-%s.html' % version
-        else:
-            raise ImproperlyConfigured('Class {0}.{1} must also derive from admin.TabularInline or admin.StackedInline'.format(self.__module__, self.__class__))
-        super(SortableInlineAdminMixin, self).__init__(parent_model, admin_site)
-
     @property
     def media(self):
         return super(SortableInlineAdminMixin, self).media + widgets.Media(js=('adminsortable/js/inline-sortable.js',))
+
+    @property
+    def template(self):
+        version = VERSION[:2] <= (1, 5) and '1.5' or '1.6'
+        if isinstance(self, admin.StackedInline):
+            return 'adminsortable/stacked-{0}.html'.format(version)
+        if isinstance(self, admin.TabularInline):
+            return 'adminsortable/tabular-{0}.html'.format(version)
+        raise ImproperlyConfigured('Class {0}.{1} must also derive from admin.TabularInline or admin.StackedInline'.format(self.__module__, self.__class__))
