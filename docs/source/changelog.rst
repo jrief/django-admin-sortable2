@@ -9,6 +9,10 @@ Release history
 * Fixed issue #25: admin.TabularInline problem in django 1.5.x
 * Fixed problem when adding new Inline Form Fields.
 * PEP8 cleanup.
+* Using property method ``media()`` instead of hard coded ``Media`` class.
+* Using the ``verbose_name`` from the column used to keep the order of fields instead of a hard
+  coded "Sort".
+* When updating order in change_list_view, use the CSRF protection token.
 
 0.3.0
 -----
