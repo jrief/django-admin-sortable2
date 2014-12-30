@@ -184,16 +184,16 @@ class SortableAdminMixin(SortableAdminBase):
         if startorder < endorder - order_up:
             finalorder = endorder - order_up
             move_filter = {
-                '%s__gte' % self.default_order_field: startorder,
-                '%s__lte' % self.default_order_field: finalorder,
+                '{0}__gte'.format(self.default_order_field): startorder,
+                '{0}__lte'.format(self.default_order_field): finalorder,
             }
             order_by = self.default_order_field
             move_update = {self.default_order_field: F(self.default_order_field) - 1}
         elif startorder > endorder + order_down:
             finalorder = endorder + order_down
             move_filter = {
-                '%s__gte' % self.default_order_field: finalorder,
-                '%s__lte' % self.default_order_field: startorder,
+                '{0}__gte'.format(self.default_order_field): finalorder,
+                '{0}__lte'.format(self.default_order_field): startorder,
             }
             order_by = '-' + self.default_order_field
             move_update = {self.default_order_field: F(self.default_order_field) + 1}
