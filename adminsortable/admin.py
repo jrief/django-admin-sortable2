@@ -57,7 +57,12 @@ class SortableAdminMixin(SortableAdminBase):
 
     def __init__(self, model, admin_site):
         try:
-            self.default_order_field = model._meta.ordering[0].lstrip('-')
+            if model._meta.ordering[0].startswith('-'):
+                self.default_order_directions = ((1, 0), (0, 1))
+                self.default_order_field = model._meta.ordering[0].lstrip('-')
+            else:
+                self.default_order_directions = ((0, 1), (1, 0))
+                self.default_order_field = model._meta.ordering[0]
         except (AttributeError, IndexError):
             raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
         super(SortableAdminMixin, self).__init__(model, admin_site)
@@ -178,9 +183,9 @@ class SortableAdminMixin(SortableAdminBase):
 
     def _move_item(self, request, startorder, endorder):
         if self._get_order_direction(request) != '-1':
-            order_up, order_down = 0, 1
+            order_up, order_down = self.default_order_directions[0]
         else:
-            order_up, order_down = 1, 0
+            order_up, order_down = self.default_order_directions[1]
         if startorder < endorder - order_up:
             finalorder = endorder - order_up
             move_filter = {
