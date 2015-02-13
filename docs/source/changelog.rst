@@ -6,6 +6,10 @@ Release history
 
 0.3.2
 -----
+* Fixed #42: Sorting does not work when ordering is descending.
+
+0.3.2
+-----
 * Using property method ``media()`` instead of hard coded ``Media`` class.
 * Using the ``verbose_name`` from the column used to keep the order of fields instead of a hard
   coded "Sort".
