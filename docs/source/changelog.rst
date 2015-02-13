@@ -4,6 +4,13 @@
 Release history
 ===============
 
+0.3.2
+-----
+* Using property method ``media()`` instead of hard coded ``Media`` class.
+* Using the ``verbose_name`` from the column used to keep the order of fields instead of a hard
+  coded "Sort".
+* When updating order in change_list_view, use the CSRF protection token.
+
 0.3.1
 -----
 * Fixed issue #25: admin.TabularInline problem in django 1.5.x

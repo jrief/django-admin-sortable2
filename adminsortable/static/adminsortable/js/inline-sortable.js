@@ -2,7 +2,7 @@
 jQuery(function($) {
 	$('div.inline-group.sortable').each(function() {
 		var default_order_field = $(this).nextUntil('div.default_order_field').next().attr('default_order_field');
-		var order_input_field = 'input[name$="' + default_order_field + '"]';
+		var order_input_field = 'input[name$="-' + default_order_field + '"]';
 		// first, try with tabluar inlines
 		var tabular_inlines = $(this).find('div.tabular table');
 		tabular_inlines.sortable({
@@ -10,7 +10,7 @@ jQuery(function($) {
 			axis: 'y',
 			scroll: true,
 			cursor: 'ns-resize',
-			containment: $('tbody'),
+			containment: $(this).find('tbody'),
 			stop: function(event, dragged_rows) {
 				var $result_list = $(this);
 				$result_list.find('tbody tr').each(function(index) {

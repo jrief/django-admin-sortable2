@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 from adminsortable import __version__
 
-DESCRIPTION = 'Generic drag-and-drop ordering for objects in the Django admin interface'
+DESCRIPTION = 'Generic drag-and-drop sorting for the List, the Stacked- and the Tabular-Inlines Views in the Django Admin'
 
 CLASSIFIERS = [
     'Environment :: Web Environment',
