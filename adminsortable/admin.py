@@ -200,7 +200,7 @@ class SortableAdminMixin(SortableAdminBase):
                 '{0}__gte'.format(self.default_order_field): finalorder,
                 '{0}__lte'.format(self.default_order_field): startorder,
             }
-            order_by = '-' + self.default_order_field
+            order_by = '-{0}'.format(self.default_order_field)
             move_update = {self.default_order_field: F(self.default_order_field) + 1}
         else:
             return self.model.objects.none()
