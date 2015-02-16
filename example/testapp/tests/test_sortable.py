@@ -1,16 +1,24 @@
 # -*- coding: utf-8 -*-
 import json
-from django.test import TestCase
-from django.test.client import Client
+
+import django
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.core.serializers.json import DjangoJSONEncoder
-from adminsortable import admin
+from django.test import TestCase
+from django.test.client import Client
+
 from testapp.models import SortableBook
 
 
+# Django 1.8 dropped the name column on contenttypes...
+if django.VERSION[:2] >= (1, 8):
+    FIXTURES = ['data_1.8.json']
+else:
+    FIXTURES = ['data.json']
+
+
 class SortableBookTestCase(TestCase):
-    fixtures = ['data.json']
+    fixtures = FIXTURES
     admin_password = 'secret'
     ajax_update_url = reverse('admin:sortable_update')
     bulk_update_url = reverse('admin:testapp_sortablebook_changelist')
