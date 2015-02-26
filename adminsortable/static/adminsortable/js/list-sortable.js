@@ -20,7 +20,7 @@ jQuery.extend({
 jQuery(function($) {
 	var sortable_update_url = $('#adminsortable_update_url').attr('href') || 'adminsortable_update/';
 	var startorder, endorder;
-	var csrfvalue = $('#changelist-form').find('input[name="csrfmiddlewaretoken"]').val();
+	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
 
 	$('#result_list').sortable({
 		handle: 'div.drag',
