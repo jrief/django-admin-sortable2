@@ -1,5 +1,5 @@
 /* styles for list view */
-#result_list thead th:nth-child(2) {
+#result_list thead th:first-child {
 	width: 50px;
 }
 
