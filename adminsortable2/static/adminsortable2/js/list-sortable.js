@@ -18,7 +18,7 @@ jQuery.extend({
 
 // make list view sortable
 jQuery(function($) {
-	var sortable_update_url = $('#adminsortable_update_url').attr('href') || 'adminsortable_update/';
+	var sortable_update_url = $('#adminsortable_update_url').attr('href') || 'adminsortable2_update/';
 	var startorder, endorder;
 	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
 
