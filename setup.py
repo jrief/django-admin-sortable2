@@ -1,6 +1,6 @@
 import os
 from setuptools import setup, find_packages
-from adminsortable import __version__
+from adminsortable2 import __version__
 
 DESCRIPTION = 'Generic drag-and-drop sorting for the List, the Stacked- and the Tabular-Inlines Views in the Django Admin'
 
