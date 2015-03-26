@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.contrib import admin
-from adminsortable.admin import SortableAdminMixin, SortableInlineAdminMixin
+from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
 from . import models
 
 

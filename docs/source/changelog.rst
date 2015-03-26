@@ -4,6 +4,14 @@
 Release history
 ===============
 
+0.5.0
+-----
+* Changed the namespace from adminsortable to adminsortable2 to allow both this
+project and django-admin-sortable to co-exist in the same project. This is
+helpful for projects to transition from one to the other library. It also allows
+existing projects's migrations which previously relied on django-admin-sortable
+to continue to work.
+
 0.3.2
 -----
 * Fixed #42: Sorting does not work when ordering is descending.

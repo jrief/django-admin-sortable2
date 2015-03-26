@@ -19,12 +19,12 @@ or the newest development version from GitHub
 Configuration
 =============
 
-Add ``'adminsortable'`` to the list of ``INSTALLED_APPS`` in your project's ``settings.py`` file
+Add ``'adminsortable2'`` to the list of ``INSTALLED_APPS`` in your project's ``settings.py`` file
 
 .. code-block:: python
 
 	INSTALLED_APPS = (
 	    ...
-	    'adminsortable',
+	    'adminsortable2',
 	    ...
 	)

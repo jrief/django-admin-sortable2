@@ -19,20 +19,20 @@ from django.contrib import admin
 class SortableAdminBase(object):
     @property
     def media(self):
-        css = {'all': ('adminsortable/css/sortable.css',)}
+        css = {'all': ('adminsortable2/css/sortable.css',)}
         if VERSION[:2] <= (1, 5):
             js = (
-                'adminsortable/js/plugins/admincompat.js',
-                'adminsortable/js/libs/jquery.ui.core-1.7.1.js',
-                'adminsortable/js/libs/jquery.ui.sortable-1.7.1.js',
+                'adminsortable2/js/plugins/admincompat.js',
+                'adminsortable2/js/libs/jquery.ui.core-1.7.1.js',
+                'adminsortable2/js/libs/jquery.ui.sortable-1.7.1.js',
             )
         else:
             js = (
-                'adminsortable/js/plugins/admincompat.js',
-                'adminsortable/js/libs/jquery.ui.core-1.10.3.js',
-                'adminsortable/js/libs/jquery.ui.widget-1.10.3.js',
-                'adminsortable/js/libs/jquery.ui.mouse-1.10.3.js',
-                'adminsortable/js/libs/jquery.ui.sortable-1.10.3.js',
+                'adminsortable2/js/plugins/admincompat.js',
+                'adminsortable2/js/libs/jquery.ui.core-1.10.3.js',
+                'adminsortable2/js/libs/jquery.ui.widget-1.10.3.js',
+                'adminsortable2/js/libs/jquery.ui.mouse-1.10.3.js',
+                'adminsortable2/js/libs/jquery.ui.sortable-1.10.3.js',
             )
         if 'cms' in settings.INSTALLED_APPS:
             try:
@@ -77,7 +77,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_urls(self):
         my_urls = patterns('',
-            url(r'^adminsortable_update/$', self.admin_site.admin_view(self.update), name='sortable_update'),
+            url(r'^adminsortable2_update/$', self.admin_site.admin_view(self.update), name='sortable_update'),
         )
         return my_urls + super(SortableAdminMixin, self).get_urls()
 
@@ -116,7 +116,7 @@ class SortableAdminMixin(SortableAdminBase):
     def media(self):
         m = super(SortableAdminMixin, self).media
         if self.enable_sorting:
-            m = m + widgets.Media(js=('adminsortable/js/list-sortable.js',))
+            m = m + widgets.Media(js=('adminsortable2/js/list-sortable.js',))
         return m
 
     def _add_reorder_method(self):
@@ -292,13 +292,13 @@ class SortableInlineAdminMixin(SortableAdminBase):
 
     @property
     def media(self):
-        return super(SortableInlineAdminMixin, self).media + widgets.Media(js=('adminsortable/js/inline-sortable.js',))
+        return super(SortableInlineAdminMixin, self).media + widgets.Media(js=('adminsortable2/js/inline-sortable.js',))
 
     @property
     def template(self):
         version = VERSION[:2] <= (1, 5) and '1.5' or '1.6'
         if isinstance(self, admin.StackedInline):
-            return 'adminsortable/stacked-{0}.html'.format(version)
+            return 'adminsortable2/stacked-{0}.html'.format(version)
         if isinstance(self, admin.TabularInline):
-            return 'adminsortable/tabular-{0}.html'.format(version)
+            return 'adminsortable2/tabular-{0}.html'.format(version)
         raise ImproperlyConfigured('Class {0}.{1} must also derive from admin.TabularInline or admin.StackedInline'.format(self.__module__, self.__class__))

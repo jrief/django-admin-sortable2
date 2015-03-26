@@ -81,7 +81,7 @@ mixin class before model.ModelAdmin):
 .. code:: python
 
 	from django.contrib import admin
-	from adminsortable.admin import SortableAdminMixin
+	from adminsortable2.admin import SortableAdminMixin
 	from models import MyModel
 	
 	class MyModelAdmin(SortableAdminMixin, admin.ModelAdmin):
@@ -116,7 +116,7 @@ Integrate into a detail view
 .. code:: python
 
 	from django.contrib import admin
-	from adminsortable.admin import SortableInlineAdminMixin
+	from adminsortable2.admin import SortableInlineAdminMixin
 	from models import MySubModel, MyModel
 	
 	class MySubModelInline(SortableInlineAdminMixin, admin.TabularInline):  # or admin.StackedInline

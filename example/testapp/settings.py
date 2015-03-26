@@ -50,7 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.staticfiles',
-    'adminsortable',
+    'adminsortable2',
     'testapp',
 )
 
