@@ -278,7 +278,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
         bigger than all other order fields for the current parent_model.
         """
         obj = super(CustomInlineFormSet, self).save_new(form, commit=False)
-        if getattr(obj, self.default_order_field, None) is None:
+        if getattr(obj, self.default_order_field, None) is not None:
             query_set = self.model.objects.filter(**{self.fk.get_attname(): self.instance.pk})
             max_order = query_set.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
             setattr(obj, self.default_order_field, max_order + 1)
