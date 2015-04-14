@@ -12,7 +12,7 @@
     </h3>
     {% if inline_admin_form.form.non_field_errors %}{{ inline_admin_form.form.non_field_errors }}{% endif %}
     {% for fieldset in inline_admin_form %}
-      {% include "adminsortable/includes/fieldset.html" %}
+      {% include "adminsortable2/includes/fieldset.html" %}
     {% endfor %}
     {% if inline_admin_form.has_auto_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
     {{ inline_admin_form.fk_field.field }}
