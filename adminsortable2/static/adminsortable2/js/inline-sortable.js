@@ -6,6 +6,7 @@ jQuery(function($) {
 		// first, try with tabluar inlines
 		var tabular_inlines = $(this).find('div.tabular table');
 		tabular_inlines.sortable({
+			handle: $(this).find('tbody .drag'),
 			items: 'tr.form-row.has_original',
 			axis: 'y',
 			scroll: true,
