@@ -12,3 +12,4 @@ build
 docs/_build
 dist
 htmlcov
+.idea/
