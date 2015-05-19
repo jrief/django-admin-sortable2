@@ -26,7 +26,7 @@ MEDIA_URL = ''
 
 # Absolute path to the directory that holds static files.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/tmp/static'
+STATIC_ROOT = '/home/static/'
 
 # URL that handles the static files served from STATIC_ROOT.
 # Example: "http://media.lawrence.com/static/"
@@ -63,4 +63,3 @@ MIDDLEWARE_CLASSES = (
 # Explicitely set the test runner to the new 1.7 version, to silence obnoxious
 # 1_6.W001 check
 # TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-LANGUAGE_CODE="it_IT"
