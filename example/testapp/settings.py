@@ -63,4 +63,3 @@ MIDDLEWARE_CLASSES = (
 # Explicitely set the test runner to the new 1.7 version, to silence obnoxious
 # 1_6.W001 check
 # TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-LANGUAGE_CODE="it_IT"
