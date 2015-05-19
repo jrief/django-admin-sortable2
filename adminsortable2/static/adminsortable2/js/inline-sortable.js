@@ -33,12 +33,12 @@ jQuery(function ($) {
             cursor: 'ns-resize',
             containment: $(this),
             start: function (event, dragged_rows) {
-                $(this).find('.tinyMCE').each(function () {
+                $(this).find('.tinyMCE, .tinymce').each(function () {
                     tinyMCE.execCommand('mceRemoveControl', false, $(this).attr('id'));
                 });
             },
             stop: function (event, dragged_rows) {
-                $(this).find('.tinyMCE').each(function () {
+                $(this).find('.tinyMCE, .tinymce').each(function () {
                     tinyMCE.execCommand('mceAddControl', true, $(this).attr('id'));
                     $(this).sortable("refresh");
                 });
