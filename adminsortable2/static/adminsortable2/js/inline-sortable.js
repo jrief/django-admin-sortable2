@@ -32,7 +32,15 @@ jQuery(function($) {
 			scroll: true,
 			cursor: 'ns-resize',
 			containment: $(this),
+            start: function (event, dragged_rows) {
+                $(this).find('.tinyMCE, .tinymce').each(function () {
+                    tinyMCE.execCommand('mceRemoveControl', false, $(this).attr('id'));
+                });
 			stop: function(event, dragged_rows) {
+                $(this).find('.tinyMCE, .tinymce').each(function () {
+                    tinyMCE.execCommand('mceAddControl', true, $(this).attr('id'));
+                    $(this).sortable("refresh");
+                });
 				var $result_list = $(this);
 				$result_list.find('div.inline-related.has_original').each(function(index) {
 					$(this).find(order_input_field).val(index + 1);
