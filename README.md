@@ -13,6 +13,16 @@ Existing models can inherit from ``models.Model`` or any other class derived the
 base class is required.
 
 
+Fork - News
+----
+
+* Draggable TinyMCE editor
+* Added I18N it_IT
+* Updated with latest adminsortable2 commit on master upstream [dee7c0cb9b13a74e1f45df35fa13b8a5198ad87f](https://github.com/jrief/django-admin-sortable2/commit/dee7c0cb9b13a74e1f45df35fa13b8a5198ad87f)
+* Improved management command for large dataset
+* Fix strange behaviour when ```my_order``` field has a default value
+* Monkey patch for ```getqueryset```
+
 News
 ----
 Version 0.5.0 changed its naming convention.
