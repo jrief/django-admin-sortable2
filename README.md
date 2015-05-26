@@ -9,15 +9,17 @@ This module offers simple mixin classes which enrich the functionality of any ex
 from ``admin.ModelAdmin``, ``admin.StackedInline`` or ``admin.TabluarInline``.
 
 Thus it makes it very easy to integrate with existing models and their model admin interfaces.
-Existing models can continue to inherit from ``models.Model``. No special base class is required.
+Existing models can inherit from ``models.Model`` or any other class derived thereof. No special
+base class is required.
+
 
 News
 ----
 Version 0.5.0 changed its naming convention.
 
-Unfortunately, because both libraries django-admin-sortable and dkango-admin-sortable2, use the same
-package name: ``adminsortable``, it is rather difficult if not impossible to use them side-by-side
-in the same project during transition. It also means that all of my migration history has to be either
+Unfortunately, because both libraries **django-admin-sortable** and **django-admin-sortable2**, used the same
+package name: ``adminsortable``, it was rather difficult, if not impossible, to use them side-by-side
+in the same project during transition. It also means that all migration history had to be either
 rewritten or discarded, because the existing migrations reference ``adminsortable.SortableForeignKey``,
 which does not exist in this package.
 
