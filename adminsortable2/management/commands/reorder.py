@@ -18,7 +18,7 @@ class Command(BaseCommand):
                 raise CommandError('Model "{0}" does not define field "ordering" in its Meta class'.format(modelname))
             orderfield = Model._meta.ordering[0]
             order = 0
-            for obj in Model.objects.all():
+            for obj in Model.objects.iterator():
                 order += 1
                 setattr(obj, orderfield, order)
                 obj.save()
