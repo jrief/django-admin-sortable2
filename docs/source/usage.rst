@@ -154,9 +154,7 @@ file and change it into a data migration:
 
 	class Migration(DataMigration):
 	    def forwards(self, orm):
-	        order = 0
-	        for obj in orm.MyModel.objects.all():
-	            order += 1
+	        for order, obj in enumerate(orm.MyModel.objects.iterator(), start=1):
 	            obj.my_order = order
 	            obj.save()
 
