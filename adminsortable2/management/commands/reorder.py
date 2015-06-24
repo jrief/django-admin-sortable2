@@ -17,9 +17,7 @@ class Command(BaseCommand):
             if not hasattr(Model._meta, 'ordering') or len(Model._meta.ordering) == 0:
                 raise CommandError('Model "{0}" does not define field "ordering" in its Meta class'.format(modelname))
             orderfield = Model._meta.ordering[0]
-            order = 0
-            for obj in Model.objects.iterator():
-                order += 1
+            for order, obj in enumerate(Model.objects.iterator(), start=1):
                 setattr(obj, orderfield, order)
                 obj.save()
             self.stdout.write('Successfully reordered model "{0}"'.format(modelname))
