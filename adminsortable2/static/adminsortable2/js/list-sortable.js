@@ -29,6 +29,7 @@ jQuery(function($) {
 		scroll: true,
 		cursor: 'ns-resize',
 		containment: $('#result_list tbody'),
+		tolerance: 'pointer',
 		start: function(event, dragged_rows) {
 			$(this).find('thead tr th').each(function(index) {
 				$(dragged_rows.item.context.childNodes[index]).width($(this).width() - 10);
