@@ -54,6 +54,7 @@ class SortableAdminBase(object):
 
 class SortableAdminMixin(SortableAdminBase):
     PREV, NEXT, FIRST, LAST = range(4)
+    enable_sorting = False
 
     def __init__(self, model, admin_site):
         try:
