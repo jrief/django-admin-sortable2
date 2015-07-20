@@ -54,6 +54,7 @@ class SortableAdminBase(object):
 
 class SortableAdminMixin(SortableAdminBase):
     PREV, NEXT, FIRST, LAST = range(4)
+    enable_sorting = False
 
     def __init__(self, model, admin_site):
         try:
@@ -115,7 +116,7 @@ class SortableAdminMixin(SortableAdminBase):
     @property
     def media(self):
         m = super(SortableAdminMixin, self).media
-        if getattr(self, 'enable_sorting', False):
+        if self.enable_sorting:
             m = m + widgets.Media(js=('adminsortable2/js/list-sortable.js',))
         return m
 
