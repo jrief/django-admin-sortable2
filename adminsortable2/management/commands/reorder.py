@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+from django import VERSION
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.module_loading import import_string
 from django.core import exceptions
+
+if VERSION[:2] <= (1, 7):
+    from django.utils.module_loading import import_by_path
+else:
+    from django.utils.module_loading import import_string
 
 
 class Command(BaseCommand):
