@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.module_loading import import_by_path
+from django.utils.module_loading import import_string
 from django.core import exceptions
 
 
@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for modelname in args:
             try:
-                Model = import_by_path(modelname)
+                Model = import_string(modelname)
             except exceptions.ImproperlyConfigured:
                 raise CommandError('Unable to load model "%s"' % modelname)
             if not hasattr(Model._meta, 'ordering') or len(Model._meta.ordering) == 0:
