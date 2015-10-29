@@ -38,6 +38,7 @@ jQuery(function($) {
 		},
 		stop: function(event, dragged_rows) {
 			var $result_list = $(this);
+			var ordering = $.getQueryParam('o');
 			$result_list.find('tbody tr').each(function(index) {
 				$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
 			}).each(function() {
@@ -46,13 +47,15 @@ jQuery(function($) {
 					return false;
 				endorder = untilorder;
 			});
-			if (startorder === endorder + 1)
+			if (ordering === '1' || ordering === undefined && startorder === endorder + 1)
+				return;
+			else if(ordering === '-1' && startorder === endorder - 1)
 				return;
 			$.ajax({
 				url: sortable_update_url,
 				type: 'POST',
 				data: {
-					o: $.getQueryParam('o'),
+					o: ordering,
 					startorder: startorder,
 					endorder: endorder,
 					csrfmiddlewaretoken: csrfvalue
