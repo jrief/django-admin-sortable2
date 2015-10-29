@@ -135,8 +135,8 @@ class SortableBookTestCase(TestCase):
         self.assertEqual(SortableBook.objects.get(pk=17).my_order, 17)
         self.assertEqual(SortableBook.objects.get(pk=18).my_order, 18)
         self.assertEqual(SortableBook.objects.get(pk=19).my_order, 19)
-        post_data = {'p': 1, 'action': ['move_to_prev_page'], '_selected_action': [17, 18, 19]}
-        self.client.post(self.bulk_update_url, post_data)
+        post_data = {'action': ['move_to_prev_page'], '_selected_action': [17, 18, 19]}
+        self.client.post(self.bulk_update_url + '?p=1', post_data)
         self.assertEqual(SortableBook.objects.get(pk=17).my_order, 1)
         self.assertEqual(SortableBook.objects.get(pk=18).my_order, 2)
         self.assertEqual(SortableBook.objects.get(pk=19).my_order, 3)
@@ -144,8 +144,8 @@ class SortableBookTestCase(TestCase):
     def test_bulkMoveNextPage(self):
         self.assertEqual(SortableBook.objects.get(pk=14).my_order, 14)
         self.assertEqual(SortableBook.objects.get(pk=10).my_order, 10)
-        post_data = {'p': 1, 'action': ['move_to_next_page'], '_selected_action': [14, 10]}
-        self.client.post(self.bulk_update_url, post_data)
+        post_data = {'action': ['move_to_next_page'], '_selected_action': [14, 10]}
+        self.client.post(self.bulk_update_url + '?p=1', post_data)
         self.assertEqual(SortableBook.objects.get(pk=10).my_order, 17)
         self.assertEqual(SortableBook.objects.get(pk=14).my_order, 18)
 
@@ -160,8 +160,8 @@ class SortableBookTestCase(TestCase):
     def test_bulkMoveFirstPage(self):
         self.assertEqual(SortableBook.objects.get(pk=17).my_order, 17)
         self.assertEqual(SortableBook.objects.get(pk=20).my_order, 20)
-        post_data = {'p': 2, 'action': ['move_to_first_page'], '_selected_action': [17, 20]}
-        self.client.post(self.bulk_update_url, post_data)
+        post_data = {'action': ['move_to_first_page'], '_selected_action': [17, 20]}
+        self.client.post(self.bulk_update_url + '?p=2', post_data)
         self.assertEqual(SortableBook.objects.get(pk=17).my_order, 1)
         self.assertEqual(SortableBook.objects.get(pk=20).my_order, 2)
 

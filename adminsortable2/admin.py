@@ -4,7 +4,7 @@ from types import MethodType
 from django import VERSION
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
 from django.db import transaction
@@ -77,9 +77,9 @@ class SortableAdminMixin(SortableAdminBase):
         self.list_display = ['_reorder'] + list(self.list_display)
 
     def get_urls(self):
-        my_urls = patterns('',
+        my_urls = [
             url(r'^adminsortable2_update/$', self.admin_site.admin_view(self.update), name='sortable_update'),
-        )
+        ]
         return my_urls + super(SortableAdminMixin, self).get_urls()
 
     def get_actions(self, request):
@@ -88,7 +88,7 @@ class SortableAdminMixin(SortableAdminBase):
         if len(paginator.page_range) > 1:
             # add actions for moving items to other pages
             move_actions = []
-            cur_page = int(request.REQUEST.get('p', 0)) + 1
+            cur_page = int(request.GET.get('p', 0)) + 1
             if len(paginator.page_range) > 2 and cur_page > paginator.page_range[1]:
                 move_actions.append('move_to_first_page')
             if cur_page > paginator.page_range[0]:
@@ -180,7 +180,7 @@ class SortableAdminMixin(SortableAdminBase):
     move_to_last_page.short_description = _('Move selected to last page')
 
     def _get_order_direction(self, request):
-        return request.REQUEST.get('o', '').split('.')[0]
+        return request.POST.get('o', request.GET.get('o', '')).split('.')[0]
 
     def _move_item(self, request, startorder, endorder):
         if self._get_order_direction(request) != '-1':
@@ -228,7 +228,7 @@ class SortableAdminMixin(SortableAdminBase):
             return
         objects = self.model.objects.order_by(self.order_by)
         paginator = self.paginator(objects, self.list_per_page)
-        page = paginator.page(int(request.REQUEST.get('p', 0)) + 1)
+        page = paginator.page(int(request.GET.get('p', 0)) + 1)
         try:
             if method == self.PREV:
                 page = paginator.page(page.previous_page_number())
