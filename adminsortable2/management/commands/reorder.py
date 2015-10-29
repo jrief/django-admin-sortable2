@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+from django import VERSION
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.module_loading import import_by_path
 from django.core import exceptions
+
+if VERSION[:2] <= (1, 7):
+    from django.utils.module_loading import import_by_path as import_string
+else:
+    from django.utils.module_loading import import_string
 
 
 class Command(BaseCommand):
@@ -11,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for modelname in args:
             try:
-                Model = import_by_path(modelname)
+                Model = import_string(modelname)
             except exceptions.ImproperlyConfigured:
                 raise CommandError('Unable to load model "%s"' % modelname)
             if not hasattr(Model._meta, 'ordering') or len(Model._meta.ordering) == 0:
