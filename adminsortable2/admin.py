@@ -72,7 +72,7 @@ class SortableAdminMixin(SortableAdminBase):
         elif not self.exclude or self.default_order_field != self.exclude[0]:
             self.exclude = [self.default_order_field] + self.exclude
         if not self.list_display_links:
-            self.list_display_links = self.list_display[0]
+            self.list_display_links = (self.list_display[0],)
         self._add_reorder_method()
         self.list_display = ['_reorder'] + list(self.list_display)
 
