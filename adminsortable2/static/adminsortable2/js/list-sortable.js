@@ -19,8 +19,9 @@ jQuery.extend({
 // make list view sortable
 jQuery(function($) {
 	var sortable_update_url = $('#adminsortable_update_url').attr('href') || 'adminsortable2_update/';
-	var startorder, endorder;
+	var startindex, startorder, endindex, endorder;
 	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
+	var ordering = $.getQueryParam('o');
 
 	$('#result_list').sortable({
 		handle: 'div.drag',
@@ -34,23 +35,25 @@ jQuery(function($) {
 			$(this).find('thead tr th').each(function(index) {
 				$(dragged_rows.item.context.childNodes[index]).width($(this).width() - 10);
 			});
-			startorder = parseInt($(dragged_rows.item.context).find('div.drag').attr('order'));
+			startindex = dragged_rows.item.index();
 		},
 		stop: function(event, dragged_rows) {
 			var $result_list = $(this);
-			var ordering = $.getQueryParam('o');
 			$result_list.find('tbody tr').each(function(index) {
 				$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
-			}).each(function() {
-				var untilorder = parseInt($(this).find('div.drag').attr('order'));
-				if (startorder === untilorder)
-					return false;
-				endorder = untilorder;
 			});
-			if (ordering === '1' || ordering === undefined && startorder === endorder + 1)
-				return;
-			else if(ordering === '-1' && startorder === endorder - 1)
-				return;
+			endindex = dragged_rows.item.index()
+
+			var startorder = parseInt($(dragged_rows.item.context).find('div.drag').attr('order'));
+			if (startindex == endindex) return;
+			else if (endindex == 0) {
+				if (ordering === '1' || ordering === undefined)
+					endorder = parseInt($(dragged_rows.item.context.nextElementSibling).find('div.drag').attr('order')) - 1;
+				else
+					endorder = parseInt($(dragged_rows.item.context.nextElementSibling).find('div.drag').attr('order')) + 1;
+			} else {
+				endorder = $(dragged_rows.item.context.previousElementSibling).find('div.drag').attr('order');
+			}
 			$.ajax({
 				url: sortable_update_url,
 				type: 'POST',
