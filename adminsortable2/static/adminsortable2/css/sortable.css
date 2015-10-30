@@ -1,3 +1,8 @@
+/* hide action input fields */
+#changelist-form-step, #changelist-form-page {
+	display: none;
+}
+
 /* styles for list view */
 #result_list thead th:nth-child(2) {
 	width: 50px;

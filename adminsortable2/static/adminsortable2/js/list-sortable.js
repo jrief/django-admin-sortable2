@@ -79,3 +79,39 @@ jQuery(function($) {
 	});
 	$('#result_list, tbody, tr, td, th').disableSelection();
 });
+
+// Show and hide the step input field
+jQuery(function($) {
+	var $step_field = $('#changelist-form-step');
+	var $page_field = $('#changelist-form-page');
+
+	var page = $.getQueryParam('p');
+	if (page === undefined)
+		$page_field.val('2');
+	else {
+		// TODO: Is there a better way than this hack?
+		var $last_page = $('#changelist-form .paginator .end');
+		if ($last_page.length == 0)
+			$last_page = $('#changelist-form .paginator .this-page');
+		var total_pages = parseInt($last_page.text());
+
+		page = parseInt(page) + 1;
+		if (page == total_pages)
+			$page_field.val(page - 1);
+		else
+			$page_field.val(page + 1);
+	}
+
+	$('#changelist-form').find('select[name="action"]').change(function() {
+		if (['move_to_back_page', 'move_to_forward_page'].indexOf($(this).val()) != -1) {
+			$step_field.show();
+		} else {
+			$step_field.hide();
+		}
+		if ($(this).val() == 'move_to_exact_page') {
+			$page_field.show();
+		} else {
+			$page_field.hide();
+		}
+	});
+});
