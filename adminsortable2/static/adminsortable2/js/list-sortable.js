@@ -44,16 +44,17 @@ jQuery(function($) {
 			});
 			endindex = dragged_rows.item.index()
 
-			startorder = $(dragged_rows.item.context).find('div.drag').attr('order');
 			if (startindex == endindex) return;
 			else if (endindex == 0) {
-				if (ordering === '1' || ordering === undefined)
-					endorder = parseInt($(dragged_rows.item.context.nextElementSibling).find('div.drag').attr('order')) - 1;
-				else
+				if (ordering.split('.')[0] === '-1')
 					endorder = parseInt($(dragged_rows.item.context.nextElementSibling).find('div.drag').attr('order')) + 1;
+				else
+					endorder = parseInt($(dragged_rows.item.context.nextElementSibling).find('div.drag').attr('order')) - 1;
 			} else {
 				endorder = $(dragged_rows.item.context.previousElementSibling).find('div.drag').attr('order');
 			}
+			startorder = $(dragged_rows.item.context).find('div.drag').attr('order');
+
 			$.ajax({
 				url: sortable_update_url,
 				type: 'POST',

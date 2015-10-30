@@ -85,7 +85,7 @@ class SortableAdminMixin(SortableAdminBase):
     def get_actions(self, request):
         actions = super(SortableAdminMixin, self).get_actions(request)
         paginator = self.get_paginator(request, self.get_queryset(request), self.list_per_page)
-        if len(paginator.page_range) > 1 and 'all' not in request.GET:
+        if len(paginator.page_range) > 1 and 'all' not in request.GET and self.enable_sorting:
             # add actions for moving items to other pages
             move_actions = []
             cur_page = int(request.GET.get('p', 0)) + 1
@@ -103,7 +103,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_changelist(self, request, **kwargs):
         order = self._get_order_direction(request)
-        if not order or order == '1':
+        if order == '1':
             self.enable_sorting = True
             self.order_by = self.default_order_field
         elif order == '-1':
@@ -180,7 +180,7 @@ class SortableAdminMixin(SortableAdminBase):
     move_to_last_page.short_description = _('Move selected to last page')
 
     def _get_order_direction(self, request):
-        return request.POST.get('o', request.GET.get('o', '')).split('.')[0]
+        return request.POST.get('o', request.GET.get('o', '1')).split('.')[0]
 
     def _move_item(self, request, startorder, endorder):
         if self._get_order_direction(request) != '-1':
