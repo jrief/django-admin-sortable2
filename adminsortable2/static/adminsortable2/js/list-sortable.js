@@ -22,6 +22,8 @@ jQuery(function($) {
 	var startindex, startorder, endindex, endorder;
 	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
 	var ordering = $.getQueryParam('o');
+	if (ordering === undefined)
+		ordering = '1';
 
 	$('#result_list').sortable({
 		handle: 'div.drag',
