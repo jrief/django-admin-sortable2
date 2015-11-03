@@ -61,6 +61,7 @@ class SortableAdminMixin(SortableAdminBase):
     BACK, FORWARD, FIRST, LAST, EXACT = range(5)
     enable_sorting = False
     action_form = MovePageActionForm
+    change_list_template = 'adminsortable2/change_list.html'
 
     def __init__(self, model, admin_site):
         try:

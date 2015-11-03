@@ -18,7 +18,6 @@ jQuery.extend({
 
 // make list view sortable
 jQuery(function($) {
-	var sortable_update_url = $('#adminsortable_update_url').attr('href') || 'adminsortable2_update/';
 	var startindex, startorder, endindex, endorder;
 	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
 	var ordering = $.getQueryParam('o');
@@ -87,25 +86,26 @@ jQuery(function($) {
 	var $step_field = $('#changelist-form-step');
 	var $page_field = $('#changelist-form-page');
 
-	var page = $.getQueryParam('p');
-	if (page === undefined)
-		$page_field.val('2');
-	else {
-		// TODO: Is there a better way than this hack?
-		var $last_page = $('#changelist-form .paginator .end');
-		if ($last_page.length == 0)
-			$last_page = $('#changelist-form .paginator .this-page');
-		var total_pages = parseInt($last_page.text());
-
-		page = parseInt(page) + 1;
-		if (page == total_pages)
-			$page_field.val(page - 1);
-		else
-			$page_field.val(page + 1);
+	if (sortable_current_page == sortable_total_pages) {
+		$page_field.attr('max', sortable_total_pages - 1);
+		$page_field.val(sortable_current_page - 1);
+	} else {
+		$page_field.attr('max', sortable_total_pages);
+		$page_field.val(sortable_current_page + 1)
 	}
+	if(sortable_current_page == 1)
+		$page_field.attr('min', 2);
+	else
+		$page_field.attr('min', 1);
+
+	$step_field.attr('min', 1);
 
 	$('#changelist-form').find('select[name="action"]').change(function() {
 		if (['move_to_back_page', 'move_to_forward_page'].indexOf($(this).val()) != -1) {
+			if ($(this).val() == 'move_to_forward_page')
+				$step_field.attr('max', sortable_total_pages - sortable_current_page);
+			else
+				$step_field.attr('max', sortable_current_page - 1);
 			$step_field.show();
 		} else {
 			$step_field.hide();

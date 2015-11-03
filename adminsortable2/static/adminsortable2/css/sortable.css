@@ -1,6 +1,7 @@
 /* hide action input fields */
 #changelist-form-step, #changelist-form-page {
 	display: none;
+	margin-left: 0.5em;
 }
 
 /* styles for list view */
