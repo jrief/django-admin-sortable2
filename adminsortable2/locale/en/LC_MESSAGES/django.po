@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-06 17:55+0200\n"
+"POT-Creation-Date: 2015-11-10 17:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,50 +17,54 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: admin.py:127 templates/adminsortable/tabular-1.5.html:9
-#: templates/adminsortable/tabular-1.6.html:9
+#: admin.py:152 templates/adminsortable2/tabular-1.5.html:9
+#: templates/adminsortable2/tabular-1.6.html:9
 msgid "Sort"
 msgstr ""
 
-#: admin.py:151
-msgid "Move selected to previous page"
+#: admin.py:175
+msgid "Move selected to specific page"
 msgstr ""
 
-#: admin.py:155
-msgid "Move selected to next page"
+#: admin.py:179
+msgid "Move selected ... pages back"
 msgstr ""
 
-#: admin.py:159
+#: admin.py:183
+msgid "Move selected ... pages forward"
+msgstr ""
+
+#: admin.py:187
 msgid "Move selected to first page"
 msgstr ""
 
-#: admin.py:163
+#: admin.py:191
 msgid "Move selected to last page"
 msgstr ""
 
-#: templates/adminsortable/stacked-1.5.html:10
-#: templates/adminsortable/stacked-1.6.html:10
-#: templates/adminsortable/tabular-1.5.html:31
-#: templates/adminsortable/tabular-1.6.html:31
+#: templates/adminsortable2/stacked-1.5.html:10
+#: templates/adminsortable2/stacked-1.6.html:10
+#: templates/adminsortable2/tabular-1.5.html:31
+#: templates/adminsortable2/tabular-1.6.html:31
 msgid "View on site"
 msgstr ""
 
-#: templates/adminsortable/stacked-1.5.html:28
-#: templates/adminsortable/stacked-1.6.html:28
-#: templates/adminsortable/tabular-1.5.html:78
-#: templates/adminsortable/tabular-1.6.html:77
+#: templates/adminsortable2/stacked-1.5.html:28
+#: templates/adminsortable2/stacked-1.6.html:28
+#: templates/adminsortable2/tabular-1.5.html:78
+#: templates/adminsortable2/tabular-1.6.html:77
 msgid "Remove"
 msgstr ""
 
-#: templates/adminsortable/stacked-1.5.html:29
-#: templates/adminsortable/stacked-1.6.html:29
-#: templates/adminsortable/tabular-1.5.html:77
-#: templates/adminsortable/tabular-1.6.html:76
+#: templates/adminsortable2/stacked-1.5.html:29
+#: templates/adminsortable2/stacked-1.6.html:29
+#: templates/adminsortable2/tabular-1.5.html:77
+#: templates/adminsortable2/tabular-1.6.html:76
 #, python-format
 msgid "Add another %(verbose_name)s"
 msgstr ""
 
-#: templates/adminsortable/tabular-1.5.html:17
-#: templates/adminsortable/tabular-1.6.html:17
+#: templates/adminsortable2/tabular-1.5.html:17
+#: templates/adminsortable2/tabular-1.6.html:17
 msgid "Delete?"
 msgstr ""

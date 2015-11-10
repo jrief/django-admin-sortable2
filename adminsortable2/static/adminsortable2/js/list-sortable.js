@@ -18,9 +18,11 @@ jQuery.extend({
 
 // make list view sortable
 jQuery(function($) {
-	var sortable_update_url = $('#adminsortable_update_url').attr('href') || 'adminsortable2_update/';
-	var startorder, endorder;
+	var startindex, startorder, endindex, endorder;
 	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
+	var ordering = $.getQueryParam('o');
+	if (ordering === undefined)
+		ordering = '1';
 
 	$('#result_list').sortable({
 		handle: 'div.drag',
@@ -34,25 +36,31 @@ jQuery(function($) {
 			$(this).find('thead tr th').each(function(index) {
 				$(dragged_rows.item.context.childNodes[index]).width($(this).width() - 10);
 			});
-			startorder = parseInt($(dragged_rows.item.context).find('div.drag').attr('order'));
+			startindex = dragged_rows.item.index();
 		},
 		stop: function(event, dragged_rows) {
 			var $result_list = $(this);
 			$result_list.find('tbody tr').each(function(index) {
 				$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
-			}).each(function() {
-				var untilorder = parseInt($(this).find('div.drag').attr('order'));
-				if (startorder === untilorder)
-					return false;
-				endorder = untilorder;
 			});
-			if (startorder === endorder + 1)
-				return;
+			endindex = dragged_rows.item.index()
+
+			if (startindex == endindex) return;
+			else if (endindex == 0) {
+				if (ordering.split('.')[0] === '-1')
+					endorder = parseInt($(dragged_rows.item.context.nextElementSibling).find('div.drag').attr('order')) + 1;
+				else
+					endorder = parseInt($(dragged_rows.item.context.nextElementSibling).find('div.drag').attr('order')) - 1;
+			} else {
+				endorder = $(dragged_rows.item.context.previousElementSibling).find('div.drag').attr('order');
+			}
+			startorder = $(dragged_rows.item.context).find('div.drag').attr('order');
+
 			$.ajax({
 				url: sortable_update_url,
 				type: 'POST',
 				data: {
-					o: $.getQueryParam('o'),
+					o: ordering,
 					startorder: startorder,
 					endorder: endorder,
 					csrfmiddlewaretoken: csrfvalue
@@ -71,4 +79,41 @@ jQuery(function($) {
 		}
 	});
 	$('#result_list, tbody, tr, td, th').disableSelection();
+});
+
+// Show and hide the step input field
+jQuery(function($) {
+	var $step_field = $('#changelist-form-step');
+	var $page_field = $('#changelist-form-page');
+
+	if (sortable_current_page == sortable_total_pages) {
+		$page_field.attr('max', sortable_total_pages - 1);
+		$page_field.val(sortable_current_page - 1);
+	} else {
+		$page_field.attr('max', sortable_total_pages);
+		$page_field.val(sortable_current_page + 1)
+	}
+	if(sortable_current_page == 1)
+		$page_field.attr('min', 2);
+	else
+		$page_field.attr('min', 1);
+
+	$step_field.attr('min', 1);
+
+	$('#changelist-form').find('select[name="action"]').change(function() {
+		if (['move_to_back_page', 'move_to_forward_page'].indexOf($(this).val()) != -1) {
+			if ($(this).val() == 'move_to_forward_page')
+				$step_field.attr('max', sortable_total_pages - sortable_current_page);
+			else
+				$step_field.attr('max', sortable_current_page - 1);
+			$step_field.show();
+		} else {
+			$step_field.hide();
+		}
+		if ($(this).val() == 'move_to_exact_page') {
+			$page_field.show();
+		} else {
+			$page_field.hide();
+		}
+	});
 });
