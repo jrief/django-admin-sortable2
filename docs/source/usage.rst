@@ -69,12 +69,14 @@ on any item and vertically drag that item to a new position.
 .. figure:: _static/list-view.png
    :alt: Sortable List View
 
+
 Sortable List View
 ------------------
 
 If one or more items shall be moved to another page, this can easily been done by selecting them
 though the action checkbox. Then the user shall click on a predefined action from the pull down
 menu on the top of the list view.
+
 
 Integrate into a list view
 ..........................
@@ -115,6 +117,7 @@ Sortable Tabular Inlines
 
 After moving a tabular or stacked inline, save the model form to persist
 its sorting order.
+
 
 Integrate into a detail view
 ............................

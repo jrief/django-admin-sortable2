@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
 from types import MethodType
-from django import VERSION
+from django import VERSION, forms
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
 from django.db import transaction
@@ -14,6 +14,11 @@ from django.forms import widgets
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
+
+
+class MovePageActionForm(admin.helpers.ActionForm):
+    step = forms.IntegerField(required=False, initial=1, widget=widgets.NumberInput(attrs={'id': 'changelist-form-step'}), label=False)
+    page = forms.IntegerField(required=False, widget=widgets.NumberInput(attrs={'id': 'changelist-form-page'}), label=False)
 
 
 class SortableAdminBase(object):
@@ -53,8 +58,10 @@ class SortableAdminBase(object):
 
 
 class SortableAdminMixin(SortableAdminBase):
-    PREV, NEXT, FIRST, LAST = range(4)
+    BACK, FORWARD, FIRST, LAST, EXACT = range(5)
     enable_sorting = False
+    action_form = MovePageActionForm
+    change_list_template = 'adminsortable2/change_list.html'
 
     def __init__(self, model, admin_site):
         try:
@@ -77,24 +84,24 @@ class SortableAdminMixin(SortableAdminBase):
         self.list_display = ['_reorder'] + list(self.list_display)
 
     def get_urls(self):
-        my_urls = patterns('',
+        my_urls = [
             url(r'^adminsortable2_update/$', self.admin_site.admin_view(self.update), name='sortable_update'),
-        )
+        ]
         return my_urls + super(SortableAdminMixin, self).get_urls()
 
     def get_actions(self, request):
         actions = super(SortableAdminMixin, self).get_actions(request)
         paginator = self.get_paginator(request, self.get_queryset(request), self.list_per_page)
-        if len(paginator.page_range) > 1:
+        if len(paginator.page_range) > 1 and 'all' not in request.GET and self.enable_sorting:
             # add actions for moving items to other pages
-            move_actions = []
-            cur_page = int(request.REQUEST.get('p', 0)) + 1
+            move_actions = ['move_to_exact_page']
+            cur_page = int(request.GET.get('p', 0)) + 1
             if len(paginator.page_range) > 2 and cur_page > paginator.page_range[1]:
                 move_actions.append('move_to_first_page')
             if cur_page > paginator.page_range[0]:
-                move_actions.append('move_to_prev_page')
+                move_actions.append('move_to_back_page')
             if cur_page < paginator.page_range[-1]:
-                move_actions.append('move_to_next_page')
+                move_actions.append('move_to_forward_page')
             if len(paginator.page_range) > 2 and cur_page < paginator.page_range[-2]:
                 move_actions.append('move_to_last_page')
             for fname in move_actions:
@@ -103,7 +110,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_changelist(self, request, **kwargs):
         order = self._get_order_direction(request)
-        if not order or order == '1':
+        if order == '1':
             self.enable_sorting = True
             self.order_by = self.default_order_field
         elif order == '-1':
@@ -163,13 +170,17 @@ class SortableAdminMixin(SortableAdminBase):
             setattr(obj, self.default_order_field, self.get_max_order() + 1)
         obj.save()
 
-    def move_to_prev_page(self, request, queryset):
-        self._bulk_move(request, queryset, self.PREV)
-    move_to_prev_page.short_description = _('Move selected to previous page')
+    def move_to_exact_page(self, request, queryset):
+        self._bulk_move(request, queryset, self.EXACT)
+    move_to_exact_page.short_description = _('Move selected to specific page')
 
-    def move_to_next_page(self, request, queryset):
-        self._bulk_move(request, queryset, self.NEXT)
-    move_to_next_page.short_description = _('Move selected to next page')
+    def move_to_back_page(self, request, queryset):
+        self._bulk_move(request, queryset, self.BACK)
+    move_to_back_page.short_description = _('Move selected ... pages back')
+
+    def move_to_forward_page(self, request, queryset):
+        self._bulk_move(request, queryset, self.FORWARD)
+    move_to_forward_page.short_description = _('Move selected ... pages forward')
 
     def move_to_first_page(self, request, queryset):
         self._bulk_move(request, queryset, self.FIRST)
@@ -180,7 +191,7 @@ class SortableAdminMixin(SortableAdminBase):
     move_to_last_page.short_description = _('Move selected to last page')
 
     def _get_order_direction(self, request):
-        return request.REQUEST.get('o', '').split('.')[0]
+        return request.POST.get('o', request.GET.get('o', '1')).split('.')[0]
 
     def _move_item(self, request, startorder, endorder):
         if self._get_order_direction(request) != '-1':
@@ -228,14 +239,28 @@ class SortableAdminMixin(SortableAdminBase):
             return
         objects = self.model.objects.order_by(self.order_by)
         paginator = self.paginator(objects, self.list_per_page)
-        page = paginator.page(int(request.REQUEST.get('p', 0)) + 1)
+        page = paginator.page(int(request.GET.get('p', 0)) + 1)
+        step = int(request.POST.get('step', 1))
         try:
-            if method == self.PREV:
-                page = paginator.page(page.previous_page_number())
+            if method == self.EXACT:
+                target_page = int(request.POST.get('page', page))
+                if page.number == target_page:
+                    return
+                elif target_page > page.number:
+                    direction = -1
+                else:
+                    direction = +1
+                page = paginator.page(target_page)
+                endorder = getattr(objects[page.start_index() - 1], self.default_order_field)
+                if direction == -1:
+                    endorder += queryset.count()
+                    queryset = queryset.reverse()
+            elif method == self.BACK:
+                page = paginator.page(page.number - step)
                 endorder = getattr(objects[page.start_index() - 1], self.default_order_field)
                 direction = +1
-            elif method == self.NEXT:
-                page = paginator.page(page.next_page_number())
+            elif method == self.FORWARD:
+                page = paginator.page(page.number + step)
                 endorder = getattr(objects[page.start_index() - 1], self.default_order_field) + queryset.count()
                 queryset = queryset.reverse()
                 direction = -1
@@ -274,9 +299,12 @@ class CustomInlineFormSet(BaseInlineFormSet):
         """
         New objects do not have a valid value in their ordering field. On object save, add an order
         bigger than all other order fields for the current parent_model.
+        Strange behaviour when field has a default, this might be evaluated on new object and the value
+        will be not None, but the default value.
         """
         obj = super(CustomInlineFormSet, self).save_new(form, commit=False)
-        if getattr(obj, self.default_order_field, None) is None:
+        default_order_field = getattr(obj, self.default_order_field, None)
+        if default_order_field is None or default_order_field >= 0:
             query_set = self.model.objects.filter(**{self.fk.get_attname(): self.instance.pk})
             max_order = query_set.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
             setattr(obj, self.default_order_field, max_order + 1)
