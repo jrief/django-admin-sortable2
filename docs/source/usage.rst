@@ -3,6 +3,7 @@
 ====================
 Using Admin Sortable
 ====================
+
 This Django module offers three mixin classes to be added to the existing classes of your model
 admin:
 
@@ -14,8 +15,10 @@ They slightly modify the admin views of a sortable model. There is no need to de
 class from a special base model class. You can use your existing ordered field, just as you always
 did, or add a new one with any name you like, if needed.
 
+
 Integrate your models
 =====================
+
 Each database model which shall be sortable, requires a position value in its model description.
 Rather than defining a base class, which contains such a positional value in a hard coded field,
 this module lets you reuse existing sort fields or define a new field for the sort value.
@@ -56,6 +59,7 @@ are not recommended.
 
 .. warning:: Do not make this field unique! See below why.
 
+
 In Django's Admin, make the list view sortable
 ==============================================
 
@@ -92,6 +96,7 @@ That's it! The list view of the model admin interface now adds a column with a s
 By clicking on that area, the user can move that row up or down. If he wants to move it to another
 page, he can do that as a bulk operation, using the admin actions.
 
+
 Make a stacked or tabular inline view sortable
 ==============================================
 
@@ -103,6 +108,7 @@ rows then can be moved up and down.
 
 .. figure:: _static/tabular-inline.png
    :alt: Sortable Tabular Inlines
+
 
 Sortable Tabular Inlines
 ------------------------
@@ -129,6 +135,7 @@ Integrate into a detail view
 
 Initial data
 ============
+
 In case you just changed your model to contain an additional sorting
 field (e.g. ``my_order``), which does not yet contain any values, then
 you **must** set initial ordering values.
