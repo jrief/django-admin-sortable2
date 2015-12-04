@@ -21,8 +21,11 @@ jQuery(function($) {
 	var startindex, startorder, endindex, endorder;
 	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
 	var ordering = $.getQueryParam('o');
-	if (ordering === undefined)
+	if (typeof sortable_update_url === 'undefined')
+		return;  // global variables not initialized by change_list.html
+	if (ordering === undefined) {
 		ordering = '1';
+	}
 
 	$('#result_list').sortable({
 		handle: 'div.drag',
@@ -85,32 +88,36 @@ jQuery(function($) {
 jQuery(function($) {
 	var $step_field = $('#changelist-form-step');
 	var $page_field = $('#changelist-form-page');
+	if (typeof sortable_current_page === 'undefined' || typeof sortable_total_pages === 'undefined')
+		return;  // global variables not initialized by change_list.html
 
-	if (sortable_current_page == sortable_total_pages) {
+	if (sortable_current_page === sortable_total_pages) {
 		$page_field.attr('max', sortable_total_pages - 1);
 		$page_field.val(sortable_current_page - 1);
 	} else {
 		$page_field.attr('max', sortable_total_pages);
 		$page_field.val(sortable_current_page + 1)
 	}
-	if(sortable_current_page == 1)
+	if (sortable_current_page === 1) {
 		$page_field.attr('min', 2);
-	else
+	} else {
 		$page_field.attr('min', 1);
+	}
 
 	$step_field.attr('min', 1);
 
 	$('#changelist-form').find('select[name="action"]').change(function() {
 		if (['move_to_back_page', 'move_to_forward_page'].indexOf($(this).val()) != -1) {
-			if ($(this).val() == 'move_to_forward_page')
+			if ($(this).val() === 'move_to_forward_page') {
 				$step_field.attr('max', sortable_total_pages - sortable_current_page);
-			else
+			} else {
 				$step_field.attr('max', sortable_current_page - 1);
+			}
 			$step_field.show();
 		} else {
 			$step_field.hide();
 		}
-		if ($(this).val() == 'move_to_exact_page') {
+		if ($(this).val() === 'move_to_exact_page') {
 			$page_field.show();
 		} else {
 			$page_field.hide();
