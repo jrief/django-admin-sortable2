@@ -1,10 +1,12 @@
 {% extends "admin/change_list.html" %}
 
 {% block extrahead %}
-    {{ block.super }}
-    <script type="text/javascript">
-        var sortable_update_url = '{% url 'admin:sortable_update' %}';
-        var sortable_current_page = {{ cl.page_num | add:'1' }};
-        var sortable_total_pages = {{ cl.paginator.num_pages }};
-    </script>
+	{{ block.super }}
+	<script type="text/javascript">
+		window.admin_sortable2 = {
+			update_url: '{% url 'admin:sortable_update' %}',
+			current_page: {{ cl.page_num | add:'1' }},
+			total_pages: {{ cl.paginator.num_pages }}
+		};
+	</script>
 {% endblock %}

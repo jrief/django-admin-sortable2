@@ -14,6 +14,12 @@ Existing models can inherit from ``models.Model`` or any other class derived the
 base class is required.
 
 
+News in Version 0.6.1
+---------------------
+
+* Fixed a regression introduced in 0.6.0: Checking for assigned global singletons.
+
+
 News in Version 0.6.0
 ---------------------
 
