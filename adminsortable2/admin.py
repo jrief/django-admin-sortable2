@@ -32,21 +32,6 @@ class SortableAdminBase(object):
             'adminsortable2/js/libs/jquery.ui.mouse-1.11.4.js',
             'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
         )
-        if False and 'cms' in settings.INSTALLED_APPS:
-            try:
-                # for DjangoCMS < 3, override jQuery files for inclusion from the CMS
-                from cms import __version__
-                cms_version = __version__.split('.')
-                if int(cms_version[0]) < 3:
-                    js = (
-                        'cms/js/plugins/admincompat.js',
-                        'cms/js/libs/jquery.query.js',
-                        'cms/js/libs/jquery.ui.core.js',
-                        'cms/js/libs/jquery.ui.sortable.js',
-                    )
-            except ImportError:
-                # other packages may pollute the import search path with 'cms'
-                pass
         return super(SortableAdminBase, self).media + widgets.Media(css=css, js=js)
 
 
