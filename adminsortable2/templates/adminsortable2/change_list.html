@@ -4,7 +4,7 @@
 	{{ block.super }}
 	<script type="text/javascript">
 		window.admin_sortable2 = {
-			update_url: '{% url 'admin:sortable_update' %}',
+			update_url: '{{ sortable_update_url }}',
 			current_page: {{ cl.page_num | add:'1' }},
 			total_pages: {{ cl.paginator.num_pages }}
 		};
