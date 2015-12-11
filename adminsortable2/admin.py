@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
+from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Max, F
 from django.forms.models import BaseInlineFormSet
@@ -83,9 +84,12 @@ class SortableAdminMixin(SortableAdminBase):
         self._add_reorder_method()
         self.list_display = ['_reorder'] + list(self.list_display)
 
+    def _get_update_url_name(self):
+        return '%s_%s_sortable_update' % (self.model._meta.app_label, self.model._meta.model_name)
+
     def get_urls(self):
         my_urls = [
-            url(r'^adminsortable2_update/$', self.admin_site.admin_view(self.update), name='sortable_update'),
+            url(r'^adminsortable2_update/$', self.admin_site.admin_view(self.update), name=self._get_update_url_name()),
         ]
         return my_urls + super(SortableAdminMixin, self).get_urls()
 
@@ -282,6 +286,14 @@ class SortableAdminMixin(SortableAdminBase):
             startorder = getattr(obj, self.default_order_field)
             self._move_item(request, startorder, endorder)
             endorder += direction
+
+    def changelist_view(self, request, extra_context=None):
+        if extra_context is None:
+            extra_context = {}
+
+        extra_context['sortable_update_url'] = reverse('admin:' + self._get_update_url_name())
+
+        return super(SortableAdminMixin, self).changelist_view(request, extra_context)
 
 
 class CustomInlineFormSet(BaseInlineFormSet):
