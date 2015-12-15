@@ -4,6 +4,19 @@
 Release history
 ===============
 
+0.6.2
+-----
+* Fixed regression from 0.6.0: Multiple sortable inlines are now possible again.
+
+0.6.1
+-----
+* Removed global variables from Javascript namespace.
+
+0.6.0
+-----
+* Compatible with Django 1.9.
+* In the list view, it now is possible to move items to any arbitrary page.
+
 0.5.0
 -----
 * Changed the namespace from adminsortable to adminsortable2 to allow both this

@@ -19,7 +19,7 @@ else:
 class SortableBookTestCase(TestCase):
     fixtures = FIXTURES
     admin_password = 'secret'
-    ajax_update_url = reverse('admin:sortable_update')
+    ajax_update_url = reverse('admin:testapp_sortablebook_sortable_update')
     bulk_update_url = reverse('admin:testapp_sortablebook_changelist')
     client = Client()
     http_headers = {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'}
