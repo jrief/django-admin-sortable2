@@ -23,8 +23,6 @@ News in Version 0.6.1
 News in Version 0.6.0
 ---------------------
 
-Many Thanks to Michał Przybyś for adding these two features:
-
 * Compatible with Django 1.9.
 * In the list view, it now is possible to move items to any arbitrary page.
 
