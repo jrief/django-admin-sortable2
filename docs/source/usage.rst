@@ -180,14 +180,21 @@ Edit the
 file and change it into a data migration:
 
 .. code:: python
-	def reorder(apps, schema_editor):
-	    MyModel = apps.get_model("myapp", "MyModel")
-	    order = 0
-	    for item in MyModel.objects.all():
-	        order += 1
-	        item.my_order = order
-	        item.save()
-#then add to operations list, after migrations.AddField — migrations.RunPython(reorder), and add initial = True, like so:
+
+def reorder(apps, schema_editor):
+    MyModel = apps.get_model("myapp", "MyModel")
+    order = 0
+    for item in MyModel.objects.all():
+        order += 1
+        item.my_order = order
+        item.save()
+
+
+
+Then add to operations list, after migrations.AddField — migrations.RunPython(reorder), and add initial = True, like so:
+
+.. code:: python
+
 class Migration(migrations.Migration):
     initial = True
     dependencies = [
