@@ -174,10 +174,7 @@ for Django 1.7 and up above:
 
 	shell> ./manage.py makemigrations myapp
 
-this creates **non** empty migration named somethin like ``migrations/0123_auto_20160208_054.py``.
-
-Edit the
-file and change it into a data migration:
+this creates **non** empty migration named somethin like ``migrations/0123_auto_20160208_054.py``. Edit the file and change it into a data migration:
 
 .. code:: python
 
