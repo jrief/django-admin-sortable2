@@ -33,7 +33,7 @@ in Django is declared through the model's Meta class. An example ``models.py``:
 	class SortableBook(models.Model):
 	    title = models.CharField('Title', null=True, blank=True, max_length=255)
 	    my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
-	
+
 	    class Meta(object):
 	        ordering = ('my_order',)
 
@@ -89,7 +89,7 @@ mixin class before model.ModelAdmin):
 	from django.contrib import admin
 	from adminsortable2.admin import SortableAdminMixin
 	from models import MyModel
-	
+
 	class MyModelAdmin(SortableAdminMixin, admin.ModelAdmin):
 	    pass
 	admin.site.register(MyModel, MyModelAdmin)
@@ -127,10 +127,10 @@ Integrate into a detail view
 	from django.contrib import admin
 	from adminsortable2.admin import SortableInlineAdminMixin
 	from models import MySubModel, MyModel
-	
+
 	class MySubModelInline(SortableInlineAdminMixin, admin.TabularInline):  # or admin.StackedInline
 	    model = MySubModel
-	
+
 	class MyModelAdmin(admin.ModelAdmin):
 	    inlines = (MySubModelInline,)
 	admin.site.register(MyModel, MyModelAdmin)
@@ -150,8 +150,8 @@ the ordering field:
 
 	shell> ./manage.py reorder my_app.models.MyModel
 
-If you prefer to do a one-time database migration, just after having added the ordering field 
-to the model, then create a datamigration:
+If you prefer to do a one-time database migration, just after having added the ordering field
+to the model, then create a datamigration(for Django < 1.7, with South):
 
 .. code:: python
 
@@ -168,11 +168,50 @@ file and change it into a data migration:
 	            obj.my_order = order
 	            obj.save()
 
+for Django 1.7 and up above:
+
+..code:: python
+
+	shell> ./manage.py makemigrations myapp
+
+this creates **non** empty migration named somethin like ``migrations/0123_auto_20160208_054.py``.
+
+Edit the
+file and change it into a data migration:
+
+.. code:: python
+	def reorder(apps, schema_editor):
+	    MyModel = apps.get_model("myapp", "MyModel")
+	    order = 0
+	    for item in MyModel.objects.all():
+	        order += 1
+	        item.my_order = order
+	        item.save()
+#then add to operations list, after migrations.AddField — migrations.RunPython(reorder), and add initial = True, like so:
+class Migration(migrations.Migration):
+    initial = True
+    dependencies = [
+        ...
+    ]
+    operations = [
+        migrations.AlterModelOptions(
+            ....
+        ),
+        migrations.AddField(
+			...
+        ),
+        migrations.RunPython(reorder),
+    ]
+
+
+
 then apply the changes to the database using:
 
 .. code:: bash
 
 	shell> ./manage.py migrate myapp
+
+
 
 .. note:: If you omit to prepopulate the ordering field with unique values, after adding this field
           to an existing model, then attempting to reorder field manually will fail.
