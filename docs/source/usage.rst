@@ -151,7 +151,7 @@ the ordering field:
 	shell> ./manage.py reorder my_app.models.MyModel
 
 If you prefer to do a one-time database migration, just after having added the ordering field 
-to the model, then create a datamigration:
+to the model, then create a datamigration. For Django < 1.6, using South:
 
 .. code:: python
 
@@ -167,6 +167,47 @@ file and change it into a data migration:
 	        for order, obj in enumerate(orm.MyModel.objects.iterator(), start=1):
 	            obj.my_order = order
 	            obj.save()
+
+And for Django 1.6 and up above:
+
+..code:: python
+
+	shell> ./manage.py makemigrations myapp
+
+this creates **non** empty migration named somethin like ``migrations/0123_auto_20160208_054.py``.
+
+Edit the
+file and change it into a data migration:
+
+.. code:: python
+
+	def reorder(apps, schema_editor):
+	    MyModel = apps.get_model("myapp", "MyModel")
+	    order = 0
+	    for item in MyModel.objects.all():
+	        order += 1
+	        item.my_order = order
+	        item.save()
+	
+
+#then add to operations list, after migrations.AddField — migrations.RunPython(reorder), and add initial = True, like so:
+
+.. code:: python
+
+	class Migration(migrations.Migration):
+	    initial = True
+	    dependencies = [
+	        ...
+	    ]
+	    operations = [
+	        migrations.AlterModelOptions(
+	            ....
+	        ),
+	        migrations.AddField(
+				...
+	        ),
+	        migrations.RunPython(reorder),
+	    ]
 
 then apply the changes to the database using:
 
