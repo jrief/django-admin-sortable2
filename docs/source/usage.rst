@@ -98,6 +98,20 @@ That's it! The list view of the model admin interface now adds a column with a s
 By clicking on that area, the user can move that row up or down. If he wants to move it to another
 page, he can do that as a bulk operation, using the admin actions.
 
+``SortableAdminMixin`` by default, excludes the field specified in first item
+of ordering option (we call it default_order_field). This behaviour can be
+configured by a property of ``SortableAdminMixin``.
+
+.. code:: python
+
+	from django.contrib import admin
+	from adminsortable2.admin import SortableAdminMixin
+	from models import MyModel
+	
+	class MyModelAdmin(SortableAdminMixin, admin.ModelAdmin):
+        exclude_default_order_field = False
+	admin.site.register(MyModel, MyModelAdmin)
+
 
 Make a stacked or tabular inline view sortable
 ==============================================

@@ -41,6 +41,7 @@ class SortableAdminMixin(SortableAdminBase):
     enable_sorting = False
     action_form = MovePageActionForm
     change_list_template = 'adminsortable2/change_list.html'
+    exclude_default_order_field = True
 
     def __init__(self, model, admin_site):
         try:
@@ -53,10 +54,11 @@ class SortableAdminMixin(SortableAdminBase):
         except (AttributeError, IndexError):
             raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
         super(SortableAdminMixin, self).__init__(model, admin_site)
-        if not isinstance(self.exclude, (list, tuple)):
-            self.exclude = [self.default_order_field]
-        elif not self.exclude or self.default_order_field != self.exclude[0]:
-            self.exclude = [self.default_order_field] + self.exclude
+        if self.exclude_default_order_field:
+            if not isinstance(self.exclude, (list, tuple)):
+                self.exclude = [self.default_order_field]
+            elif not self.exclude or self.default_order_field != self.exclude[0]:
+                self.exclude = [self.default_order_field] + self.exclude
         if not self.list_display_links:
             self.list_display_links = (self.list_display[0],)
         self._add_reorder_method()
