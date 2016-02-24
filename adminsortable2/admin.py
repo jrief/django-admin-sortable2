@@ -150,7 +150,7 @@ class SortableAdminMixin(SortableAdminBase):
     def save_model(self, request, obj, form, change):
         if not change:
             setattr(obj, self.default_order_field, self.get_max_order() + 1)
-        obj.save()
+        super(SortableAdminMixin, self).save_model(request, obj, form, change)
 
     def move_to_exact_page(self, request, queryset):
         self._bulk_move(request, queryset, self.EXACT)
