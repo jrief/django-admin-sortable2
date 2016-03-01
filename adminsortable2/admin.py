@@ -180,6 +180,7 @@ class SortableAdminMixin(SortableAdminBase):
             order_up, order_down = self.default_order_directions[0]
         else:
             order_up, order_down = self.default_order_directions[1]
+        extra_model_filters = self.get_extra_model_filters(request)
         if startorder < endorder - order_up:
             finalorder = endorder - order_up
             move_filter = {
@@ -199,7 +200,12 @@ class SortableAdminMixin(SortableAdminBase):
         else:
             return self.model.objects.none()
         with transaction.atomic():
-            obj = self.model.objects.get(**{self.default_order_field: startorder})
+            filters = {
+                self.default_order_field: startorder
+            }
+            filters.update(extra_model_filters)
+            move_filter.update(extra_model_filters)
+            obj = self.model.objects.get(**filters)
             setattr(obj, self.default_order_field, self.get_max_order() + 1)
             obj.save()
             self.model.objects.filter(**move_filter).order_by(order_by).update(**move_update)
@@ -207,6 +213,12 @@ class SortableAdminMixin(SortableAdminBase):
             obj.save()
         query_set = self.model.objects.filter(**move_filter).order_by(self.default_order_field).values_list('pk', self.default_order_field)
         return [dict(pk=pk, order=order) for pk, order in query_set]
+
+    def get_extra_model_filters(self, request):
+        """
+            # TODO
+        """
+        return {}
 
     def get_max_order(self):
         max_order = self.model.objects.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
@@ -265,10 +277,12 @@ class SortableAdminMixin(SortableAdminBase):
         if extra_context is None:
             extra_context = {}
 
-        extra_context['sortable_update_url'] = reverse('admin:' + self._get_update_url_name())
+        extra_context['sortable_update_url'] = self.get_update_url(request)
 
         return super(SortableAdminMixin, self).changelist_view(request, extra_context)
 
+    def get_update_url(self, request):
+        return reverse('admin:' + self._get_update_url_name())
 
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
