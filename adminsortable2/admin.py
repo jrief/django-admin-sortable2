@@ -180,7 +180,6 @@ class SortableAdminMixin(SortableAdminBase):
             order_up, order_down = self.default_order_directions[0]
         else:
             order_up, order_down = self.default_order_directions[1]
-        extra_model_filters = self.get_extra_model_filters(request)
         if startorder < endorder - order_up:
             finalorder = endorder - order_up
             move_filter = {
@@ -200,9 +199,8 @@ class SortableAdminMixin(SortableAdminBase):
         else:
             return self.model.objects.none()
         with transaction.atomic():
-            filters = {
-                self.default_order_field: startorder
-            }
+            extra_model_filters = self.get_extra_model_filters(request)
+            filters = {self.default_order_field: startorder}
             filters.update(extra_model_filters)
             move_filter.update(extra_model_filters)
             obj = self.model.objects.get(**filters)
@@ -216,7 +214,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_extra_model_filters(self, request):
         """
-            # TODO
+            Returns additional fields to filter sortable objects
         """
         return {}
 
@@ -278,11 +276,14 @@ class SortableAdminMixin(SortableAdminBase):
             extra_context = {}
 
         extra_context['sortable_update_url'] = self.get_update_url(request)
-
         return super(SortableAdminMixin, self).changelist_view(request, extra_context)
 
     def get_update_url(self, request):
+        """
+            Returns a callback URL used for updating items via AJAX drag-n-drop
+        """
         return reverse('admin:' + self._get_update_url_name())
+
 
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
