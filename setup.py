@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from setuptools import setup, find_packages
 from adminsortable2 import __version__
 try:
     from pypandoc import convert
 except ImportError:
+    import io
+
     def convert(filename, fmt):
-        with open(filename) as fd:
+        with io.open(filename, encoding='utf-8') as fd:
             return fd.read()
 
 DESCRIPTION = 'Generic drag-and-drop sorting for the List, the Stacked- and the Tabular-Inlines Views in the Django Admin'
