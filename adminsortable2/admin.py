@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 from types import MethodType
-from django import VERSION, forms
+from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.conf.urls import url
@@ -26,35 +26,13 @@ class SortableAdminBase(object):
     @property
     def media(self):
         css = {'all': ('adminsortable2/css/sortable.css',)}
-        if VERSION[:2] <= (1, 5):
-            js = (
-                'adminsortable2/js/plugins/admincompat.js',
-                'adminsortable2/js/libs/jquery.ui.core-1.7.1.js',
-                'adminsortable2/js/libs/jquery.ui.sortable-1.7.1.js',
-            )
-        else:
-            js = (
-                'adminsortable2/js/plugins/admincompat.js',
-                'adminsortable2/js/libs/jquery.ui.core-1.11.4.js',
-                'adminsortable2/js/libs/jquery.ui.widget-1.11.4.js',
-                'adminsortable2/js/libs/jquery.ui.mouse-1.11.4.js',
-                'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-            )
-        if 'cms' in settings.INSTALLED_APPS:
-            try:
-                # for DjangoCMS < 3, override jQuery files for inclusion from the CMS
-                from cms import __version__
-                cms_version = __version__.split('.')
-                if int(cms_version[0]) < 3:
-                    js = (
-                        'cms/js/plugins/admincompat.js',
-                        'cms/js/libs/jquery.query.js',
-                        'cms/js/libs/jquery.ui.core.js',
-                        'cms/js/libs/jquery.ui.sortable.js',
-                    )
-            except ImportError:
-                # other packages may pollute the import search path with 'cms'
-                pass
+        js = (
+            'adminsortable2/js/plugins/admincompat.js',
+            'adminsortable2/js/libs/jquery.ui.core-1.11.4.js',
+            'adminsortable2/js/libs/jquery.ui.widget-1.11.4.js',
+            'adminsortable2/js/libs/jquery.ui.mouse-1.11.4.js',
+            'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
+        )
         return super(SortableAdminBase, self).media + widgets.Media(css=css, js=js)
 
 
@@ -78,7 +56,7 @@ class SortableAdminMixin(SortableAdminBase):
         if not isinstance(self.exclude, (list, tuple)):
             self.exclude = [self.default_order_field]
         elif not self.exclude or self.default_order_field != self.exclude[0]:
-            self.exclude = [self.default_order_field] + self.exclude
+            self.exclude = [self.default_order_field] + list(self.exclude)
         if not self.list_display_links:
             self.list_display_links = (self.list_display[0],)
         self._add_reorder_method()
@@ -172,7 +150,7 @@ class SortableAdminMixin(SortableAdminBase):
     def save_model(self, request, obj, form, change):
         if not change:
             setattr(obj, self.default_order_field, self.get_max_order() + 1)
-        obj.save()
+        super(SortableAdminMixin, self).save_model(request, obj, form, change)
 
     def move_to_exact_page(self, request, queryset):
         self._bulk_move(request, queryset, self.EXACT)
@@ -220,11 +198,7 @@ class SortableAdminMixin(SortableAdminBase):
             move_update = {self.default_order_field: F(self.default_order_field) + 1}
         else:
             return self.model.objects.none()
-        if VERSION[:2] <= (1, 5):
-            atomic_context_manager = transaction.commit_on_success
-        else:
-            atomic_context_manager = transaction.atomic
-        with atomic_context_manager():
+        with transaction.atomic():
             obj = self.model.objects.get(**{self.default_order_field: startorder})
             setattr(obj, self.default_order_field, self.get_max_order() + 1)
             obj.save()
@@ -340,9 +314,8 @@ class SortableInlineAdminMixin(SortableAdminBase):
 
     @property
     def template(self):
-        version = VERSION[:2] <= (1, 5) and '1.5' or '1.6'
         if isinstance(self, admin.StackedInline):
-            return 'adminsortable2/stacked-{0}.html'.format(version)
+            return 'adminsortable2/stacked.html'
         if isinstance(self, admin.TabularInline):
-            return 'adminsortable2/tabular-{0}.html'.format(version)
+            return 'adminsortable2/tabular.html'
         raise ImproperlyConfigured('Class {0}.{1} must also derive from admin.TabularInline or admin.StackedInline'.format(self.__module__, self.__class__))
