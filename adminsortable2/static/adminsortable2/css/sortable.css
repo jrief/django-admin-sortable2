@@ -20,9 +20,10 @@ div.inline-group table.ui-sortable tr.form-row.has_original td.drag {
 	background-repeat: repeat;
 	width: 20px;
 }
-div.inline-group table.ui-sortable tr.form-row.has_original td.original {
-	position: relative;
+div.inline-group table.ui-sortable tr.form-row.has_original td.original p {
+	left: initial;
 }
+
 div.inline-group table.ui-sortable tr.form-row td.is_hidden {
 	display: none;
 }
