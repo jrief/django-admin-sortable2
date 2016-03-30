@@ -37,13 +37,14 @@ in Django is declared through the model's Meta class. An example ``models.py``:
 	    class Meta(object):
 	        ordering = ('my_order',)
 
-Here the ordering field is named ``my_order``, but you may choose any other name. There are only
-two constraints:
+Here the ordering field is named ``my_order``, but you may choose any other name. There are three
+constraints:
 
 * ``my_order`` is the first field in the ``ordering`` tuple of the model's Meta class.
 * ``my_order``'s default value must be 0. The JavaScript which performs the sorting is 1-indexed,
 	so this will not interfere with the order of your items, even if you're already using 0-indexed
 	ordering fields.
+* The ``my_order`` field must be editable, so make sure that you **do not** add ``editable=False``.
 
 The field used to store the ordering position may be any kind of numeric model field offered by
 Django. Use one of these models fields:
