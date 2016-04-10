@@ -100,6 +100,25 @@ By clicking on that area, the user can move that row up or down. If he wants to 
 page, he can do that as a bulk operation, using the admin actions.
 
 
+Overriding change list page
+...........................
+
+To add for example a custom tool to the change list view, copy ``contrib/admin/templates/admin/change_list.html``
+to either ``templates/admin/my_app/`` or ``templates/admin/my_app/page/`` directory of your project and make sure
+you are extending from the right template:
+
+.. code:: html
+
+    {% extends "adminsortable2/change_list.html" %}
+
+    {% block object-tools-items %}
+        {{ block.super }}
+        <li>
+            <a href="mylink/">My Link</a>
+        </li>
+    {% endblock %}
+
+
 Make a stacked or tabular inline view sortable
 ==============================================
 
