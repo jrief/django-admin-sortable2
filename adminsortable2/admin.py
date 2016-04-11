@@ -40,7 +40,18 @@ class SortableAdminMixin(SortableAdminBase):
     BACK, FORWARD, FIRST, LAST, EXACT = range(5)
     enable_sorting = False
     action_form = MovePageActionForm
-    change_list_template = 'adminsortable2/change_list.html'
+
+    @property
+    def change_list_template(self):
+        opts = self.model._meta
+        app_label = opts.app_label
+        return [
+            'adminsortable2/%s/%s/change_list.html' % (
+                app_label, opts.model_name
+            ),
+            'adminsortable2/%s/change_list.html' % app_label,
+            'adminsortable2/change_list.html'
+        ]
 
     def __init__(self, model, admin_site):
         try:
