@@ -299,7 +299,12 @@ class SortableAdminMixin(SortableAdminBase):
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         try:
-            self.default_order_field = self.model._meta.ordering[0]
+            if self.model._meta.ordering[0].startswith('-'):
+                self.default_order_directions = ((1, 0), (0, 1))
+                self.default_order_field = self.model._meta.ordering[0].lstrip('-')
+            else:
+                self.default_order_directions = ((0, 1), (1, 0))
+                self.default_order_field = self.model._meta.ordering[0]
         except IndexError:
             self.default_order_field = self.model.Meta.ordering[0]
         except AttributeError:
