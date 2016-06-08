@@ -17,6 +17,20 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
 
 
+def _get_default_ordering(model):
+    try:
+        if model._meta.ordering[0].startswith('-'):
+            default_order_directions = ((1, 0), (0, 1))
+            default_order_field = model._meta.ordering[0].lstrip('-')
+        else:
+            default_order_directions = ((0, 1), (1, 0))
+            default_order_field = model._meta.ordering[0]
+    except (AttributeError, IndexError):
+        raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
+
+    return default_order_directions, default_order_field
+
+
 class MovePageActionForm(admin.helpers.ActionForm):
     step = forms.IntegerField(required=False, initial=1, widget=widgets.NumberInput(attrs={'id': 'changelist-form-step'}), label=False)
     page = forms.IntegerField(required=False, widget=widgets.NumberInput(attrs={'id': 'changelist-form-page'}), label=False)
@@ -54,15 +68,7 @@ class SortableAdminMixin(SortableAdminBase):
         ]
 
     def __init__(self, model, admin_site):
-        try:
-            if model._meta.ordering[0].startswith('-'):
-                self.default_order_directions = ((1, 0), (0, 1))
-                self.default_order_field = model._meta.ordering[0].lstrip('-')
-            else:
-                self.default_order_directions = ((0, 1), (1, 0))
-                self.default_order_field = model._meta.ordering[0]
-        except (AttributeError, IndexError):
-            raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
+        self.default_order_directions, self.default_order_field = _get_default_ordering(model)
         super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(self.exclude, (list, tuple)):
             self.exclude = [self.default_order_field]
@@ -298,18 +304,7 @@ class SortableAdminMixin(SortableAdminBase):
 
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
-        try:
-            if self.model._meta.ordering[0].startswith('-'):
-                self.default_order_directions = ((1, 0), (0, 1))
-                self.default_order_field = self.model._meta.ordering[0].lstrip('-')
-            else:
-                self.default_order_directions = ((0, 1), (1, 0))
-                self.default_order_field = self.model._meta.ordering[0]
-        except IndexError:
-            self.default_order_field = self.model.Meta.ordering[0]
-        except AttributeError:
-            msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class".format(self.model.__module__, self.model.__name__)
-            raise ImproperlyConfigured(msg)
+        self.default_order_directions, self.default_order_field = _get_default_ordering(self.model)
 
         if self.default_order_field not in self.form.base_fields:
             self.form.base_fields[self.default_order_field] = self.model._meta.get_field(self.default_order_field).formfield()
@@ -343,6 +338,28 @@ class CustomInlineFormSet(BaseInlineFormSet):
 
 class SortableInlineAdminMixin(SortableAdminBase):
     formset = CustomInlineFormSet
+
+    def get_fields(self, request, obj=None):
+        fields = super(SortableInlineAdminMixin, self).get_fields(request, obj)
+        default_order_directions, default_order_field = _get_default_ordering(self.model)
+
+        if fields[0] == default_order_field:
+            """
+            Remove the order field and add it again immediately to ensure it is not on first position.
+            This ensures that django's template for tabular inline renders the first column with colspan="2":
+
+            ```
+            {% for field in inline_admin_formset.fields %}
+                {% if not field.widget.is_hidden %}
+                    <th{% if forloop.first %} colspan="2"{% endif %}
+            ```
+
+            See https://github.com/jrief/django-admin-sortable2/issues/82
+            """
+            fields = list(fields)
+            fields.append(fields.pop(0))
+
+        return fields
 
     @property
     def media(self):
