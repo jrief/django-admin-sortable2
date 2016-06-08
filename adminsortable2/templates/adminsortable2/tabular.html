@@ -10,7 +10,7 @@
      {% for field in inline_admin_formset.fields %}
        {% if not field.widget.is_hidden %}
          <th{% if forloop.first %} colspan="2"{% endif %}{% if field.required %} class="required"{% endif %}>{{ field.label|capfirst }}
-         {% if field.help_text %}&nbsp;<img src="{% static "admin/img/icon-unknown.gif" %}" class="help help-tooltip" width="10" height="10" alt="({{ field.help_text|striptags }})" title="{{ field.help_text|striptags }}" />{% endif %}
+         {% if field.help_text %}&nbsp;<img src="{% static "admin/img/icon-unknown.svg" %}" class="help help-tooltip" width="10" height="10" alt="({{ field.help_text|striptags }})" title="{{ field.help_text|striptags }}" />{% endif %}
          </th>
        {% endif %}
      {% endfor %}
@@ -27,9 +27,11 @@
         <td class="drag">&nbsp;</td>
         <td class="original">
           {% if inline_admin_form.original or inline_admin_form.show_url %}<p>
-          {% if inline_admin_form.original %} {{ inline_admin_form.original }}{% endif %}
+          {% if inline_admin_form.original %}
+          {{ inline_admin_form.original }}
           {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}<a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}" class="inlinechangelink">{% trans "Change" %}</a>{% endif %}
-          {% if inline_admin_form.show_url %}<a href="{% url 'admin:view_on_site' inline_admin_form.original_content_type_id inline_admin_form.original.pk %}">{% trans "View on site" %}</a>{% endif %}
+          {% endif %}
+          {% if inline_admin_form.show_url %}<a href="{{ inline_admin_form.absolute_url }}">{% trans "View on site" %}</a>{% endif %}
             </p>{% endif %}
           {% if inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
           {{ inline_admin_form.fk_field.field }}
@@ -37,7 +39,7 @@
           {% for fieldset in inline_admin_form %}
             {% for line in fieldset %}
               {% for field in line %}
-                {% if field.is_hidden %} {{ field.field }} {% endif %}
+                {% if field.field.is_hidden %} {{ field.field }} {% endif %}
               {% endfor %}
             {% endfor %}
           {% endfor %}
@@ -46,7 +48,8 @@
         {% for fieldset in inline_admin_form %}
           {% for line in fieldset %}
             {% for field in line %}
-              <td{% if field.field.name %} class="field-{{ field.field.name }}{% if field.field.is_hidden %} is_hidden{% endif %}"{% endif %}>
+              {% if not field.field.is_hidden %}
+              <td{% if field.field.name %} class="field-{{ field.field.name }}"{% endif %}>
               {% if field.is_readonly %}
                   <p>{{ field.contents|linebreaksbr }}</p>
               {% else %}
@@ -54,6 +57,7 @@
                   {{ field.field }}
               {% endif %}
               </td>
+              {% endif %}
             {% endfor %}
           {% endfor %}
         {% endfor %}
@@ -71,11 +75,11 @@
 <script type="text/javascript">
 
 (function($) {
-  $("#{{ inline_admin_formset.formset.prefix }}-group .tabular.inline-related tbody tr").tabularFormset({
-    prefix: "{{ inline_admin_formset.formset.prefix }}",
+  $("#{{ inline_admin_formset.formset.prefix|escapejs }}-group .tabular.inline-related tbody tr").tabularFormset({
+    prefix: "{{ inline_admin_formset.formset.prefix|escapejs }}",
     adminStaticPrefix: '{% static "admin/" %}',
-    addText: "{% blocktrans with inline_admin_formset.opts.verbose_name|title as verbose_name %}Add another {{ verbose_name }}{% endblocktrans %}",
-    deleteText: "{% trans 'Remove' %}"
+    addText: "{% filter escapejs %}{% blocktrans with inline_admin_formset.opts.verbose_name|title as verbose_name %}Add another {{ verbose_name }}{% endblocktrans %}{% endfilter %}",
+    deleteText: "{% filter escapejs %}{% trans 'Remove' %}{% endfilter %}"
   });
 })(django.jQuery);
 </script>
