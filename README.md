@@ -28,13 +28,6 @@ News in Version 0.6.4
 Many thanks to @rubengrill for fixing them!
 
 
-News in Version 0.6.0
----------------------
-
-* Compatible with Django 1.9.
-* In the list view, it now is possible to move items to any arbitrary page.
-
-
 Project's home
 --------------
 https://github.com/jrief/django-admin-sortable2.
@@ -64,6 +57,6 @@ restrictions.
 License
 -------
 
-Copyright &copy; 2015 Jacob Rief.
+Copyright &copy; 2016 Jacob Rief.
 
 MIT licensed.
