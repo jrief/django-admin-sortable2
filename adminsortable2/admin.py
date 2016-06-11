@@ -3,7 +3,6 @@ import json
 from types import MethodType
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
@@ -15,6 +14,8 @@ from django.forms import widgets
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
+
+__all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
 
 def _get_default_ordering(model):
