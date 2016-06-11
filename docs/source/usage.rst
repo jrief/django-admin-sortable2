@@ -37,13 +37,14 @@ in Django is declared through the model's Meta class. An example ``models.py``:
 	    class Meta(object):
 	        ordering = ('my_order',)
 
-Here the ordering field is named ``my_order``, but you may choose any other name. There are only
-two constraints:
+Here the ordering field is named ``my_order``, but you may choose any other name. There are three
+constraints:
 
 * ``my_order`` is the first field in the ``ordering`` tuple of the model's Meta class.
 * ``my_order``'s default value must be 0. The JavaScript which performs the sorting is 1-indexed,
 	so this will not interfere with the order of your items, even if you're already using 0-indexed
 	ordering fields.
+* The ``my_order`` field must be editable, so make sure that you **do not** add ``editable=False`` to it.
 
 The field used to store the ordering position may be any kind of numeric model field offered by
 Django. Use one of these models fields:
@@ -97,6 +98,25 @@ mixin class before model.ModelAdmin):
 That's it! The list view of the model admin interface now adds a column with a sensitive area.
 By clicking on that area, the user can move that row up or down. If he wants to move it to another
 page, he can do that as a bulk operation, using the admin actions.
+
+
+Overriding change list page
+...........................
+
+To add for example a custom tool to the change list view, copy ``contrib/admin/templates/admin/change_list.html``
+to either ``templates/admin/my_app/`` or ``templates/admin/my_app/page/`` directory of your project and make sure
+you are extending from the right template:
+
+.. code:: html
+
+    {% extends "adminsortable2/change_list.html" %}
+
+    {% block object-tools-items %}
+        {{ block.super }}
+        <li>
+            <a href="mylink/">My Link</a>
+        </li>
+    {% endblock %}
 
 
 Make a stacked or tabular inline view sortable
