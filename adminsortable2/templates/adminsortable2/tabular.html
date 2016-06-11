@@ -51,7 +51,7 @@
               {% if not field.field.is_hidden %}
               <td{% if field.field.name %} class="field-{{ field.field.name }}"{% endif %}>
               {% if field.is_readonly %}
-                  <p>{{ field.contents|linebreaksbr }}</p>
+                  <p>{{ field.contents }}</p>
               {% else %}
                   {{ field.field.errors.as_ul }}
                   {{ field.field }}
@@ -77,8 +77,7 @@
 (function($) {
   $("#{{ inline_admin_formset.formset.prefix|escapejs }}-group .tabular.inline-related tbody tr").tabularFormset({
     prefix: "{{ inline_admin_formset.formset.prefix|escapejs }}",
-    adminStaticPrefix: '{% static "admin/" %}',
-    addText: "{% filter escapejs %}{% blocktrans with inline_admin_formset.opts.verbose_name|title as verbose_name %}Add another {{ verbose_name }}{% endblocktrans %}{% endfilter %}",
+    addText: "{% filter escapejs %}{% blocktrans with inline_admin_formset.opts.verbose_name|capfirst as verbose_name %}Add another {{ verbose_name }}{% endblocktrans %}{% endfilter %}",
     deleteText: "{% filter escapejs %}{% trans 'Remove' %}{% endfilter %}"
   });
 })(django.jQuery);
