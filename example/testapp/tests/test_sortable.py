@@ -9,11 +9,7 @@ from django.test.client import Client
 
 from testapp.models import SortableBook
 
-# Django 1.8 dropped the name column on contenttypes...
-if django.VERSION[:2] >= (1, 8):
-    FIXTURES = ['data_1.8.json']
-else:
-    FIXTURES = ['data.json']
+FIXTURES = ['data.json']
 
 
 class SortableBookTestCase(TestCase):
