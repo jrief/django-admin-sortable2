@@ -18,6 +18,8 @@ News in Version 0.6.4
 ---------------------
 
 * Drop support for Django-1.7 and lower.
+* Feature request #107: Overidable SortableAdminMixin.get_max_order(request, obj)
+* Fixed #98: js error in admin
 * Fixed #55: TabularInline template THEAD colspan=2 broken
 * Fixed #82: SortableInlineAdminMixin screws up TabularInline colums
 * Fixed #104: Key 'order' not found

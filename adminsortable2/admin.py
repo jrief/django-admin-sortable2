@@ -167,7 +167,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def save_model(self, request, obj, form, change):
         if not change:
-            setattr(obj, self.default_order_field, self.get_max_order() + 1)
+            setattr(obj, self.default_order_field, self.get_max_order(request, obj) + 1)
         super(SortableAdminMixin, self).save_model(request, obj, form, change)
 
     def move_to_exact_page(self, request, queryset):
@@ -222,7 +222,7 @@ class SortableAdminMixin(SortableAdminBase):
             filters.update(extra_model_filters)
             move_filter.update(extra_model_filters)
             obj = self.model.objects.get(**filters)
-            setattr(obj, self.default_order_field, self.get_max_order() + 1)
+            setattr(obj, self.default_order_field, self.get_max_order(request, obj) + 1)
             obj.save()
             self.model.objects.filter(**move_filter).order_by(order_by).update(**move_update)
             setattr(obj, self.default_order_field, finalorder)
@@ -236,7 +236,7 @@ class SortableAdminMixin(SortableAdminBase):
         """
         return {}
 
-    def get_max_order(self):
+    def get_max_order(self, request, obj=None):
         max_order = self.model.objects.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
         return max_order
 
