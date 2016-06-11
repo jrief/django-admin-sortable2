@@ -14,10 +14,15 @@ Existing models can inherit from ``models.Model`` or any other class derived the
 base class is required.
 
 
-News in Version 0.6.1
+News in Version 0.6.4
 ---------------------
 
-* Fixed a regression introduced in 0.6.0: Checking for assigned global singletons.
+* Drop support for Django-1.7 and lower.
+* Fixed #55: TabularInline template THEAD colspan=2 broken
+* Fixed #82: SortableInlineAdminMixin screws up TabularInline colums
+* Fixed #104: Key 'order' not found
+
+Many thanks to @rubengrill for fixing them!
 
 
 News in Version 0.6.0
