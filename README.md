@@ -41,7 +41,6 @@ Build status
 ------------
 
 [![Build Status](https://travis-ci.org/jrief/django-admin-sortable2.png?branch=master)](https://travis-ci.org/jrief/django-admin-sortable2)
-[![Downloads](http://img.shields.io/pypi/dm/django-admin-sortable2.svg?style=flat-square)](https://pypi.python.org/pypi/django-admin-sortable2/)
 
 
 Why should You use it?
