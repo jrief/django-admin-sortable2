@@ -7,10 +7,15 @@ env:
   - DJANGO="django<1.8"
   - DJANGO="django<1.9"
   - DJANGO="django==1.9"
+  - DJANGO='https://github.com/django/django/archive/master.tar.gz'
 
 install:
   - pip install -q $DJANGO
   - python setup.py -q install
 
 script:
-  - cd example/ && ./manage.py test testapp --settings=testapp.settings
+  - cd example/ && python -Wall manage.py test testapp --settings=testapp.settings
+
+matrix:
+   allow_failures:
+      - env: DJANGO='https://github.com/django/django/archive/master.tar.gz'
