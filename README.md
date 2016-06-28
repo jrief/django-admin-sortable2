@@ -7,24 +7,25 @@ This plugin is a generic drag-and-drop ordering module for sorting objects in th
 and the Tabular-Inlines Views in the Django Admin interface.
 
 This module offers simple mixin classes which enrich the functionality of any existing class derived
-from ``admin.ModelAdmin``, ``admin.StackedInline`` or ``admin.TabluarInline``.
+from ``admin.ModelAdmin``, ``admin.StackedInline`` or ``admin.TabularInline``.
 
 Thus it makes it very easy to integrate with existing models and their model admin interfaces.
 Existing models can inherit from ``models.Model`` or any other class derived thereof. No special
 base class is required.
 
 
-News in Version 0.6.1
+News in Version 0.6.4
 ---------------------
 
-* Fixed a regression introduced in 0.6.0: Checking for assigned global singletons.
+* Drop support for Django-1.7 and lower.
+* Feature request #107: Overidable SortableAdminMixin.get_max_order(request, obj)
+# Fixed #100: actions = none breaks functionality
+* Fixed #98: js error in admin
+* Fixed #55: TabularInline template THEAD colspan=2 broken
+* Fixed #82: SortableInlineAdminMixin screws up TabularInline colums
+* Fixed #104: Key 'order' not found
 
-
-News in Version 0.6.0
----------------------
-
-* Compatible with Django 1.9.
-* In the list view, it now is possible to move items to any arbitrary page.
+Many thanks to @rubengrill for fixing them!
 
 
 Project's home
@@ -40,7 +41,6 @@ Build status
 ------------
 
 [![Build Status](https://travis-ci.org/jrief/django-admin-sortable2.png?branch=master)](https://travis-ci.org/jrief/django-admin-sortable2)
-[![Downloads](http://img.shields.io/pypi/dm/django-admin-sortable2.svg?style=flat-square)](https://pypi.python.org/pypi/django-admin-sortable2/)
 
 
 Why should You use it?
@@ -56,6 +56,6 @@ restrictions.
 License
 -------
 
-Copyright &copy; 2015 Jacob Rief.
+Copyright &copy; 2016 Jacob Rief.
 
 MIT licensed.

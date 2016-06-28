@@ -1,7 +1,10 @@
 "use strict";
 
-jQuery.extend({
-	getQueryParams: function() {
+// make list view sortable
+jQuery(function($) {
+	var startindex, startorder, endindex, endorder;
+	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
+	var getQueryParams = function() {
 		var vars = [], hash, i;
 		var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
 		for (i = 0; i < hashes.length; i++) {
@@ -10,17 +13,8 @@ jQuery.extend({
 			vars[hash[0]] = hash[1];
 		}
 		return vars;
-	},
-	getQueryParam: function(name) {
-		return jQuery.getQueryParams()[name];
-	}
-});
-
-// make list view sortable
-jQuery(function($) {
-	var startindex, startorder, endindex, endorder;
-	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
-	var ordering = $.getQueryParam('o');
+	};
+	var ordering = getQueryParams()['o'];
 
 	if (window.admin_sortable2 === undefined)
 		return;  // global variables not initialized by change_list.html

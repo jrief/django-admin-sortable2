@@ -5,7 +5,7 @@
 }
 
 /* styles for list view */
-#result_list thead th:nth-child(2) {
+#result_list thead th.column-_reorder {
 	width: 50px;
 }
 
@@ -20,9 +20,10 @@ div.inline-group table.ui-sortable tr.form-row.has_original td.drag {
 	background-repeat: repeat;
 	width: 20px;
 }
-div.inline-group table.ui-sortable tr.form-row.has_original td.original {
-	position: relative;
+div.inline-group table.ui-sortable tr.form-row.has_original td.original p {
+	left: initial;
 }
+
 div.inline-group table.ui-sortable tr.form-row td.is_hidden {
 	display: none;
 }

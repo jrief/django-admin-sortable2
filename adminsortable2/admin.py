@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
 from types import MethodType
-from django import VERSION, forms
+from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
@@ -16,6 +15,22 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAll
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
 
+__all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
+
+
+def _get_default_ordering(model):
+    try:
+        if model._meta.ordering[0].startswith('-'):
+            default_order_directions = ((1, 0), (0, 1))
+            default_order_field = model._meta.ordering[0].lstrip('-')
+        else:
+            default_order_directions = ((0, 1), (1, 0))
+            default_order_field = model._meta.ordering[0]
+    except (AttributeError, IndexError):
+        raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
+
+    return default_order_directions, default_order_field
+
 
 class MovePageActionForm(admin.helpers.ActionForm):
     step = forms.IntegerField(required=False, initial=1, widget=widgets.NumberInput(attrs={'id': 'changelist-form-step'}), label=False)
@@ -26,35 +41,13 @@ class SortableAdminBase(object):
     @property
     def media(self):
         css = {'all': ('adminsortable2/css/sortable.css',)}
-        if VERSION[:2] <= (1, 5):
-            js = (
-                'adminsortable2/js/plugins/admincompat.js',
-                'adminsortable2/js/libs/jquery.ui.core-1.7.1.js',
-                'adminsortable2/js/libs/jquery.ui.sortable-1.7.1.js',
-            )
-        else:
-            js = (
-                'adminsortable2/js/plugins/admincompat.js',
-                'adminsortable2/js/libs/jquery.ui.core-1.11.4.js',
-                'adminsortable2/js/libs/jquery.ui.widget-1.11.4.js',
-                'adminsortable2/js/libs/jquery.ui.mouse-1.11.4.js',
-                'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-            )
-        if 'cms' in settings.INSTALLED_APPS:
-            try:
-                # for DjangoCMS < 3, override jQuery files for inclusion from the CMS
-                from cms import __version__
-                cms_version = __version__.split('.')
-                if int(cms_version[0]) < 3:
-                    js = (
-                        'cms/js/plugins/admincompat.js',
-                        'cms/js/libs/jquery.query.js',
-                        'cms/js/libs/jquery.ui.core.js',
-                        'cms/js/libs/jquery.ui.sortable.js',
-                    )
-            except ImportError:
-                # other packages may pollute the import search path with 'cms'
-                pass
+        js = (
+            'adminsortable2/js/plugins/admincompat.js',
+            'adminsortable2/js/libs/jquery.ui.core-1.11.4.js',
+            'adminsortable2/js/libs/jquery.ui.widget-1.11.4.js',
+            'adminsortable2/js/libs/jquery.ui.mouse-1.11.4.js',
+            'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
+        )
         return super(SortableAdminBase, self).media + widgets.Media(css=css, js=js)
 
 
@@ -62,23 +55,26 @@ class SortableAdminMixin(SortableAdminBase):
     BACK, FORWARD, FIRST, LAST, EXACT = range(5)
     enable_sorting = False
     action_form = MovePageActionForm
-    change_list_template = 'adminsortable2/change_list.html'
+
+    @property
+    def change_list_template(self):
+        opts = self.model._meta
+        app_label = opts.app_label
+        return [
+            'adminsortable2/%s/%s/change_list.html' % (
+                app_label, opts.model_name
+            ),
+            'adminsortable2/%s/change_list.html' % app_label,
+            'adminsortable2/change_list.html'
+        ]
 
     def __init__(self, model, admin_site):
-        try:
-            if model._meta.ordering[0].startswith('-'):
-                self.default_order_directions = ((1, 0), (0, 1))
-                self.default_order_field = model._meta.ordering[0].lstrip('-')
-            else:
-                self.default_order_directions = ((0, 1), (1, 0))
-                self.default_order_field = model._meta.ordering[0]
-        except (AttributeError, IndexError):
-            raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
+        self.default_order_directions, self.default_order_field = _get_default_ordering(model)
         super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(self.exclude, (list, tuple)):
             self.exclude = [self.default_order_field]
         elif not self.exclude or self.default_order_field != self.exclude[0]:
-            self.exclude = [self.default_order_field] + self.exclude
+            self.exclude = [self.default_order_field] + list(self.exclude)
         if not self.list_display_links:
             self.list_display_links = (self.list_display[0],)
         self._add_reorder_method()
@@ -171,8 +167,8 @@ class SortableAdminMixin(SortableAdminBase):
 
     def save_model(self, request, obj, form, change):
         if not change:
-            setattr(obj, self.default_order_field, self.get_max_order() + 1)
-        obj.save()
+            setattr(obj, self.default_order_field, self.get_max_order(request, obj) + 1)
+        super(SortableAdminMixin, self).save_model(request, obj, form, change)
 
     def move_to_exact_page(self, request, queryset):
         self._bulk_move(request, queryset, self.EXACT)
@@ -220,13 +216,13 @@ class SortableAdminMixin(SortableAdminBase):
             move_update = {self.default_order_field: F(self.default_order_field) + 1}
         else:
             return self.model.objects.none()
-        if VERSION[:2] <= (1, 5):
-            atomic_context_manager = transaction.commit_on_success
-        else:
-            atomic_context_manager = transaction.atomic
-        with atomic_context_manager():
-            obj = self.model.objects.get(**{self.default_order_field: startorder})
-            setattr(obj, self.default_order_field, self.get_max_order() + 1)
+        with transaction.atomic():
+            extra_model_filters = self.get_extra_model_filters(request)
+            filters = {self.default_order_field: startorder}
+            filters.update(extra_model_filters)
+            move_filter.update(extra_model_filters)
+            obj = self.model.objects.get(**filters)
+            setattr(obj, self.default_order_field, self.get_max_order(request, obj) + 1)
             obj.save()
             self.model.objects.filter(**move_filter).order_by(order_by).update(**move_update)
             setattr(obj, self.default_order_field, finalorder)
@@ -234,7 +230,13 @@ class SortableAdminMixin(SortableAdminBase):
         query_set = self.model.objects.filter(**move_filter).order_by(self.default_order_field).values_list('pk', self.default_order_field)
         return [dict(pk=pk, order=order) for pk, order in query_set]
 
-    def get_max_order(self):
+    def get_extra_model_filters(self, request):
+        """
+            Returns additional fields to filter sortable objects
+        """
+        return {}
+
+    def get_max_order(self, request, obj=None):
         max_order = self.model.objects.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
         return max_order
 
@@ -291,23 +293,27 @@ class SortableAdminMixin(SortableAdminBase):
         if extra_context is None:
             extra_context = {}
 
-        extra_context['sortable_update_url'] = reverse('admin:' + self._get_update_url_name())
-
+        extra_context['sortable_update_url'] = self.get_update_url(request)
         return super(SortableAdminMixin, self).changelist_view(request, extra_context)
+
+    def get_update_url(self, request):
+        """
+            Returns a callback URL used for updating items via AJAX drag-n-drop
+        """
+        return reverse('admin:' + self._get_update_url_name())
 
 
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
-        try:
-            self.default_order_field = self.model._meta.ordering[0]
-        except IndexError:
-            self.default_order_field = self.model.Meta.ordering[0]
-        except AttributeError:
-            msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class".format(self.model.__module__, self.model.__name__)
-            raise ImproperlyConfigured(msg)
+        self.default_order_directions, self.default_order_field = _get_default_ordering(self.model)
+
+        if self.default_order_field not in self.form.base_fields:
+            self.form.base_fields[self.default_order_field] = self.model._meta.get_field(self.default_order_field).formfield()
+
         self.form.base_fields[self.default_order_field].is_hidden = True
         self.form.base_fields[self.default_order_field].required = False
         self.form.base_fields[self.default_order_field].widget = widgets.HiddenInput()
+
         super(CustomInlineFormSet, self).__init__(*args, **kwargs)
 
     def save_new(self, form, commit=True):
@@ -334,15 +340,36 @@ class CustomInlineFormSet(BaseInlineFormSet):
 class SortableInlineAdminMixin(SortableAdminBase):
     formset = CustomInlineFormSet
 
+    def get_fields(self, request, obj=None):
+        fields = super(SortableInlineAdminMixin, self).get_fields(request, obj)
+        default_order_directions, default_order_field = _get_default_ordering(self.model)
+
+        if fields[0] == default_order_field:
+            """
+            Remove the order field and add it again immediately to ensure it is not on first position.
+            This ensures that django's template for tabular inline renders the first column with colspan="2":
+
+            ```
+            {% for field in inline_admin_formset.fields %}
+                {% if not field.widget.is_hidden %}
+                    <th{% if forloop.first %} colspan="2"{% endif %}
+            ```
+
+            See https://github.com/jrief/django-admin-sortable2/issues/82
+            """
+            fields = list(fields)
+            fields.append(fields.pop(0))
+
+        return fields
+
     @property
     def media(self):
         return super(SortableInlineAdminMixin, self).media + widgets.Media(js=('adminsortable2/js/inline-sortable.js',))
 
     @property
     def template(self):
-        version = VERSION[:2] <= (1, 5) and '1.5' or '1.6'
         if isinstance(self, admin.StackedInline):
-            return 'adminsortable2/stacked-{0}.html'.format(version)
+            return 'adminsortable2/stacked.html'
         if isinstance(self, admin.TabularInline):
-            return 'adminsortable2/tabular-{0}.html'.format(version)
+            return 'adminsortable2/tabular.html'
         raise ImproperlyConfigured('Class {0}.{1} must also derive from admin.TabularInline or admin.StackedInline'.format(self.__module__, self.__class__))
