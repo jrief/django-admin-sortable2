@@ -4,7 +4,6 @@ python:
   - 3.4
 
 env:
-  - DJANGO="django<1.8"
   - DJANGO="django<1.9"
   - DJANGO="django==1.9"
 
