@@ -4,6 +4,22 @@
 Release history
 ===============
 
+0.6.5
+-----
+* Fixed: Reorder management command now accepts args.
+
+
+0.6.4
+-----
+* Drop support for Django-1.5.
+* change_list_template now is extendible.
+* Fixed concatenation if ``exclude`` is tuple.
+* Support reverse sorting in CustomInlineFormSet.
+
+0.6.3
+-----
+* setup.py ready for Python 3.
+
 0.6.2
 -----
 * Fixed regression from 0.6.0: Multiple sortable inlines are now possible again.

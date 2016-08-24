@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+import os
 import json
 from types import MethodType
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
@@ -46,10 +46,8 @@ class SortableAdminMixin(SortableAdminBase):
         opts = self.model._meta
         app_label = opts.app_label
         return [
-            'adminsortable2/%s/%s/change_list.html' % (
-                app_label, opts.model_name
-            ),
-            'adminsortable2/%s/change_list.html' % app_label,
+            os.path.join('adminsortable2', app_label, opts.model_name, 'change_list.html'),
+            os.path.join('adminsortable2', app_label, 'change_list.html'),
             'adminsortable2/change_list.html'
         ]
 
@@ -62,7 +60,8 @@ class SortableAdminMixin(SortableAdminBase):
                 self.default_order_directions = ((0, 1), (1, 0))
                 self.default_order_field = model._meta.ordering[0]
         except (AttributeError, IndexError):
-            raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
+            msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class"
+            raise ImproperlyConfigured(msg.format(model.__module__, model.__name__))
         super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(self.exclude, (list, tuple)):
             self.exclude = [self.default_order_field]
@@ -291,7 +290,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_update_url(self, request):
         """
-            Returns a callback URL used for updating items via AJAX drag-n-drop
+        Returns a callback URL used for updating items via AJAX drag-n-drop
         """
         return reverse('admin:' + self._get_update_url_name())
 
@@ -308,8 +307,11 @@ class CustomInlineFormSet(BaseInlineFormSet):
         except IndexError:
             self.default_order_field = self.model.Meta.ordering[0]
         except AttributeError:
-            msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class".format(self.model.__module__, self.model.__name__)
-            raise ImproperlyConfigured(msg)
+            msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class"
+            raise ImproperlyConfigured(msg.format(self.model.__module__, self.model.__name__))
+        if self.default_order_field not in self.form.base_fields:
+            msg = "Field '{}' used for ordering must be declared inside 'fields'"
+            raise ImproperlyConfigured(msg.format(self.default_order_field))
         self.form.base_fields[self.default_order_field].is_hidden = True
         self.form.base_fields[self.default_order_field].required = False
         self.form.base_fields[self.default_order_field].widget = widgets.HiddenInput()
