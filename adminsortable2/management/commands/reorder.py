@@ -7,8 +7,11 @@ class Command(BaseCommand):
     args = '<model model ...>'
     help = 'Restore the primary ordering fields of a model containing a special ordering field'
 
+    def add_arguments(self, parser):
+        parser.add_argument('models', nargs='+', type=str)
+
     def handle(self, *args, **options):
-        for modelname in args:
+        for modelname in options['models']:
             try:
                 Model = import_string(modelname)
             except ImportError:
