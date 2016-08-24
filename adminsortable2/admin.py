@@ -28,7 +28,8 @@ def _get_default_ordering(model):
             default_order_directions = ((0, 1), (1, 0))
             default_order_field = model._meta.ordering[0]
     except (AttributeError, IndexError):
-        raise ImproperlyConfigured('Model {0}.{1} requires a list or tuple "ordering" in its Meta class'.format(model.__module__, model.__name__))
+        msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class"
+        raise ImproperlyConfigured(msg.format(model.__module__, model.__name__))
 
     return default_order_directions, default_order_field
 
