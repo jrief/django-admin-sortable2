@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import json
+import warnings
 from types import MethodType
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -17,7 +18,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
 
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
-
 
 def _get_default_ordering(model):
     try:
@@ -377,8 +377,8 @@ class SortableInlineAdminMixin(SortableAdminBase):
                 from parler.admin import TranslatableInlineModelAdmin, TranslatableStackedInline, TranslatableTabularInline
                 if isinstance(self, TranslatableInlineModelAdmin):
                     if self.inline_tabs:
-                        print("Warning: adminsortable2 is incompatible with parler inline_tabs")
-                        return super().template
+                        warnings.warn('adminsortable2 is currently incompatible with parler inline_tabs')
+                        return super(SortableInlineAdminMixin, self).template
                     elif isinstance(self, TranslatableStackedInline):
                         return 'adminsortable2/stacked.html'
                     elif isinstance(self, TranslatableTabularInline):
