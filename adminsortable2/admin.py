@@ -31,12 +31,13 @@ __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 def _get_default_ordering(model, model_admin):
     try:
         # first try with the model admin ordering
-        if model_admin.ordering[0].startswith('-'):
+        order_field = model_admin.ordering[-1]
+        if order_field.startswith('-'):
             default_order_directions = ((1, 0), (0, 1))
-            default_order_field = model_admin.ordering[0].lstrip('-')
+            default_order_field = order_field.lstrip('-')
         else:
             default_order_directions = ((0, 1), (1, 0))
-            default_order_field = model_admin.ordering[0]
+            default_order_field = order_field
     except (AttributeError, IndexError, TypeError):
         pass
     else:
@@ -44,12 +45,13 @@ def _get_default_ordering(model, model_admin):
 
     try:
         # then try with the model ordering
-        if model._meta.ordering[0].startswith('-'):
+        order_field = model._meta.ordering[-1]
+        if order_field.startswith('-'):
             default_order_directions = ((1, 0), (0, 1))
-            default_order_field = model._meta.ordering[0].lstrip('-')
+            default_order_field = order_field.lstrip('-')
         else:
             default_order_directions = ((0, 1), (1, 0))
-            default_order_field = model._meta.ordering[0]
+            default_order_field = order_field
     except (AttributeError, IndexError):
         msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class"
         raise ImproperlyConfigured(msg.format(model.__module__, model.__name__))
