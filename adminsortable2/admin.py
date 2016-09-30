@@ -19,6 +19,7 @@ from django.contrib import admin
 
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
+
 def _get_default_ordering(model):
     try:
         if model._meta.ordering[0].startswith('-'):
