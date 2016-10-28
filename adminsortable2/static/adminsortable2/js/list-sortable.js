@@ -101,7 +101,7 @@ jQuery(function($) {
 
 	$step_field.attr('min', 1);
 
-	$('#changelist-form').find('select[name="action"]').change(function() {
+	function display_fields() {
 		if (['move_to_back_page', 'move_to_forward_page'].indexOf($(this).val()) != -1) {
 			if ($(this).val() === 'move_to_forward_page') {
 				$step_field.attr('max', window.admin_sortable2.total_pages - window.admin_sortable2.current_page);
@@ -117,5 +117,12 @@ jQuery(function($) {
 		} else {
 			$page_field.hide();
 		}
-	});
+	}
+
+	var $grp_form = $('#grp-changelist-form'); // Grappelli support
+	if ($grp_form) {
+		$grp_form.attr('novalidate', 'novalidate');
+	}
+	var $form = $('#changelist-form') || $grp_form;
+	$form.find('select[name="action"]').change(display_fields);
 });
