@@ -228,7 +228,7 @@
     "pk": 3,
     "fields": {
         "title": "The Pragmatic Programmer",
-        "my_order": 8,
+        "my_order": 3,
         "author": 8
     }
 },
@@ -273,7 +273,7 @@
     "pk": 8,
     "fields": {
         "title": "Succeeding with Agile",
-        "my_order": 3,
+        "my_order": 8,
         "author": 5
     }
 },
