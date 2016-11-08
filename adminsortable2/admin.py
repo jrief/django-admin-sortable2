@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import os
 import json
+
 from types import MethodType
+
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url

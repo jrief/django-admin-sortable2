@@ -1,6 +1,10 @@
 #-*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from django.contrib import admin
+
 from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
+
 from . import models
 
 
@@ -14,13 +18,14 @@ class NotesInline(admin.TabularInline):
     extra = 1
 
 
+@admin.register(models.SortableBook)
 class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
-    list_per_page = 8
-    list_display = ('title', 'my_order',)
+    list_per_page = 12
+    list_display = ('author', 'title', 'my_order',)
+    list_display_links = ('title',)
     inlines = (ChapterInline, NotesInline,)
-admin.site.register(models.SortableBook, SortableBookAdmin)
 
 
+@admin.register(models.Author)
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ('name',)
-admin.site.register(models.Author, AuthorAdmin)

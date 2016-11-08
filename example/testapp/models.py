@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from django.db import models
 
 
 class Author(models.Model):
     name = models.CharField('Name', null=True, blank=True, max_length=255)
+
+    class Meta:
+        ordering = ('name',)
 
     def __unicode__(self):
         return self.name
