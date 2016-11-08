@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import json
+import warnings
 from types import MethodType
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -370,6 +371,19 @@ class SortableInlineAdminMixin(SortableAdminBase):
     def template(self):
         if isinstance(self, admin.StackedInline):
             return 'adminsortable2/stacked.html'
-        if isinstance(self, admin.TabularInline):
+        elif isinstance(self, admin.TabularInline):
             return 'adminsortable2/tabular.html'
-        raise ImproperlyConfigured('Class {0}.{1} must also derive from admin.TabularInline or admin.StackedInline'.format(self.__module__, self.__class__))
+        else:
+            try:
+                from parler.admin import TranslatableInlineModelAdmin, TranslatableStackedInline, TranslatableTabularInline
+                if isinstance(self, TranslatableInlineModelAdmin):
+                    if self.inline_tabs:
+                        warnings.warn('adminsortable2 is currently incompatible with parler inline_tabs')
+                        return super(SortableInlineAdminMixin, self).template
+                    elif isinstance(self, TranslatableStackedInline):
+                        return 'adminsortable2/stacked.html'
+                    elif isinstance(self, TranslatableTabularInline):
+                        return 'adminsortable2/tabular.html'
+                raise ImportError
+            except ImportError:
+                raise ImproperlyConfigured('Class {0}.{1} must also derive from admin.TabularInline/admin.StackedInline/parler.admin.TranslatableInlineModelAdmin'.format(self.__module__, self.__class__))
