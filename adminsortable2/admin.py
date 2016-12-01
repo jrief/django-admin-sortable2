@@ -14,6 +14,7 @@ from django.core.paginator import EmptyPage
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Max, F
+from django.db.models.signals import post_save
 from django.forms.models import BaseInlineFormSet
 from django.forms import widgets
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
@@ -226,13 +227,19 @@ class SortableAdminMixin(SortableAdminBase):
             filters.update(extra_model_filters)
             move_filter.update(extra_model_filters)
             obj = self.model.objects.get(**filters)
-            setattr(obj, self.default_order_field, self.get_max_order(request, obj) + 1)
-            obj.save()
+            obj_qs = self.model.objects.filter(pk=obj.pk)
+            # using qs.update avoid multi [pre|post]_save signal on obj.save()
+            obj_qs.update(**{self.default_order_field: self.get_max_order(request, obj) + 1})
             self.model.objects.filter(**move_filter).order_by(order_by).update(**move_update)
-            setattr(obj, self.default_order_field, finalorder)
-            obj.save()
-        query_set = self.model.objects.filter(**move_filter).order_by(self.default_order_field).values_list('pk', self.default_order_field)
-        return [dict(pk=pk, order=order) for pk, order in query_set]
+            # using qs.update avoid multi [pre|post]_save signal on obj.save()
+            obj_qs.update(**{self.default_order_field: finalorder})
+        queryset = self.model.objects.filter(**move_filter).order_by(self.default_order_field)
+        moved_pks_orders = []
+        for instance in queryset:
+            moved_pks_orders.append({'pk': instance.pk,
+                                     'order': getattr(instance, self.default_order_field)})
+            post_save.send(self.model, instance=instance, update_fields=[self.default_order_field])
+        return moved_pks_orders
 
     def get_extra_model_filters(self, request):
         """
