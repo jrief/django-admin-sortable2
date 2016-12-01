@@ -4,7 +4,7 @@ import json
 import django
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.test import TestCase
 from django.test.client import Client
 
@@ -221,5 +221,16 @@ class SortableBookTestCase(TestCase):
         response = self.client.post(self.ajax_update_url, in_data, **self.http_headers)
         post_save.disconnect(listener)
         self.assertEqual(len(updated_instances), 5)
-        self.assertEqual(updated_instances, [7, 3, 4, 5, 6])  # signals are sent in final order
+        self.assertEqual(updated_instances, [6, 5, 4, 3, 7])
+
+    def test_pre_save_is_sent_before_reorder(self):
+        updated_instances = []
+        def listener(sender, instance, **kwargs):
+            updated_instances.append(instance.pk)
+        in_data = {'startorder': 7, 'endorder': 2}  # from 12345667 to 1273456
+        pre_save.connect(listener)
+        response = self.client.post(self.ajax_update_url, in_data, **self.http_headers)
+        pre_save.disconnect(listener)
+        self.assertEqual(len(updated_instances), 5)
+        self.assertEqual(updated_instances, [7, 6, 5, 4, 3])
         
