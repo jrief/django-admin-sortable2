@@ -14,6 +14,7 @@ from django.core.paginator import EmptyPage
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Max, F
+from django.db.models.signals import post_save, pre_save
 from django.forms.models import BaseInlineFormSet
 from django.forms import widgets
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
@@ -226,11 +227,16 @@ class SortableAdminMixin(SortableAdminBase):
             filters.update(extra_model_filters)
             move_filter.update(extra_model_filters)
             obj = self.model.objects.get(**filters)
-            setattr(obj, self.default_order_field, self.get_max_order(request, obj) + 1)
-            obj.save()
-            self.model.objects.filter(**move_filter).order_by(order_by).update(**move_update)
-            setattr(obj, self.default_order_field, finalorder)
-            obj.save()
+            obj_qs = self.model.objects.filter(pk=obj.pk)
+            move_qs = self.model.objects.filter(**move_filter).order_by(order_by)
+            for instance in move_qs:
+                pre_save.send(self.model, instance=instance, update_fields=[self.default_order_field])
+            # using qs.update avoid multi [pre|post]_save signal on obj.save()
+            obj_qs.update(**{self.default_order_field: self.get_max_order(request, obj) + 1})
+            move_qs.update(**move_update)
+            obj_qs.update(**{self.default_order_field: finalorder})
+            for instance in move_qs:
+                post_save.send(self.model, instance=instance, update_fields=[self.default_order_field])
         query_set = self.model.objects.filter(**move_filter).order_by(self.default_order_field).values_list('pk', self.default_order_field)
         return [dict(pk=pk, order=order) for pk, order in query_set]
 

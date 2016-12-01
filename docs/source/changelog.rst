@@ -4,6 +4,10 @@
 Release history
 ===============
 
+0.6.6
+-----
+* Fixed: Drag'n Drop reordering now send [pre|post]_save signals for all updated instances.
+
 0.6.5
 -----
 * Fixed: Reorder management command now accepts args.
