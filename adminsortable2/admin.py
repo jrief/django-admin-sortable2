@@ -247,7 +247,9 @@ class SortableAdminMixin(SortableAdminBase):
         return {}
 
     def get_max_order(self, request, obj=None):
-        max_order = self.model.objects.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
+        max_order = self.model.objects.aggregate(
+            max_order=Max(self.default_order_field)
+        )['max_order'] or 0
         return max_order
 
     def _bulk_move(self, request, queryset, method):
