@@ -313,6 +313,19 @@ class SortableAdminMixin(SortableAdminBase):
         return reverse('admin:' + self._get_update_url_name())
 
 
+class PolymorphicSortableAdminMixin(SortableAdminMixin):
+    """
+    If the admin class is used for a polymorphic model, hence inherits from
+    ``PolymorphicParentModelAdmin`` rather than ``admin.ModelAdmin``, then
+    additionally inherit from ``PolymorphicSortableAdminMixin`` rather than
+    ``SortableAdminMixin``.
+    """
+    def get_max_order(self, request, obj=None):
+        return self.base_model.objects.aggregate(
+            max_order=Max(self.default_order_field)
+        )['max_order'] or 0
+
+
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         self.default_order_directions, self.default_order_field = _get_default_ordering(self.model)

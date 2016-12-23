@@ -4,6 +4,12 @@
 Release history
 ===============
 
+0.6.7
+-----
+* Added class ``PolymorphicSortableAdminMixin`` so that method ``get_max_order`` references
+  the ordering field from the base model.
+
+
 0.6.6
 -----
 * Fixed: Drag'n Drop reordering now send [pre|post]_save signals for all updated instances.
