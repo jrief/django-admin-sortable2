@@ -12,12 +12,14 @@ from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
 from django.core.urlresolvers import reverse
-from django.db import transaction
+from django.db import router, transaction
 from django.db.models import Max, F
 from django.db.models.signals import post_save, pre_save
 from django.forms.models import BaseInlineFormSet
 from django.forms import widgets
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
+from django.http import (
+    HttpResponse, HttpResponseBadRequest,
+    HttpResponseNotAllowed, HttpResponseForbidden)
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
 
@@ -40,8 +42,15 @@ def _get_default_ordering(model):
 
 
 class MovePageActionForm(admin.helpers.ActionForm):
-    step = forms.IntegerField(required=False, initial=1, widget=widgets.NumberInput(attrs={'id': 'changelist-form-step'}), label=False)
-    page = forms.IntegerField(required=False, widget=widgets.NumberInput(attrs={'id': 'changelist-form-page'}), label=False)
+    step = forms.IntegerField(
+        required=False,
+        initial=1,
+        widget=widgets.NumberInput(attrs={'id': 'changelist-form-step'}),
+        label=False)
+    page = forms.IntegerField(
+        required=False,
+        widget=widgets.NumberInput(attrs={'id': 'changelist-form-page'}),
+        label=False)
 
 
 class SortableAdminBase(object):
@@ -230,7 +239,14 @@ class SortableAdminMixin(SortableAdminBase):
             obj_qs = self.model.objects.filter(pk=obj.pk)
             move_qs = self.model.objects.filter(**move_filter).order_by(order_by)
             for instance in move_qs:
-                pre_save.send(self.model, instance=instance, update_fields=[self.default_order_field])
+                pre_save.send(
+                    self.model,
+                    instance=instance,
+                    update_fields=[self.default_order_field],
+                    raw=False,
+                    using=None or router.db_for_write(
+                        self.__class__, instance=self),
+                )
             # using qs.update avoid multi [pre|post]_save signal on obj.save()
             obj_qs.update(**{self.default_order_field: self.get_max_order(request, obj) + 1})
             move_qs.update(**move_update)
