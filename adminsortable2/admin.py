@@ -245,7 +245,8 @@ class SortableAdminMixin(SortableAdminBase):
                     update_fields=[self.default_order_field],
                     raw=False,
                     using=None or router.db_for_write(
-                        self.__class__, instance=self),
+                        self.model,
+                        instance=instance),
                 )
             # using qs.update avoid multi [pre|post]_save signal on obj.save()
             obj_qs.update(**{self.default_order_field: self.get_max_order(request, obj) + 1})
