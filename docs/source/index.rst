@@ -8,7 +8,7 @@ This Django module is as a replacement for `django-admin-sortable`_ using an uni
 It is a generic drag-and-drop ordering module for sorting objects in the list view of the Django
 admin interface. This plugin offers simple mixin classes which enrich the functionality of *any*
 existing class derived from ``admin.ModelAdmin``, ``admin.StackedInline`` or
-``admin.TabluarInline``. It thus makes it very easy to integrate with existing models and their
+``admin.TabularInline``. It thus makes it very easy to integrate with existing models and their
 model admin interfaces.
 
 .. _django-admin-sortable: https://github.com/iambrandontaylor/django-admin-sortable
