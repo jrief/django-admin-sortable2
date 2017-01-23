@@ -4,6 +4,15 @@
 Release history
 ===============
 
+
+0.6.8
+-----
+* Fixes Issue #135: better call of pre_save signal.
+* On ``./manage.py reorder ...``, name the model using ``app_label.model_name`` rather than
+  requiring the fully qualified path.
+* In :class:`adminsortable2.admin.SortableAdminMixin` renamed method ``update`` to ``update_order``,
+  to prevent potential naming conflicts.
+
 0.6.7
 -----
 * Added class ``PolymorphicSortableAdminMixin`` so that method ``get_max_order`` references

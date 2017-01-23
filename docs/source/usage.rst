@@ -168,7 +168,7 @@ the ordering field:
 
 .. code:: python
 
-	shell> ./manage.py reorder my_app.models.MyModel
+	shell> ./manage.py reorder my_app.ModelOne [my_app.ModelTwo ...]
 
 If you prefer to do a one-time database migration, just after having added the ordering field 
 to the model, then create a datamigration. For Django < 1.6, using South:
