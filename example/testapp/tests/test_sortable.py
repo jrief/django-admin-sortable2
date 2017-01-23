@@ -233,4 +233,3 @@ class SortableBookTestCase(TestCase):
         pre_save.disconnect(listener)
         self.assertEqual(len(updated_instances), 5)
         self.assertEqual(updated_instances, [7, 6, 5, 4, 3])
-        
