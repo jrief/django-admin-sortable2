@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.apps import apps
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.module_loading import import_string
 
 
 class Command(BaseCommand):
@@ -13,7 +15,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for modelname in options['models']:
             try:
-                Model = import_string(modelname)
+                app_label, model_name = modelname.rsplit('.', 1)
+                Model = apps.get_model(app_label, model_name)
             except ImportError:
                 raise CommandError('Unable to load model "%s"' % modelname)
             if not hasattr(Model._meta, 'ordering') or len(Model._meta.ordering) == 0:
