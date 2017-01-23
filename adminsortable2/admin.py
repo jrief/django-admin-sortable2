@@ -253,7 +253,14 @@ class SortableAdminMixin(SortableAdminBase):
             move_qs.update(**move_update)
             obj_qs.update(**{self.default_order_field: finalorder})
             for instance in move_qs:
-                post_save.send(self.model, instance=instance, update_fields=[self.default_order_field])
+                post_save.send(
+                    self.model,
+                    instance=instance,
+                    update_fields=[self.default_order_field],
+                    raw=False,
+                    using=router.db_for_write(self.model, instance=instance),
+                    created=False
+                )
         query_set = self.model.objects.filter(**move_filter).order_by(self.default_order_field).values_list('pk', self.default_order_field)
         return [dict(pk=pk, order=order) for pk, order in query_set]
 
