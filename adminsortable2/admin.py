@@ -90,7 +90,9 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_urls(self):
         my_urls = [
-            url(r'^adminsortable2_update/$', self.admin_site.admin_view(self.update), name=self._get_update_url_name()),
+            url(r'^adminsortable2_update/$',
+                self.admin_site.admin_view(self.update_order),
+                name=self._get_update_url_name()),
         ]
         return my_urls + super(SortableAdminMixin, self).get_urls()
 
@@ -158,7 +160,7 @@ class SortableAdminMixin(SortableAdminBase):
         setattr(func, 'admin_order_field', self.default_order_field)
         setattr(self, '_reorder', MethodType(func, self))
 
-    def update(self, request):
+    def update_order(self, request):
         if not request.is_ajax() or request.method != 'POST':
             return HttpResponseBadRequest('Not an XMLHttpRequest')
         if request.method != 'POST':
