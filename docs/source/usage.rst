@@ -35,7 +35,7 @@ in Django is declared through the model's Meta class. An example ``models.py``:
 	    my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
 	
 	    class Meta(object):
-	        ordering = ('my_order',)
+	        ordering = ['my_order']
 
 Here the ordering field is named ``my_order``, but you may choose any other name. There are three
 constraints:
@@ -44,7 +44,8 @@ constraints:
 * ``my_order``'s default value must be 0. The JavaScript which performs the sorting is 1-indexed,
 	so this will not interfere with the order of your items, even if you're already using 0-indexed
 	ordering fields.
-* The ``my_order`` field must be editable, so make sure that you **do not** add ``editable=False`` to it.
+* The ``my_order`` field must be editable, so make sure that you **do not** add ``editable=False``
+	to it.
 
 The field used to store the ordering position may be any kind of numeric model field offered by
 Django. Use one of these models fields:
@@ -90,10 +91,10 @@ mixin class before model.ModelAdmin):
 	from django.contrib import admin
 	from adminsortable2.admin import SortableAdminMixin
 	from models import MyModel
-	
+
+	@admin.register(MyModel)
 	class MyModelAdmin(SortableAdminMixin, admin.ModelAdmin):
 	    pass
-	admin.site.register(MyModel, MyModelAdmin)
 
 That's it! The list view of the model admin interface now adds a column with a sensitive area.
 By clicking on that area, the user can move that row up or down. If he wants to move it to another
@@ -150,10 +151,12 @@ Integrate into a detail view
 	
 	class MySubModelInline(SortableInlineAdminMixin, admin.TabularInline):  # or admin.StackedInline
 	    model = MySubModel
-	
+
+	@admin.register(MyModel)
 	class MyModelAdmin(admin.ModelAdmin):
 	    inlines = (MySubModelInline,)
-	admin.site.register(MyModel, MyModelAdmin)
+
+.. note:: Remember to also set the list ``ordering`` in the ``Meta`` class of ``MySubModel``.
 
 
 Initial data
@@ -171,33 +174,15 @@ the ordering field:
 	shell> ./manage.py reorder my_app.ModelOne [my_app.ModelTwo ...]
 
 If you prefer to do a one-time database migration, just after having added the ordering field 
-to the model, then create a datamigration. For Django < 1.6, using South:
-
-.. code:: python
-
-	shell> ./manage.py datamigration myapp preset_order
-
-this creates an empty migration named something like ``migrations/0123_preset_order.py``. Edit the
-file and change it into a data migration:
-
-.. code:: python
-
-	class Migration(DataMigration):
-	    def forwards(self, orm):
-	        for order, obj in enumerate(orm.MyModel.objects.iterator(), start=1):
-	            obj.my_order = order
-	            obj.save()
-
-And for Django 1.6 and up above:
+to the model, then create a datamigration.
 
 ..code:: python
 
 	shell> ./manage.py makemigrations myapp
 
-this creates **non** empty migration named somethin like ``migrations/0123_auto_20160208_054.py``.
+this creates **non** empty migration named something like ``migrations/0123_auto_20160208_054.py``.
 
-Edit the
-file and change it into a data migration:
+Edit the file and change it into a data migration:
 
 .. code:: python
 
@@ -210,22 +195,14 @@ file and change it into a data migration:
 	        item.save()
 	
 
-#then add to operations list, after migrations.AddField — migrations.RunPython(reorder), and add initial = True, like so:
+then add to operations list, after migrations. Add ``migrations.RunPython(reorder)`` to the list
+of operations:
 
 .. code:: python
 
 	class Migration(migrations.Migration):
-	    initial = True
-	    dependencies = [
-	        ...
-	    ]
 	    operations = [
-	        migrations.AlterModelOptions(
-	            ....
-	        ),
-	        migrations.AddField(
-				...
-	        ),
+	        ....
 	        migrations.RunPython(reorder),
 	    ]
 
@@ -236,7 +213,7 @@ then apply the changes to the database using:
 	shell> ./manage.py migrate myapp
 
 .. note:: If you omit to prepopulate the ordering field with unique values, after adding this field
-          to an existing model, then attempting to reorder field manually will fail.
+		to an existing model, then attempting to reorder field manually will fail.
 
 
 Note on unique indices on the position field
