@@ -5,6 +5,10 @@ Release history
 ===============
 
 
+0.6.9
+-----
+* Fixes Issue #139: better call of post_save signal.
+
 0.6.8
 -----
 * Fixes Issue #135: better call of pre_save signal.
