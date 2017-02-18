@@ -26,8 +26,22 @@ from django.contrib import admin
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
 
-def _get_default_ordering(model):
+def _get_default_ordering(model, model_admin):
     try:
+        # first try with the model admin ordering
+        if model_admin.ordering[0].startswith('-'):
+            default_order_directions = ((1, 0), (0, 1))
+            default_order_field = model_admin.ordering[0].lstrip('-')
+        else:
+            default_order_directions = ((0, 1), (1, 0))
+            default_order_field = model_admin.ordering[0]
+    except (AttributeError, IndexError, TypeError):
+        pass
+    else:
+        return default_order_directions, default_order_field
+
+    try:
+        # then try with the model ordering
         if model._meta.ordering[0].startswith('-'):
             default_order_directions = ((1, 0), (0, 1))
             default_order_field = model._meta.ordering[0].lstrip('-')
@@ -83,7 +97,7 @@ class SortableAdminMixin(SortableAdminBase):
         ]
 
     def __init__(self, model, admin_site):
-        self.default_order_directions, self.default_order_field = _get_default_ordering(model)
+        self.default_order_directions, self.default_order_field = _get_default_ordering(model, self)
         super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(self.exclude, (list, tuple)):
             self.exclude = [self.default_order_field]
@@ -356,7 +370,7 @@ class PolymorphicSortableAdminMixin(SortableAdminMixin):
 
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
-        self.default_order_directions, self.default_order_field = _get_default_ordering(self.model)
+        self.default_order_directions, self.default_order_field = _get_default_ordering(self.model, self)
 
         if self.default_order_field not in self.form.base_fields:
             self.form.base_fields[self.default_order_field] = self.model._meta.get_field(self.default_order_field).formfield()
@@ -393,7 +407,7 @@ class SortableInlineAdminMixin(SortableAdminBase):
 
     def get_fields(self, request, obj=None):
         fields = super(SortableInlineAdminMixin, self).get_fields(request, obj)
-        default_order_directions, default_order_field = _get_default_ordering(self.model)
+        default_order_directions, default_order_field = _get_default_ordering(self.model, self)
 
         if fields[0] == default_order_field:
             """
