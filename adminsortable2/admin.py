@@ -107,6 +107,9 @@ class SortableAdminMixin(SortableAdminBase):
             self.list_display_links = (self.list_display[0],)
         self._add_reorder_method()
         self.list_display = ['_reorder'] + list(self.list_display)
+        # get_queryset method compatibility for Django < 1.6.x
+        if hasattr(self, 'queryset'):
+            self.get_queryset = self.queryset
 
     def _get_update_url_name(self):
         return '%s_%s_sortable_update' % (self.model._meta.app_label, self.model._meta.model_name)
