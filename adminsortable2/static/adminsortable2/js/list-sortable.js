@@ -37,6 +37,10 @@ jQuery(function($) {
 			startindex = dragged_rows.item.index();
 		},
 		stop: function(event, dragged_rows) {
+			$(this).find('thead tr th').each(function(index) {
+				$(dragged_rows.item.context.childNodes[index]).width('auto');
+			});
+			
 			var $result_list = $(this);
 			$result_list.find('tbody tr').each(function(index) {
 				$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
