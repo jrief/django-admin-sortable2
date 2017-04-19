@@ -352,7 +352,8 @@ class SortableAdminMixin(SortableAdminBase):
         """
         Returns a callback URL used for updating items via AJAX drag-n-drop
         """
-        return reverse('admin:' + self._get_update_url_name())
+        return reverse('%s:%s' % (
+            self.admin_site.name, self._get_update_url_name()))
 
 
 class PolymorphicSortableAdminMixin(SortableAdminMixin):
