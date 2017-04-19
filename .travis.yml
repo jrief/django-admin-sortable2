@@ -2,10 +2,14 @@ language: python
 python:
   - 2.7
   - 3.4
+  - 3.5
+  - 3.6
 
 env:
-  - DJANGO="django<1.9"
-  - DJANGO="django==1.9"
+  - DJANGO="django>=1.8,django<1.9"
+  - DJANGO="django>=1.9,django<1.10"
+  - DJANGO="django>=1.10,django<1.11"
+  - DJANGO="django>=1.11,django<1.12"
 
 install:
   - pip install -q $DJANGO
