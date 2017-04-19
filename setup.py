@@ -17,17 +17,23 @@ DESCRIPTION = 'Generic drag-and-drop sorting for the List, the Stacked- and the 
 
 CLASSIFIERS = [
     'Environment :: Web Environment',
-    'Framework :: Django',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Topic :: Software Development :: Libraries :: Python Modules',
-    'Development Status :: 4 - Beta',
-    'Programming Language :: Python :: 2',
+    'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+    'Topic :: Software Development :: Libraries :: Application Frameworks',
+    'Development Status :: 5 - Production/Stable',
     'Programming Language :: Python :: 2.7',
-    'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
+    'Framework :: Django',
+    'Framework :: Django :: 1.8',
+    'Framework :: Django :: 1.9',
+    'Framework :: Django :: 1.10',
+    'Framework :: Django :: 1.11',
 ]
 
 
