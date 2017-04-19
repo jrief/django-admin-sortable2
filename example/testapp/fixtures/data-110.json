@@ -1,0 +1,776 @@
+[
+{
+  "model": "testapp.author",
+  "pk": 1,
+  "fields": {
+    "name": "Douglas Crockford"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 3,
+  "fields": {
+    "name": "Frederick P. Brooks Jr."
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 4,
+  "fields": {
+    "name": "Erich Gamma"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 5,
+  "fields": {
+    "name": "Mike Cohn"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 6,
+  "fields": {
+    "name": "Steve McConnell"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 7,
+  "fields": {
+    "name": "Kent Beck"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 8,
+  "fields": {
+    "name": "Andrew Hunt"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 9,
+  "fields": {
+    "name": "Tom DeMarco"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 10,
+  "fields": {
+    "name": "Kenneth S. Rubin"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 11,
+  "fields": {
+    "name": "Robert K. Wysocki"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 12,
+  "fields": {
+    "name": "Gregory T. Haugan"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 13,
+  "fields": {
+    "name": "Terry Schmidt"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 14,
+  "fields": {
+    "name": "Mark Lutz"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 15,
+  "fields": {
+    "name": "Arun Ravindran"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 16,
+  "fields": {
+    "name": "Jonathan Chaffer"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 17,
+  "fields": {
+    "name": "Bjarne Stroustrup"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 18,
+  "fields": {
+    "name": "Brian W. Kernighan"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 19,
+  "fields": {
+    "name": "Robert C. Martin"
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 1,
+  "fields": {
+    "title": "The Mythical Man-Month",
+    "my_order": 1,
+    "author": 3
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 2,
+  "fields": {
+    "title": "Design Patterns",
+    "my_order": 2,
+    "author": 4
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 3,
+  "fields": {
+    "title": "The Pragmatic Programmer",
+    "my_order": 3,
+    "author": 8
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 4,
+  "fields": {
+    "title": "Code Complete",
+    "my_order": 4,
+    "author": 6
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 5,
+  "fields": {
+    "title": "Test Driven Development",
+    "my_order": 5,
+    "author": 7
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 6,
+  "fields": {
+    "title": "Refactoring",
+    "my_order": 6,
+    "author": 7
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 7,
+  "fields": {
+    "title": "Extreme Programming Explained",
+    "my_order": 7,
+    "author": 7
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 8,
+  "fields": {
+    "title": "Succeeding with Agile",
+    "my_order": 8,
+    "author": 5
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 9,
+  "fields": {
+    "title": "The Deadline",
+    "my_order": 9,
+    "author": 9
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 10,
+  "fields": {
+    "title": "Essential Scrum",
+    "my_order": 10,
+    "author": 10
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 11,
+  "fields": {
+    "title": "Effective Project Management",
+    "my_order": 11,
+    "author": 11
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 12,
+  "fields": {
+    "title": "Effective Work Breakdown Structures",
+    "my_order": 12,
+    "author": 12
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 13,
+  "fields": {
+    "title": "Strategic Project Management Made Simple",
+    "my_order": 13,
+    "author": 13
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 14,
+  "fields": {
+    "title": "Learning Python",
+    "my_order": 14,
+    "author": 14
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 15,
+  "fields": {
+    "title": "Django Design Patterns",
+    "my_order": 15,
+    "author": 15
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 16,
+  "fields": {
+    "title": "Learning jQuery",
+    "my_order": 16,
+    "author": 16
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 17,
+  "fields": {
+    "title": "JavaScript: The Good Parts",
+    "my_order": 17,
+    "author": 1
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 18,
+  "fields": {
+    "title": "The C++ Programming Language",
+    "my_order": 18,
+    "author": 17
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 19,
+  "fields": {
+    "title": "C Programming Language",
+    "my_order": 19,
+    "author": 18
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 20,
+  "fields": {
+    "title": "Clean Code",
+    "my_order": 20,
+    "author": 19
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 21,
+  "fields": {
+    "title": "Peopleware",
+    "my_order": 21,
+    "author": 9
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 22,
+  "fields": {
+    "title": "Slack",
+    "my_order": 22,
+    "author": 9
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 23,
+  "fields": {
+    "title": "Agile Software Development",
+    "my_order": 23,
+    "author": 19
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 24,
+  "fields": {
+    "title": "UML for Java Programmers",
+    "my_order": 24,
+    "author": 19
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 25,
+  "fields": {
+    "title": "Designing Object Oriented C++ Applications",
+    "my_order": 25,
+    "author": 19
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 26,
+  "fields": {
+    "title": "More C++ Gems",
+    "my_order": 26,
+    "author": 19
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 27,
+  "fields": {
+    "title": "Pragmatic Thinking and Learning",
+    "my_order": 27,
+    "author": 8
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 28,
+  "fields": {
+    "title": "Practices of an Agile Developer",
+    "my_order": 28,
+    "author": 8
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 29,
+  "fields": {
+    "title": "Learn to Program with Minecraft Plugins",
+    "my_order": 29,
+    "author": 8
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 1,
+  "fields": {
+    "title": "Good Parts",
+    "book": 17,
+    "my_order": 1
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 2,
+  "fields": {
+    "title": "Grammar",
+    "book": 17,
+    "my_order": 2
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 3,
+  "fields": {
+    "title": "Objects",
+    "book": 17,
+    "my_order": 3
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 4,
+  "fields": {
+    "title": "Functions",
+    "book": 17,
+    "my_order": 4
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 5,
+  "fields": {
+    "title": "Inheritance",
+    "book": 17,
+    "my_order": 5
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 6,
+  "fields": {
+    "title": "Arrays",
+    "book": 17,
+    "my_order": 6
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 7,
+  "fields": {
+    "title": "Regular Expressions",
+    "book": 17,
+    "my_order": 7
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 8,
+  "fields": {
+    "title": "Methods",
+    "book": 17,
+    "my_order": 8
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 9,
+  "fields": {
+    "title": "Style",
+    "book": 17,
+    "my_order": 9
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 10,
+  "fields": {
+    "title": "Beautiful Features",
+    "book": 17,
+    "my_order": 10
+  }
+},
+{
+  "model": "testapp.chapter",
+  "pk": 11,
+  "fields": {
+    "title": "Awful Parts",
+    "book": 17,
+    "my_order": 11
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": 1,
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": 1,
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": 1,
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can add group",
+    "content_type": 2,
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can change group",
+    "content_type": 2,
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": 2,
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can add user",
+    "content_type": 3,
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can change user",
+    "content_type": 3,
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can delete user",
+    "content_type": 3,
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": 4,
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": 4,
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": 4,
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add session",
+    "content_type": 5,
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change session",
+    "content_type": 5,
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": 5,
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": 6,
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": 6,
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": 6,
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can add author",
+    "content_type": 7,
+    "codename": "add_author"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can change author",
+    "content_type": 7,
+    "codename": "change_author"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can delete author",
+    "content_type": 7,
+    "codename": "delete_author"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can add sortable book",
+    "content_type": 8,
+    "codename": "add_sortablebook"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can change sortable book",
+    "content_type": 8,
+    "codename": "change_sortablebook"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can delete sortable book",
+    "content_type": 8,
+    "codename": "delete_sortablebook"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add chapter",
+    "content_type": 9,
+    "codename": "add_chapter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change chapter",
+    "content_type": 9,
+    "codename": "change_chapter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete chapter",
+    "content_type": 9,
+    "codename": "delete_chapter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can add notes",
+    "content_type": 10,
+    "codename": "add_notes"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can change notes",
+    "content_type": 10,
+    "codename": "change_notes"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can delete notes",
+    "content_type": 10,
+    "codename": "delete_notes"
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$24000$kAuwqSqPnNjC$9X70B+B1NdePvUpeqhlGFQR/ok26AFrIBil4OR/aGGs=",
+    "last_login": "2016-11-08T02:51:53.896",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2014-07-18T14:22:20.881",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]

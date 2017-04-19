@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 
-import django
-from django.contrib.auth.models import User
+from django import VERSION as DJANGO_VERSION
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save, pre_save
 from django.test import TestCase
@@ -10,11 +9,12 @@ from django.test.client import Client
 
 from testapp.models import SortableBook
 
-FIXTURES = ['data.json']
-
 
 class SortableBookTestCase(TestCase):
-    fixtures = FIXTURES
+    if DJANGO_VERSION < (1, 10):
+        fixtures = ['data-19.json']
+    else:
+        fixtures = ['data-110.json']
     admin_password = 'secret'
     ajax_update_url = reverse('admin:testapp_sortablebook_sortable_update')
     bulk_update_url = reverse('admin:testapp_sortablebook_changelist')
