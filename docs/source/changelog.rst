@@ -5,8 +5,13 @@ Release history
 ===============
 
 
-0.6.9
------
+0.6.11
+------
+* Fixes Issue #147: Use current admin site name instead of 'admin'.
+* Fixes #122: Columns expand continuously with each sort.
+
+0.6.9 and 0.6.10
+----------------
 * Fixes Issue #139: better call of post_save signal.
 
 0.6.8
