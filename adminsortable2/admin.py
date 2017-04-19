@@ -282,7 +282,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_extra_model_filters(self, request):
         """
-            Returns additional fields to filter sortable objects
+        Returns additional fields to filter sortable objects
         """
         return {}
 
