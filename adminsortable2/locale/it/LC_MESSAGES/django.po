@@ -58,7 +58,7 @@ msgstr "Rimuovi"
 #: templates/adminsortable/tabular-1.6.html:76
 #, python-format
 msgid "Add another %(verbose_name)s"
-msgstr "Aggiungi un altro $(verbose_name)"
+msgstr "Aggiungi un altro %(verbose_name)s"
 
 #: templates/adminsortable/tabular-1.5.html:17
 #: templates/adminsortable/tabular-1.6.html:17
