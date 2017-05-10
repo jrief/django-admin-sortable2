@@ -158,6 +158,8 @@ Integrate into a detail view
 
 .. note:: Remember to also set the list ``ordering`` in the ``Meta`` class of ``MySubModel``.
 
+.. warning:: Tabular inlines with help text expect ``admin/img/icon_unknown.svg`` to be in the staticfiles path. \
+	Prior to Django 1.9, you'll need to manually add this icon or patch the template to remove it.
 
 Initial data
 ============
