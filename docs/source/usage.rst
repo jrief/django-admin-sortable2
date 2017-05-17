@@ -100,6 +100,14 @@ That's it! The list view of the model admin interface now adds a column with a s
 By clicking on that area, the user can move that row up or down. If he wants to move it to another
 page, he can do that as a bulk operation, using the admin actions.
 
+**Note**: If you're modifying the available fields, the ordering field must be included. This applies to stacked or tabular inlines too.
+
+.. code:: python
+
+	class MyModelAdmin(SortableAdminMixin, admin.ModelAdmin):
+	    fields = ('my_order', ...)
+	    pass
+
 
 Overriding change list page
 ...........................
