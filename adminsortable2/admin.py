@@ -153,7 +153,7 @@ class SortableAdminMixin(SortableAdminBase):
     @property
     def media(self):
         m = super(SortableAdminMixin, self).media
-        if self.enable_sorting:
+        if hasattr(self, 'enable_sorting') and self.enable_sorting:
             m = m + widgets.Media(js=('adminsortable2/js/list-sortable.js',))
         return m
 
