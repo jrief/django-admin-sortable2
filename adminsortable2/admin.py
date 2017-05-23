@@ -106,7 +106,9 @@ class SortableAdminMixin(SortableAdminBase):
         if not self.list_display_links:
             self.list_display_links = (self.list_display[0],)
         self._add_reorder_method()
-        self.list_display = ['_reorder'] + list(self.list_display)
+        self.list_display = [e.replace(self.default_order_field, '_reorder') for e in self.list_display]
+        if '_reorder' not in self.list_display:
+            self.list_display = ['_reorder'] + list(self.list_display)
 
     def _get_update_url_name(self):
         return '%s_%s_sortable_update' % (self.model._meta.app_label, self.model._meta.model_name)
