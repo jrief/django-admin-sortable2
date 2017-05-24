@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 import os
 import json
 
+from re import sub
+
 from types import MethodType
 
 from django import forms
@@ -106,7 +108,7 @@ class SortableAdminMixin(SortableAdminBase):
         if not self.list_display_links:
             self.list_display_links = (self.list_display[0],)
         self._add_reorder_method()
-        self.list_display = [e.replace(self.default_order_field, '_reorder') for e in self.list_display]
+        self.list_display = [sub(r'^%s$' % self.default_order_field, '_reorder', e) for e in self.list_display]
         if '_reorder' not in self.list_display:
             self.list_display = ['_reorder'] + list(self.list_display)
 
