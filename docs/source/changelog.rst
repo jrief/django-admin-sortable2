@@ -6,7 +6,7 @@ Release history
 
 0.6.12
 ------
-* Fixes #155: Sortable column not the first field.
+* Fixes #155: Sortable column not the first field by default.
 
 0.6.11
 ------
