@@ -96,9 +96,12 @@ mixin class before model.ModelAdmin):
 	class MyModelAdmin(SortableAdminMixin, admin.ModelAdmin):
 	    pass
 
-That's it! The list view of the model admin interface now adds a column with a sensitive area.
+That's it! The list view of the model admin interface now adds a column with a draggable area.
 By clicking on that area, the user can move that row up or down. If he wants to move it to another
 page, he can do that as a bulk operation, using the admin actions.
+
+By default the draggable area is positioned on the first column. If it shall be placed somewhere else,
+add the ordering field name explicitly to the attribute ``list_display``.
 
 
 Overriding change list page
