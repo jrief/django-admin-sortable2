@@ -4,10 +4,13 @@
 Release history
 ===============
 
+0.6.12
+------
+* Fixes #155: Sortable column not the first field.
 
 0.6.11
 ------
-* Fixes Issue #147: Use current admin site name instead of 'admin'.
+* Fixes #147: Use current admin site name instead of 'admin'.
 * Fixes #122: Columns expand continuously with each sort.
 
 0.6.9 and 0.6.10
