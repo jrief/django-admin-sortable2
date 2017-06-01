@@ -14,20 +14,6 @@ Existing models can inherit from ``models.Model`` or any other class derived the
 base class is required.
 
 
-News in Version 0.6.4
----------------------
-
-* Drop support for Django-1.7 and lower.
-* Feature request #107: Overidable SortableAdminMixin.get_max_order(request, obj)
-# Fixed #100: actions = none breaks functionality
-* Fixed #98: js error in admin
-* Fixed #55: TabularInline template THEAD colspan=2 broken
-* Fixed #82: SortableInlineAdminMixin screws up TabularInline colums
-* Fixed #104: Key 'order' not found
-
-Many thanks to @rubengrill for fixing them!
-
-
 Project's home
 --------------
 https://github.com/jrief/django-admin-sortable2.
@@ -56,6 +42,6 @@ restrictions.
 License
 -------
 
-Copyright &copy; 2016 Jacob Rief.
+Copyright &copy; 2017 Jacob Rief.
 
 MIT licensed.
