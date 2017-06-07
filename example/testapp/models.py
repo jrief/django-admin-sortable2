@@ -13,6 +13,9 @@ class Author(models.Model):
     def __unicode__(self):
         return self.name
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 class SortableBook(models.Model):
     title = models.CharField('Title', null=True, blank=True, max_length=255)

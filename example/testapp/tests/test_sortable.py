@@ -131,9 +131,9 @@ class SortableBookTestCase(TestCase):
         self.assertEqual(SortableBook.objects.get(pk=19).my_order, 19)
         post_data = {'action': ['move_to_back_page'], 'step': 1, '_selected_action': [17, 18, 19]}
         self.client.post(self.bulk_update_url + '?p=1', post_data)
-        self.assertEqual(SortableBook.objects.get(pk=17).my_order, 1)
-        self.assertEqual(SortableBook.objects.get(pk=18).my_order, 2)
-        self.assertEqual(SortableBook.objects.get(pk=19).my_order, 3)
+        self.assertEqual(SortableBook.objects.get(pk=17).my_order, 19)
+        self.assertEqual(SortableBook.objects.get(pk=18).my_order, 1)
+        self.assertEqual(SortableBook.objects.get(pk=19).my_order, 2)
 
     def test_bulkMoveForwardFromLastPage(self):
         self.assertEqual(SortableBook.objects.get(pk=19).my_order, 19)
