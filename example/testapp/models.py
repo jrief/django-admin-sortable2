@@ -20,7 +20,7 @@ class SortableBook(models.Model):
     author = models.ForeignKey(Author, null=True)
 
     class Meta(object):
-        ordering = ['my_order']
+        ordering = ['author', 'my_order']
 
     def __unicode__(self):
         return self.title
