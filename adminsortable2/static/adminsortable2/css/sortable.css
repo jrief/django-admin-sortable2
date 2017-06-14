@@ -28,6 +28,10 @@ div.inline-group table.ui-sortable tr.form-row td.is_hidden {
 	display: none;
 }
 /* styles for stacked inlines */
+div.inline-group.ui-sortable div.inline-related.has_original h3 {
+	background-image: url(../icons/drag.png);
+	background-repeat: repeat;
+}
 div.inline-group.ui-sortable div.inline-related.has_original h3:hover {
 	cursor: pointer;
 }
