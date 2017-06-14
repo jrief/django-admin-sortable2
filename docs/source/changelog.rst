@@ -4,6 +4,10 @@
 Release history
 ===============
 
+0.6.13
+------
+* Fixes #159: Make stacked inline's header more clear that it is sortable.
+
 0.6.12
 ------
 * Fixes #155: Sortable column not the first field by default.
