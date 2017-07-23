@@ -45,7 +45,7 @@ jQuery(function($) {
 			$result_list.find('tbody tr').each(function(index) {
 				$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
 			});
-			endindex = dragged_rows.item.index()
+			endindex = dragged_rows.item.index();
 
 			if (startindex == endindex) return;
 			else if (endindex == 0) {
@@ -69,7 +69,7 @@ jQuery(function($) {
 				},
 				success: function(moved_items) {
 					$.each(moved_items, function(index, item) {
-						$result_list.find('tbody tr input.action-select[value=' + item.pk + ']').parents('tr').each(function() {
+						$result_list.find('tbody tr .js-reorder-' + item.pk).parents('tr').each(function() {
 							$(this).find('div.drag').attr('order', item.order);
 						});
 					});
