@@ -171,7 +171,7 @@ class SortableAdminMixin(SortableAdminBase):
         def func(this, item):
             html = ''
             if this.enable_sorting:
-                html = '<div class="drag" order="{0}">&nbsp;</div>'.format(getattr(item, this.default_order_field))
+                html = '<div class="drag js-reorder-{1}" order="{0}">&nbsp;</div>'.format(getattr(item, this.default_order_field), item.pk)
             return html
 
         setattr(func, 'allow_tags', True)
