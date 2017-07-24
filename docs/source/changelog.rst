@@ -4,6 +4,11 @@
 Release history
 ===============
 
+0.6.14
+------
+* Fixes #162: In model admin, setting ``actions`` to ``None`` or ``[]`` breaks the
+  sortable functionality.
+
 0.6.13
 ------
 * Fixes #159: Make stacked inline's header more clear that it is sortable.
