@@ -414,7 +414,10 @@ class SortableInlineAdminMixin(SortableAdminBase):
         fields = super(SortableInlineAdminMixin, self).get_fields(request, obj)
         default_order_directions, default_order_field = _get_default_ordering(self.model, self)
 
-        if fields[0] == default_order_field:
+        if not (default_order_field in fields):
+            # If the order field is not in the field list, add it
+            fields.append(default_order_field)
+        elif fields[0] == default_order_field:
             """
             Remove the order field and add it again immediately to ensure it is not on first position.
             This ensures that django's template for tabular inline renders the first column with colspan="2":
