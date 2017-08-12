@@ -4,6 +4,11 @@
 Release history
 ===============
 
+0.6.15
+------
+* Fixes #164: TypeError when ``display_list`` in admin contains a callable.
+# Fixes #160: Updated ordering values not getting saved in Tabluar/StackedInlineAdmin.
+
 0.6.14
 ------
 * Fixes #162: In model admin, setting ``actions`` to ``None`` or ``[]`` breaks the
