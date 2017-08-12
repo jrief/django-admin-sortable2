@@ -108,7 +108,8 @@ class SortableAdminMixin(SortableAdminBase):
         if not self.list_display_links:
             self.list_display_links = (self.list_display[0],)
         self._add_reorder_method()
-        self.list_display = [sub(r'^%s$' % self.default_order_field, '_reorder', e) for e in self.list_display]
+        self.list_display = [sub(r'^{}$'.format(self.default_order_field), '_reorder', e) if isinstance(e, str) else e
+                             for e in self.list_display]
         if '_reorder' not in self.list_display:
             self.list_display = ['_reorder'] + list(self.list_display)
 
