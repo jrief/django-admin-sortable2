@@ -4,6 +4,10 @@
 Release history
 ===============
 
+0.6.16
+------
+* Fixes #137: Allow standard collapsible tabular inline.
+
 0.6.15
 ------
 * Fixes #164: TypeError when ``display_list`` in admin contains a callable.
