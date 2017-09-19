@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import router, transaction
 from django.db.models import Max, F
 from django.db.models.signals import post_save, pre_save
@@ -24,6 +24,7 @@ from django.http import (
     HttpResponseNotAllowed, HttpResponseForbidden)
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
+from django.utils.html import format_html
 
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
@@ -173,7 +174,7 @@ class SortableAdminMixin(SortableAdminBase):
             html = ''
             if this.enable_sorting:
                 html = '<div class="drag js-reorder-{1}" order="{0}">&nbsp;</div>'.format(getattr(item, this.default_order_field), item.pk)
-            return html
+            return format_html(html)
 
         setattr(func, 'allow_tags', True)
         # if the field used for ordering has a verbose name use it, otherwise default to "Sort"
