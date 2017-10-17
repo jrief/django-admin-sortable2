@@ -16,8 +16,13 @@ jQuery(function($) {
 	};
 	var ordering = getQueryParams()['o'];
 
-	if (window.admin_sortable2 === undefined)
-		return;  // global variables not initialized by change_list.html
+	try {
+		var config = JSON.parse($("#admin_sortable2_config").text());
+	}
+	catch (parse_error) {
+		return;  // configuration not initialized by change_list.html
+	}
+
 	if (ordering === undefined) {
 		ordering = '1';
 	}
@@ -59,7 +64,7 @@ jQuery(function($) {
 			startorder = $(dragged_rows.item.context).find('div.drag').attr('order');
 
 			$.ajax({
-				url: window.admin_sortable2.update_url,
+				url: config.update_url,
 				type: 'POST',
 				data: {
 					o: ordering,
@@ -87,17 +92,22 @@ jQuery(function($) {
 jQuery(function($) {
 	var $step_field = $('#changelist-form-step');
 	var $page_field = $('#changelist-form-page');
-	if (window.admin_sortable2 === undefined)
-		return;  // global variables not initialized by change_list.html
 
-	if (window.admin_sortable2.current_page === window.admin_sortable2.total_pages) {
-		$page_field.attr('max', window.admin_sortable2.total_pages - 1);
-		$page_field.val(window.admin_sortable2.current_page - 1);
-	} else {
-		$page_field.attr('max', window.admin_sortable2.total_pages);
-		$page_field.val(window.admin_sortable2.current_page + 1)
+	try {
+		var config = JSON.parse($("#admin_sortable2_config").text());
 	}
-	if (window.admin_sortable2.current_page === 1) {
+	catch (parse_error) {
+		return;  // configuration not initialized by change_list.html
+	}
+
+	if (config.current_page === config.total_pages) {
+		$page_field.attr('max', config.total_pages - 1);
+		$page_field.val(config.current_page - 1);
+	} else {
+		$page_field.attr('max', config.total_pages);
+		$page_field.val(config.current_page + 1)
+	}
+	if (config.current_page === 1) {
 		$page_field.attr('min', 2);
 	} else {
 		$page_field.attr('min', 1);
@@ -108,9 +118,9 @@ jQuery(function($) {
 	function display_fields() {
 		if (['move_to_back_page', 'move_to_forward_page'].indexOf($(this).val()) != -1) {
 			if ($(this).val() === 'move_to_forward_page') {
-				$step_field.attr('max', window.admin_sortable2.total_pages - window.admin_sortable2.current_page);
+				$step_field.attr('max', config.total_pages - config.current_page);
 			} else {
-				$step_field.attr('max', window.admin_sortable2.current_page - 1);
+				$step_field.attr('max', config.current_page - 1);
 			}
 			$step_field.show();
 		} else {

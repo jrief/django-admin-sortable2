@@ -437,7 +437,11 @@ class SortableInlineAdminMixin(SortableAdminBase):
 
     @property
     def media(self):
-        return super(SortableInlineAdminMixin, self).media + widgets.Media(js=('adminsortable2/js/inline-sortable.js',))
+        shared = super(SortableInlineAdminMixin, self).media + widgets.Media(js=('adminsortable2/js/inline-sortable.js',))
+        if isinstance(self, admin.StackedInline):
+            return shared + widgets.Media(js=('adminsortable2/js/inline-stacked.js',))
+        if isinstance(self, admin.TabularInline):
+            return shared + widgets.Media(js=('adminsortable2/js/inline-tabular.js',))
 
     @property
     def template(self):
