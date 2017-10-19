@@ -4,6 +4,10 @@
 Release history
 ===============
 
+0.6.17
+------
+* Fixes #171: Adhere to Content Security Policy best practices by removing inline scripts.
+
 0.6.16
 ------
 * Fixes #137: Allow standard collapsible tabular inline.
