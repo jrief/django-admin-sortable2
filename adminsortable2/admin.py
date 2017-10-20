@@ -366,7 +366,7 @@ class PolymorphicSortableAdminMixin(SortableAdminMixin):
 
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
-        _, self.default_order_field = _get_default_ordering(self.model, self)
+        self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
 
         if self.default_order_field not in self.form.base_fields:
             self.form.base_fields[self.default_order_field] = self.model._meta.get_field(self.default_order_field).formfield()

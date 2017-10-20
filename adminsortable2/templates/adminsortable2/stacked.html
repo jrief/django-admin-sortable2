@@ -26,4 +26,4 @@
   "addText": "{% filter escapejs %}{% blocktrans with verbose_name=inline_admin_formset.opts.verbose_name|capfirst %}Add another {{ verbose_name }}{% endblocktrans %}{% endfilter %}"
 }
 </script>
-<div class="default_order_field" default_order_field="{{ inline_admin_formset.formset.default_order_field }}"></div>
+<div class="default_order_field" default_order_field="{{ inline_admin_formset.formset.default_order_field }}" default_order_direction="{{ inline_admin_formset.formset.default_order_direction }}"></div>
