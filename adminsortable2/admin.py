@@ -13,7 +13,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse
 from django.db import router, transaction
 from django.db.models import Max, F
 from django.db.models.signals import post_save, pre_save
