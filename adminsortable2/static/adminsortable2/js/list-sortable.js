@@ -24,7 +24,7 @@ jQuery(function($) {
 	}
 
 	if (ordering === undefined) {
-		ordering = '1';
+		ordering = config.default_order_direction;
 	}
 
 	$('#result_list').sortable({

@@ -31,30 +31,20 @@ __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 def _get_default_ordering(model, model_admin):
     try:
         # first try with the model admin ordering
-        if model_admin.ordering[0].startswith('-'):
-            default_order_directions = ((1, 0), (0, 1))
-            default_order_field = model_admin.ordering[0].lstrip('-')
-        else:
-            default_order_directions = ((0, 1), (1, 0))
-            default_order_field = model_admin.ordering[0]
+        none, prefix, field_name = model_admin.ordering[0].rpartition('-')
     except (AttributeError, IndexError, TypeError):
         pass
     else:
-        return default_order_directions, default_order_field
+        return '{}1'.format(prefix), field_name
 
     try:
         # then try with the model ordering
-        if model._meta.ordering[0].startswith('-'):
-            default_order_directions = ((1, 0), (0, 1))
-            default_order_field = model._meta.ordering[0].lstrip('-')
-        else:
-            default_order_directions = ((0, 1), (1, 0))
-            default_order_field = model._meta.ordering[0]
+        none, prefix, field_name = model._meta.ordering[0].rpartition('-')
     except (AttributeError, IndexError):
         msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class"
         raise ImproperlyConfigured(msg.format(model.__module__, model.__name__))
 
-    return default_order_directions, default_order_field
+    return '{}1'.format(prefix), field_name
 
 
 class MovePageActionForm(admin.helpers.ActionForm):
@@ -99,7 +89,7 @@ class SortableAdminMixin(SortableAdminBase):
         ]
 
     def __init__(self, model, admin_site):
-        self.default_order_directions, self.default_order_field = _get_default_ordering(model, self)
+        self.default_order_direction, self.default_order_field = _get_default_ordering(model, self)
         super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(self.exclude, (list, tuple)):
             self.exclude = [self.default_order_field]
@@ -230,9 +220,9 @@ class SortableAdminMixin(SortableAdminBase):
 
     def _move_item(self, request, startorder, endorder):
         if self._get_order_direction(request) != '-1':
-            order_up, order_down = self.default_order_directions[0]
+            order_up, order_down = 0, 1
         else:
-            order_up, order_down = self.default_order_directions[1]
+            order_up, order_down = 1, 0
         if startorder < endorder - order_up:
             finalorder = endorder - order_up
             move_filter = {
@@ -351,6 +341,7 @@ class SortableAdminMixin(SortableAdminBase):
             extra_context = {}
 
         extra_context['sortable_update_url'] = self.get_update_url(request)
+        extra_context['default_order_direction'] = self.default_order_direction
         return super(SortableAdminMixin, self).changelist_view(request, extra_context)
 
     def get_update_url(self, request):
@@ -375,7 +366,7 @@ class PolymorphicSortableAdminMixin(SortableAdminMixin):
 
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
-        self.default_order_directions, self.default_order_field = _get_default_ordering(self.model, self)
+        self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
 
         if self.default_order_field not in self.form.base_fields:
             self.form.base_fields[self.default_order_field] = self.model._meta.get_field(self.default_order_field).formfield()
@@ -412,7 +403,7 @@ class SortableInlineAdminMixin(SortableAdminBase):
 
     def get_fields(self, request, obj=None):
         fields = super(SortableInlineAdminMixin, self).get_fields(request, obj)
-        default_order_directions, default_order_field = _get_default_ordering(self.model, self)
+        _, default_order_field = _get_default_ordering(self.model, self)
 
         if not (default_order_field in fields):
             # If the order field is not in the field list, add it

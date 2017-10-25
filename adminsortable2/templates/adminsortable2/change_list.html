@@ -4,6 +4,7 @@
 	{{ block.super }}
 	<script type="application/json" id="admin_sortable2_config">
 		{
+			"default_order_direction": "{{ default_order_direction }}",
 			"update_url": "{{ sortable_update_url }}",
 			"current_page": {{ cl.page_num | add:'1' }},
 			"total_pages": {{ cl.paginator.num_pages }}
