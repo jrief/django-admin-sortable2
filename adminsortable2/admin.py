@@ -246,7 +246,13 @@ class SortableAdminMixin(SortableAdminBase):
             filters = {self.default_order_field: startorder}
             filters.update(extra_model_filters)
             move_filter.update(extra_model_filters)
-            obj = self.model.objects.get(**filters)
+            try:
+                obj = self.model.objects.get(**filters)
+            except self.model.MultipleObjectsReturned as exc:
+                msg = "Detected non-unique values in field '{}' used for sorting this model. Consider to run \\n"\
+                      "    python manage.py reorder {}\\n"\
+                      "to adjust this inconsistency."
+                raise self.model.MultipleObjectsReturned(msg.format(self.default_order_field, self.model._meta.label))
             obj_qs = self.model.objects.filter(pk=obj.pk)
             move_qs = self.model.objects.filter(**move_filter).order_by(order_by)
             for instance in move_qs:
