@@ -29,3 +29,9 @@ class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
 @admin.register(models.Author)
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ('name',)
+
+
+@admin.register(models.Notes)
+class NoteAdmin(SortableAdminMixin, admin.ModelAdmin):
+    list_display = ('note',)
+    ordering = ('note',)
