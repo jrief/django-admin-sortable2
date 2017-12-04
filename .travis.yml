@@ -10,6 +10,8 @@ env:
   - DJANGO="django<1.10"
   - DJANGO="django<1.11"
   - DJANGO="django<2.0"
+  - DJANGO="django<2.1"
+  - DJANGO='https://github.com/django/django/archive/master.tar.gz'
 
 install:
   - pip install -q $DJANGO
@@ -17,3 +19,14 @@ install:
 
 script:
   - cd example/ && ./manage.py test testapp --settings=testapp.settings
+
+matrix:
+  exclude:
+    - python: 2.7
+      env: DJANGO='https://github.com/django/django/archive/master.tar.gz'
+    - python: 2.7
+      env: DJANGO="django<2.1"
+    - python: 3.4
+      env: DJANGO='https://github.com/django/django/archive/master.tar.gz'
+  allow_failures:
+     - env: DJANGO='https://github.com/django/django/archive/master.tar.gz'

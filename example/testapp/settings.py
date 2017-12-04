@@ -72,11 +72,13 @@ INSTALLED_APPS = (
     'testapp',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
+
+MIDDLEWARE_CLASSES = MIDDLEWARE
 
 # Explicitely set the test runner to the new 1.7 version, to silence obnoxious
 # 1_6.W001 check

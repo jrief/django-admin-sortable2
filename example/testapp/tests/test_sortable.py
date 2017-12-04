@@ -2,7 +2,10 @@
 import json
 
 from django import VERSION as DJANGO_VERSION
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save, pre_save
 from django.test import TestCase
 from django.test.client import Client
