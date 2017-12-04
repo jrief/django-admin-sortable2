@@ -7,6 +7,7 @@ Release history
 0.6.17
 ------
 * Fixes #171: Adhere to Content Security Policy best practices by removing inline scripts.
+* Adopted to Django-2.0 keeping downwards compatibility until Django-1.9.
 
 0.6.16
 ------
