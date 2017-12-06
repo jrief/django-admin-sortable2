@@ -64,7 +64,7 @@ Indices and tables
 
 License
 =======
-Copyright © 2014 Jacob Rief.
+Copyright © 2017 Jacob Rief.
 Licensed under the MIT license.
 
 Some Related projects

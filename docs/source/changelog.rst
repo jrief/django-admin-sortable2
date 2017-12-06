@@ -4,6 +4,11 @@
 Release history
 ===============
 
+0.6.18
+------
+* Fixes meth:`adminsortable2.admin.SortableInlineAdminMixin.get_fields`: Always return
+  a list instead of sometimes a tuple.
+
 0.6.17
 ------
 * Fixes #171: Adhere to Content Security Policy best practices by removing inline scripts.
