@@ -413,6 +413,7 @@ class SortableInlineAdminMixin(SortableAdminBase):
     def get_fields(self, request, obj=None):
         fields = super(SortableInlineAdminMixin, self).get_fields(request, obj)
         _, default_order_field = _get_default_ordering(self.model, self)
+        fields = list(fields)
 
         if not (default_order_field in fields):
             # If the order field is not in the field list, add it
@@ -430,7 +431,6 @@ class SortableInlineAdminMixin(SortableAdminBase):
 
             See https://github.com/jrief/django-admin-sortable2/issues/82
             """
-            fields = list(fields)
             fields.append(fields.pop(0))
 
         return fields
