@@ -8,6 +8,7 @@ from types import MethodType
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
@@ -165,7 +166,7 @@ class SortableAdminMixin(SortableAdminBase):
             html = ''
             if this.enable_sorting:
                 html = '<div class="drag js-reorder-{1}" order="{0}">&nbsp;</div>'.format(getattr(item, this.default_order_field), item.pk)
-            return html
+            return mark_safe(html)
 
         setattr(func, 'allow_tags', True)
         # if the field used for ordering has a verbose name use it, otherwise default to "Sort"
