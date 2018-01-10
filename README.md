@@ -40,6 +40,6 @@ restrictions.
 
 ## License
 
-Copyright &copy; 2017 Jacob Rief.
+Copyright &copy; 2018 Jacob Rief and contributors.
 
 MIT licensed.

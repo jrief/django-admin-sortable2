@@ -4,6 +4,10 @@
 Release history
 ===============
 
+0.6.19
+------
+* Fix #183: Use ``mark_safe`` for reorder ``div``.
+
 0.6.18
 ------
 * Fixes meth:`adminsortable2.admin.SortableInlineAdminMixin.get_fields`: Always return
