@@ -1,10 +1,10 @@
 "use strict";
 
-// make list view sortable
-jQuery(function($) {
+django.jQuery(function ($) {
+	// make list view sortable
 	var startindex, startorder, endindex, endorder;
 	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
-	var getQueryParams = function() {
+	var getQueryParams = function () {
 		var vars = [], hash, i;
 		var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
 		for (i = 0; i < hashes.length; i++) {
@@ -35,19 +35,19 @@ jQuery(function($) {
 		cursor: 'ns-resize',
 		containment: $('#result_list tbody'),
 		tolerance: 'pointer',
-		start: function(event, dragged_rows) {
-			$(this).find('thead tr th').each(function(index) {
+		start: function (event, dragged_rows) {
+			$(this).find('thead tr th').each(function (index) {
 				$(dragged_rows.item.context.childNodes[index]).width($(this).width() - 10);
 			});
 			startindex = dragged_rows.item.index();
 		},
-		stop: function(event, dragged_rows) {
-			$(this).find('thead tr th').each(function(index) {
+		stop: function (event, dragged_rows) {
+			$(this).find('thead tr th').each(function (index) {
 				$(dragged_rows.item.context.childNodes[index]).width('auto');
 			});
-			
+
 			var $result_list = $(this);
-			$result_list.find('tbody tr').each(function(index) {
+			$result_list.find('tbody tr').each(function (index) {
 				$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
 			});
 			endindex = dragged_rows.item.index();
@@ -72,24 +72,24 @@ jQuery(function($) {
 					endorder: endorder,
 					csrfmiddlewaretoken: csrfvalue
 				},
-				success: function(moved_items) {
-					$.each(moved_items, function(index, item) {
-						$result_list.find('tbody tr .js-reorder-' + item.pk).parents('tr').each(function() {
+				success: function (moved_items) {
+					$.each(moved_items, function (index, item) {
+						$result_list.find('tbody tr .js-reorder-' + item.pk).parents('tr').each(function () {
 							$(this).find('div.drag').attr('order', item.order);
 						});
 					});
 				},
-				error: function(response) {
+				error: function (response) {
 					console.error('The server responded: ' + response.responseText);
 				}
 			});
 		}
 	});
 	$('#result_list, tbody, tr, td, th').disableSelection();
-});
+})(django.jQuery)
 
 // Show and hide the step input field
-jQuery(function($) {
+django.jQuery(function ($) {
 	var $step_field = $('#changelist-form-step');
 	var $page_field = $('#changelist-form-page');
 
@@ -139,4 +139,4 @@ jQuery(function($) {
 	}
 	var $form = $('#changelist-form') || $grp_form;
 	$form.find('select[name="action"]').change(display_fields);
-});
+})(django.jQuery);
