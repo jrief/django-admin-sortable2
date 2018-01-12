@@ -1,0 +1,6 @@
+[run]
+branch = True
+source =
+    adminsortable2
+[report]
+precision = 2
