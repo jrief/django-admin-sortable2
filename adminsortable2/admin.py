@@ -101,10 +101,28 @@ class SortableAdminMixin(SortableAdminBase):
             self.list_display_links = (self.list_display[0],)
         self._add_reorder_method()
         self.list_display = list(self.list_display)
+
+        # Insert the magic field into the same position as the first occurrence
+        # of the default_order_field, or, if not present, at the start
         try:
             self.list_display.insert(self.list_display.index(self.default_order_field), '_reorder')
         except ValueError:
             self.list_display.insert(0, '_reorder')
+
+        # Remove *all* occurrences of the field from `list_display`
+        if self.list_display and self.default_order_field in self.list_display:
+            self.list_display = [f for f in self.list_display if f != self.default_order_field]
+
+        # Remove *all* occurrences of the field from `list_display_links`
+        if self.list_display_links and self.default_order_field in self.list_display_links:
+            self.list_display_links = [f for f in self.list_display_links if f != self.default_order_field]
+
+        # Remove *all* occurrences of the field from `ordering`
+        if self.ordering and self.default_order_field in self.ordering:
+            self.ordering = [f for f in self.ordering if f != self.default_order_field]
+        rev_field = '-' + self.default_order_field
+        if self.ordering and rev_field in self.ordering:
+            self.ordering = [f for f in self.ordering if f != rev_field]
 
     def _get_update_url_name(self):
         return '%s_%s_sortable_update' % (self.model._meta.app_label, self.model._meta.model_name)

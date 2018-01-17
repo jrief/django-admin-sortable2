@@ -6,11 +6,17 @@ try:
     from django.urls import reverse
 except ImportError:  # Django<2.0
     from django.core.urlresolvers import reverse
+from django.contrib.admin import AdminSite
+from django.contrib.admin.options import ModelAdmin
+from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save, pre_save
 from django.test import TestCase
-from django.test.client import Client
+from django.test.client import Client, RequestFactory
 
+from testapp.admin import SortableBookAdmin
 from testapp.models import SortableBook
+
+User = get_user_model()
 
 
 class SortableBookTestCase(TestCase):
@@ -26,6 +32,8 @@ class SortableBookTestCase(TestCase):
 
     def setUp(self):
         self.loginAdminUser()
+        self.site = AdminSite()
+        self.factory = RequestFactory()
 
     def loginAdminUser(self):
         logged_in = self.client.login(username='admin', password=self.admin_password)
@@ -51,6 +59,56 @@ class SortableBookTestCase(TestCase):
             self.assertEqual(len(out_data), startorder - endorder + order_up)
         else:
             self.assertEqual(len(out_data), 0)
+
+    def test_default_order_position(self):
+        """
+        Ensure that when the field `my_order` is not specified at all,
+        the field `_reorder` appears at the beginning of `get_list_display()`.
+        """
+        request = self.factory.get(self.bulk_update_url)
+        old_list = SortableBookAdmin.list_display
+
+        # Ensure that `list_display` does not contain `my_order`
+        SortableBookAdmin.list_display = (
+            fld for fld in old_list if fld != 'my_order')
+        model_admin = SortableBookAdmin(SortableBook, self.site)
+        self.assertEqual(
+            model_admin.get_list_display(request).index('_reorder'), 0,
+            'The order field is not in the correct position.')
+        SortableBookAdmin.list_display = old_list
+
+    def test_custom_order_position(self):
+        """
+        Ensure that if `list_display` has the field `my_order` in a non-zero
+        position that the field is replaced by '_reorder' in the same location.
+        """
+        request = self.factory.get(self.bulk_update_url)
+        # old_list = list(SortableBookAdmin.list_display)
+        old_list = ['my_order', 'author', 'title']
+        new_list = old_list[:]
+
+        # Ensure that `list_display` contains `my_order` in non-zero position.
+        try:
+            assert old_list.index('my_order') > 0
+        except AssertionError:
+            # `list_display` contains `my_order` at the start.
+            new_list.insert(len(new_list), new_list.pop(0))
+            SortableBookAdmin.list_display = new_list
+        except ValueError:
+            # `list_display` doesn't contain `my_order` at all.
+            new_list.append('my_order')
+            SortableBookAdmin.list_display = new_list
+        my_order_position = new_list.index('my_order')
+
+        # Ensure that `get_list_display()` no longer contains `my_order`, but
+        # has `_reorder` in the position that used to contain `my_order`.
+        model_admin = SortableBookAdmin(SortableBook, self.site)
+        final_list = model_admin.get_list_display(request)
+        self.assertFalse('my_order' in final_list,
+                         'Field `my_order` is still in `get_list_display()`')
+        self.assertEqual(final_list.index('_reorder'), my_order_position,
+                         'The order field is not in the correct position')
+        SortableBookAdmin.list_display = old_list
 
     def test_moveUp(self):
         self.assertEqual(SortableBook.objects.get(pk=7).my_order, 7)
