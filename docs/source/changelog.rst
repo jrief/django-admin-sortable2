@@ -17,6 +17,7 @@ Release history
 ------
 * Fixes #171: Adhere to Content Security Policy best practices by removing inline scripts.
 * Adopted to Django-2.0 keeping downwards compatibility until Django-1.9.
+* Better explanation what to do in case of sorting inconsistency.
 
 0.6.16
 ------
