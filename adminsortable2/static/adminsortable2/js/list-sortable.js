@@ -1,6 +1,6 @@
 "use strict";
 
-django.jQuery(function ($) {
+django.jQuery(function($) {
 	// make list view sortable
 	var startindex, startorder, endindex, endorder;
 	var csrfvalue = $('form').find('input[name="csrfmiddlewaretoken"]').val();
@@ -86,10 +86,10 @@ django.jQuery(function ($) {
 		}
 	});
 	$('#result_list, tbody, tr, td, th').disableSelection();
-})(django.jQuery)
+});
 
 // Show and hide the step input field
-django.jQuery(function ($) {
+django.jQuery(function($) {
 	var $step_field = $('#changelist-form-step');
 	var $page_field = $('#changelist-form-page');
 
@@ -139,4 +139,4 @@ django.jQuery(function ($) {
 	}
 	var $form = $('#changelist-form') || $grp_form;
 	$form.find('select[name="action"]').change(display_fields);
-})(django.jQuery);
+});

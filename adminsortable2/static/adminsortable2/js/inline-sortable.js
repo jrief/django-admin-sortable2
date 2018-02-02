@@ -1,5 +1,5 @@
 // make tabular- and stacked inlines sortable
-django.jQuery(function ($) {
+django.jQuery(function($) {
 	$('div.inline-group.sortable').each(function () {
 		var $order_div = $(this).nextUntil('div.default_order_field').next()
 		var default_order_field = $order_div.attr('default_order_field');
@@ -50,5 +50,4 @@ django.jQuery(function ($) {
 			}
 		});
 	});
-})(django.jQuery)
-
+});

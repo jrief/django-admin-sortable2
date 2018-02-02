@@ -1,4 +1,4 @@
-django.jQuery(function ($) {
+django.jQuery(function($) {
 	$("script.inline-tabular-config").each(function (i, config_element) {
 		try {
 			var config = JSON.parse(config_element.textContent);
@@ -8,4 +8,4 @@ django.jQuery(function ($) {
 			console.error("Configuration for a django-adminsortable2 inline-tabular form is invalid.");
 		}
 	});
-})(django.jQuery);
+});
