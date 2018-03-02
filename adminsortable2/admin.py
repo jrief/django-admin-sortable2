@@ -71,7 +71,7 @@ class SortableAdminMixin(SortableAdminBase):
     action_form = MovePageActionForm
 
     @property
-    def change_list_template(self):
+    def sortable_change_list_template(self):
         opts = self.model._meta
         app_label = opts.app_label
         return [
@@ -86,6 +86,13 @@ class SortableAdminMixin(SortableAdminBase):
         self.enable_sorting = False
         self.order_by = None
         self._add_reorder_method()
+
+        # Store original change_list_template to allow usage with other mixins
+        if self.change_list_template:
+            self.original_change_list_template = self.change_list_template
+        else:
+            self.original_change_list_template = "admin/change_list.html"
+        self.change_list_template = [str(s) for s in self.sortable_change_list_template]
 
     def get_list_display(self, request):
         list_display = list(super().get_list_display(request))
@@ -383,6 +390,7 @@ class SortableAdminMixin(SortableAdminBase):
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         extra_context['sortable_update_url'] = self.get_update_url(request)
+        extra_context['original_change_list_template'] = self.original_change_list_template
         return super().changelist_view(request, extra_context)
 
     def get_update_url(self, request):
