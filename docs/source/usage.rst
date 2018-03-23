@@ -235,7 +235,7 @@ the ordering field:
 If you prefer to do a one-time database migration, just after having added the ordering field 
 to the model, then create a datamigration.
 
-..code:: python
+.. code:: python
 
 	shell> ./manage.py makemigrations myapp
 
