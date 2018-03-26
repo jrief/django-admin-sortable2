@@ -26,7 +26,7 @@ Release history
 0.6.15
 ------
 * Fixes #164: TypeError when ``display_list`` in admin contains a callable.
-# Fixes #160: Updated ordering values not getting saved in Tabluar/StackedInlineAdmin.
+* Fixes #160: Updated ordering values not getting saved in Tabluar/StackedInlineAdmin.
 
 0.6.14
 ------
@@ -100,10 +100,10 @@ Release history
 0.5.0
 -----
 * Changed the namespace from adminsortable to adminsortable2 to allow both this
-project and django-admin-sortable to co-exist in the same project. This is
-helpful for projects to transition from one to the other library. It also allows
-existing projects's migrations which previously relied on django-admin-sortable
-to continue to work.
+  project and django-admin-sortable to co-exist in the same project. This is
+  helpful for projects to transition from one to the other library. It also allows
+  existing projects's migrations which previously relied on django-admin-sortable
+  to continue to work.
 
 0.3.2
 -----

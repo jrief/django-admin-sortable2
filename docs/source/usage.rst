@@ -171,46 +171,51 @@ Sortable many to many relations can be achieved by creating a model to act as a 
 For example if you wished to have buttons added to control panel able to be sorted into order via the Django Admin interface you could do the following. A key feature of this approach is the ability for the same button to be used on more than one panel.
 
 Specify a junction model and assign it to the ManyToManyField
-................................................................
+-------------------------------------------------------------
 
 ``models.py``
 
 .. code:: python
+
 	from django.db.import models
 
 	class Button(models.Model):
-		"""A button"""
-		name = models.CharField(max_length=64)
-		button_text = models.CharField(max_length=64)
+	    """A button"""
+	    name = models.CharField(max_length=64)
+	    button_text = models.CharField(max_length=64)
 
 	class Panel(models.Model):
-		"""A Panel of Buttons - this represents a control panel."""
-		name = models.CharField(max_length=64)
-		buttons = models.ManyToManyField(Button, through='PanelButtons')
+	    """A Panel of Buttons - this represents a control panel."""
+	    name = models.CharField(max_length=64)
+	    buttons = models.ManyToManyField(Button, through='PanelButtons')
 
 	class PanelButtons(models.Model):
-		"""This is a junction table model that also stores the button order for a panel."""
-		panel = models.ForeignKey(Panel)
-		button = models.ForeignKey(Button)
-		button_order = models.PositiveIntegerField(default=0)
-		class Meta:
-			ordering = ('button_order',)
+	    """This is a junction table model that also stores the button order for a panel."""
+	    panel = models.ForeignKey(Panel)
+	    button = models.ForeignKey(Button)
+	    button_order = models.PositiveIntegerField(default=0)
+	
+	    class Meta:
+	        ordering = ('button_order',)
 
 Setup the Tabular Inlines to enable Buttons to be sorted in Django Admin
-..........................................................................
+------------------------------------------------------------------------
+
 ``admin.py``
 
 .. code:: python
+
 	from django.contrib import admin
 	from adminsortable2.admin import SortableInlineAdminMixin
 	from models import Panel
 
 	class ButtonTabularInline(SortableInlineAdminMixin, admin.TabularInline):
-		model = Panel.buttons.through # Note: we do not use the Button model but rather the juction table model specified on Panel.
+	    # We don't use the Button model but rather the juction model specified on Panel.
+	    model = Panel.buttons.through
 
 	@admin.register(Panel)
 	class PanelAdmin(admin.ModelAdmin)
-		inlines = (ButtonTabularInline,)
+	    inlines = (ButtonTabularInline,)
 
 
 Initial data
@@ -230,7 +235,7 @@ the ordering field:
 If you prefer to do a one-time database migration, just after having added the ordering field 
 to the model, then create a datamigration.
 
-..code:: python
+.. code:: python
 
 	shell> ./manage.py makemigrations myapp
 
