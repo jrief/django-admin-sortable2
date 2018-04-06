@@ -4,6 +4,10 @@
 Release history
 ===============
 
+0.6.20
+------
+* Fix `SortableAdminMixin` to work in combination with other mixins like that from `django-import-export`.
+
 0.6.19
 ------
 * Fix #183: Use ``mark_safe`` for reorder ``div``.
