@@ -33,19 +33,22 @@ __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 def _get_default_ordering(model, model_admin):
     try:
         # first try with the model admin ordering
-        none, prefix, field_name = model_admin.ordering[0].rpartition('-')
+        return model_admin.ordering[0]
     except (AttributeError, IndexError, TypeError):
         pass
-    else:
-        return '{}1'.format(prefix), field_name
 
     try:
         # then try with the model ordering
-        none, prefix, field_name = model._meta.ordering[0].rpartition('-')
+        return model._meta.ordering[0]
     except (AttributeError, IndexError):
-        msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class"
-        raise ImproperlyConfigured(msg.format(model.__module__, model.__name__))
+        pass
 
+    msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class"
+    raise ImproperlyConfigured(msg.format(model.__module__, model.__name__))
+
+
+def _parse_ordering(field):
+    _, prefix, field_name = field.rpartition('-')
     return '{}1'.format(prefix), field_name
 
 
@@ -79,6 +82,7 @@ class SortableAdminMixin(SortableAdminBase):
     BACK, FORWARD, FIRST, LAST, EXACT = range(5)
     enable_sorting = False
     action_form = MovePageActionForm
+    default_order_field = None
 
     @property
     def sortable_change_list_template(self):
@@ -91,7 +95,9 @@ class SortableAdminMixin(SortableAdminBase):
         ]
 
     def __init__(self, model, admin_site):
-        self.default_order_direction, self.default_order_field = _get_default_ordering(model, self)
+        if self.default_order_field is None:
+            self.default_order_field = _get_default_ordering(model, self)
+        self.default_order_direction, self.default_order_field = _parse_ordering(self.default_order_field)
         super(SortableAdminMixin, self).__init__(model, admin_site)
         if not isinstance(self.exclude, (list, tuple)):
             self.exclude = [self.default_order_field]
@@ -401,8 +407,6 @@ class PolymorphicSortableAdminMixin(SortableAdminMixin):
 
 class CustomInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
-        self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
-
         if self.default_order_field not in self.form.base_fields:
             self.form.base_fields[self.default_order_field] = self.model._meta.get_field(self.default_order_field).formfield()
 
@@ -435,16 +439,27 @@ class CustomInlineFormSet(BaseInlineFormSet):
 
 class SortableInlineAdminMixin(SortableAdminBase):
     formset = CustomInlineFormSet
+    default_order_field = None
+
+    def __init__(self, *args, **kwargs):
+        super(SortableInlineAdminMixin, self).__init__(*args, **kwargs)
+        if self.default_order_field is None:
+            self.default_order_field = _get_default_ordering(self.model, self)
+        self.default_order_direction, self.default_order_field = _parse_ordering(self.default_order_field)
+
+    def get_formset(self, *args, **kwargs):
+        formset = super(SortableInlineAdminMixin, self).get_formset(*args, **kwargs)
+        formset.default_order_field = self.default_order_field
+        return formset
 
     def get_fields(self, request, obj=None):
         fields = super(SortableInlineAdminMixin, self).get_fields(request, obj)
-        _, default_order_field = _get_default_ordering(self.model, self)
         fields = list(fields)
 
-        if not (default_order_field in fields):
+        if not (self.default_order_field in fields):
             # If the order field is not in the field list, add it
-            fields.append(default_order_field)
-        elif fields[0] == default_order_field:
+            fields.append(self.default_order_field)
+        elif fields[0] == self.default_order_field:
             """
             Remove the order field and add it again immediately to ensure it is not on first position.
             This ensures that django's template for tabular inline renders the first column with colspan="2":
