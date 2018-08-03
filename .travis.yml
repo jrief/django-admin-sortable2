@@ -11,6 +11,7 @@ env:
   - DJANGO="django<1.11"
   - DJANGO="django<2.0"
   - DJANGO="django<2.1"
+  - DJANGO="django<2.2"
   - DJANGO='https://github.com/django/django/archive/master.tar.gz'
 
 install:

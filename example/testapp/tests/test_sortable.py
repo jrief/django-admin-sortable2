@@ -2,6 +2,7 @@
 import json
 
 from django import VERSION as DJANGO_VERSION
+
 try:
     from django.urls import reverse
 except ImportError:  # Django<2.0
@@ -22,8 +23,11 @@ User = get_user_model()
 class SortableBookTestCase(TestCase):
     if DJANGO_VERSION < (1, 10):
         fixtures = ['data-19.json']
-    else:
+    elif DJANGO_VERSION < (1, 11):
         fixtures = ['data-110.json']
+    else:
+        fixtures = ['data-20.json']
+
     admin_password = 'secret'
     ajax_update_url = reverse('admin:testapp_sortablebook_sortable_update')
     bulk_update_url = reverse('admin:testapp_sortablebook_changelist')
@@ -275,8 +279,10 @@ class SortableBookTestCase(TestCase):
 
     def test_post_save_is_sent_after_reorder(self):
         updated_instances = []
+
         def listener(sender, instance, **kwargs):
             updated_instances.append(instance.pk)
+
         in_data = {'startorder': 7, 'endorder': 2}  # from 12345667 to 1273456
         post_save.connect(listener)
         response = self.client.post(self.ajax_update_url, in_data, **self.http_headers)
@@ -286,8 +292,10 @@ class SortableBookTestCase(TestCase):
 
     def test_pre_save_is_sent_before_reorder(self):
         updated_instances = []
+
         def listener(sender, instance, **kwargs):
             updated_instances.append(instance.pk)
+
         in_data = {'startorder': 7, 'endorder': 2}  # from 12345667 to 1273456
         pre_save.connect(listener)
         response = self.client.post(self.ajax_update_url, in_data, **self.http_headers)

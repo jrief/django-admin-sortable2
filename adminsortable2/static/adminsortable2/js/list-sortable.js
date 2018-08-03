@@ -37,13 +37,13 @@ django.jQuery(function($) {
 		tolerance: 'pointer',
 		start: function (event, dragged_rows) {
 			$(this).find('thead tr th').each(function (index) {
-				$(dragged_rows.item.context.childNodes[index]).width($(this).width() - 10);
+				$(dragged_rows.item[0].childNodes[index]).width($(this).width() - 10);
 			});
 			startindex = dragged_rows.item.index();
 		},
 		stop: function (event, dragged_rows) {
 			$(this).find('thead tr th').each(function (index) {
-				$(dragged_rows.item.context.childNodes[index]).width('auto');
+				$(dragged_rows.item[0].childNodes[index]).width('auto');
 			});
 
 			var $result_list = $(this);
@@ -55,11 +55,11 @@ django.jQuery(function($) {
 			if (startindex == endindex) return;
 			else if (endindex == 0) {
 				if (ordering.split('.')[0] === '-1')
-					endorder = parseInt($(dragged_rows.item.context.nextElementSibling).find('div.drag').attr('order')) + 1;
+					endorder = parseInt($(dragged_rows.item[0].nextElementSibling).find('div.drag').attr('order')) + 1;
 				else
-					endorder = parseInt($(dragged_rows.item.context.nextElementSibling).find('div.drag').attr('order')) - 1;
+					endorder = parseInt($(dragged_rows.item[0].nextElementSibling).find('div.drag').attr('order')) - 1;
 			} else {
-				endorder = $(dragged_rows.item.context.previousElementSibling).find('div.drag').attr('order');
+				endorder = $(dragged_rows.item[0].previousElementSibling).find('div.drag').attr('order');
 			}
 			startorder = $(dragged_rows.item.context).find('div.drag').attr('order');
 
