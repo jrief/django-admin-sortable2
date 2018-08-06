@@ -4,10 +4,13 @@
 Release history
 ===============
 
+0.6.21
+------
+* Added jQuery compatibility layer for Django-2.1.
+
 0.6.20
 ------
-* Fix `SortableAdminMixin` to work in combination with other mixins like that from `django-import-export`.
-* Added jQuery compatibility layer for Django-2.1.
+* Dysfunctional.
 
 0.6.19
 ------
