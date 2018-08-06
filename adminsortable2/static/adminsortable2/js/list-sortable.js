@@ -61,7 +61,7 @@ django.jQuery(function($) {
 			} else {
 				endorder = $(dragged_rows.item[0].previousElementSibling).find('div.drag').attr('order');
 			}
-			startorder = $(dragged_rows.item.context).find('div.drag').attr('order');
+			startorder = $(dragged_rows.item[0]).find('div.drag').attr('order');
 
 			$.ajax({
 				url: config.update_url,
