@@ -2,16 +2,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import io
 from setuptools import setup, find_packages
 from adminsortable2 import __version__
-try:
-    from pypandoc import convert
-except ImportError:
-    import io
 
-    def convert(filename, fmt):
-        with io.open(filename, encoding='utf-8') as fd:
-            return fd.read()
+def readfile(filename):
+    with io.open(filename, encoding='utf-8') as fd:
+        return fd.read()
 
 DESCRIPTION = 'Generic drag-and-drop sorting for the List, the Stacked- and the Tabular-Inlines Views in the Django Admin'
 
@@ -34,6 +31,8 @@ CLASSIFIERS = [
     'Framework :: Django :: 1.9',
     'Framework :: Django :: 1.10',
     'Framework :: Django :: 1.11',
+    'Framework :: Django :: 2.0',
+    'Framework :: Django :: 2.1',
 ]
 
 
@@ -43,7 +42,8 @@ setup(
     author='Jacob Rief',
     author_email='jacob.rief@gmail.com',
     description=DESCRIPTION,
-    long_description=convert('README.md', 'rst'),
+    long_description=readfile('README.md'),
+    long_description_content_type='text/markdown',
     url='https://github.com/jrief/django-admin-sortable2',
     license='MIT',
     keywords=['django'],
