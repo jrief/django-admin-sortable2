@@ -35,6 +35,7 @@ django.jQuery(function($) {
 		cursor: 'ns-resize',
 		containment: $('#result_list tbody'),
 		tolerance: 'pointer',
+		forcePlaceholderSize: true,
 		start: function (event, dragged_rows) {
 			$(this).find('thead tr th').each(function (index) {
 				$(dragged_rows.item[0].childNodes[index]).width($(this).width() - 10);
