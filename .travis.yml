@@ -6,8 +6,6 @@ python:
   - 3.6
 
 env:
-  - DJANGO="django<1.9"
-  - DJANGO="django<1.10"
   - DJANGO="django<1.11"
   - DJANGO="django<2.0"
   - DJANGO="django<2.1"
@@ -24,9 +22,11 @@ script:
 matrix:
   exclude:
     - python: 2.7
-      env: DJANGO='https://github.com/django/django/archive/master.tar.gz'
-    - python: 2.7
       env: DJANGO="django<2.1"
+    - python: 2.7
+      env: DJANGO="django<2.2"
+    - python: 2.7
+      env: DJANGO='https://github.com/django/django/archive/master.tar.gz'
     - python: 3.4
       env: DJANGO='https://github.com/django/django/archive/master.tar.gz'
   allow_failures:
