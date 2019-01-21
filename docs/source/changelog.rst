@@ -4,6 +4,12 @@
 Release history
 ===============
 
+0.7
+---
+* Add support for Django-2.0 and Django-2.1.
+* Drop support for Django-1.9 and lower.
+* Check for changed function signature in Django-2.1.
+
 0.6.21
 ------
 * Added jQuery compatibility layer for Django-2.1.
