@@ -74,7 +74,7 @@
 
 <script type="application/json" class="inline-tabular-config">
 {
-  "prefix": "{{ inline_admin_formset.formset.prefix }}",
+  "prefix": "{{ inline_admin_formset.formset.prefix|escapejs }}",
   "addText": "{% filter escapejs %}{% blocktrans with inline_admin_formset.opts.verbose_name|capfirst as verbose_name %}Add another {{ verbose_name }}{% endblocktrans %}{% endfilter %}",
   "deleteText": "{% filter escapejs %}{% trans 'Remove' %}{% endfilter %}"
 }
