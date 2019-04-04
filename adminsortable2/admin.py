@@ -171,7 +171,9 @@ class SortableAdminMixin(SortableAdminBase):
     def media(self):
         m = super(SortableAdminMixin, self).media
         if self.enable_sorting:
-            m = m + widgets.Media(js=('adminsortable2/js/list-sortable.js',))
+            m = m + widgets.Media(js=(
+                'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
+                'adminsortable2/js/list-sortable.js'))
         return m
 
     def _add_reorder_method(self):
@@ -458,7 +460,7 @@ class SortableInlineAdminMixin(SortableAdminBase):
     def media(self):
         shared = (
             super(SortableInlineAdminMixin, self).media
-            + widgets.Media(js=('adminsortable2/js/plugins/admincompat.js',
+            + widgets.Media(js=('adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
                                 'adminsortable2/js/inline-sortable.js')))
         if isinstance(self, admin.StackedInline):
             return shared + widgets.Media(
