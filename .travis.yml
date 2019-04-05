@@ -1,3 +1,10 @@
+addons:
+  apt:
+    sources:
+      - travis-ci/sqlite3
+    packages:
+      - sqlite3
+
 language: python
 python:
   - 2.7
