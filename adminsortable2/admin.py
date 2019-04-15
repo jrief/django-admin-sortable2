@@ -66,6 +66,7 @@ class SortableAdminBase(object):
     def media(self):
         css = {'all': ('adminsortable2/css/sortable.css',)}
         js = (
+            'admin/js/jquery.init.js',
             'adminsortable2/js/plugins/admincompat.js',
             'adminsortable2/js/libs/jquery.ui.core-1.11.4.js',
             'adminsortable2/js/libs/jquery.ui.widget-1.11.4.js',
@@ -170,7 +171,9 @@ class SortableAdminMixin(SortableAdminBase):
     def media(self):
         m = super(SortableAdminMixin, self).media
         if self.enable_sorting:
-            m = m + widgets.Media(js=('adminsortable2/js/list-sortable.js',))
+            m = m + widgets.Media(js=(
+                'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
+                'adminsortable2/js/list-sortable.js'))
         return m
 
     def _add_reorder_method(self):
@@ -455,11 +458,18 @@ class SortableInlineAdminMixin(SortableAdminBase):
 
     @property
     def media(self):
-        shared = super(SortableInlineAdminMixin, self).media + widgets.Media(js=('adminsortable2/js/inline-sortable.js',))
+        shared = (
+            super(SortableInlineAdminMixin, self).media
+            + widgets.Media(js=('adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
+                                'adminsortable2/js/inline-sortable.js')))
         if isinstance(self, admin.StackedInline):
-            return shared + widgets.Media(js=('adminsortable2/js/inline-stacked.js',))
+            return shared + widgets.Media(
+                js=('adminsortable2/js/inline-sortable.js',
+                    'adminsortable2/js/inline-stacked.js'))
         if isinstance(self, admin.TabularInline):
-            return shared + widgets.Media(js=('adminsortable2/js/inline-tabular.js',))
+            return shared + widgets.Media(
+                js=('adminsortable2/js/inline-sortable.js',
+                    'adminsortable2/js/inline-tabular.js'))
 
     @property
     def template(self):
