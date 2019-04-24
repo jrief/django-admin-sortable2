@@ -4,6 +4,10 @@
 Release history
 ===============
 
+0.7.1
+-----
+* Fix issue with JavaScript loading in Django-2.2.
+
 0.7
 ---
 * Add support for Django-2.0 and Django-2.1.

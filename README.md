@@ -42,6 +42,6 @@ restrictions.
 
 ## License
 
-Copyright &copy; 2018 Jacob Rief and contributors.
+Copyright &copy; 2019 Jacob Rief and contributors.
 
 MIT licensed.
