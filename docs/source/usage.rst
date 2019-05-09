@@ -273,6 +273,8 @@ then apply the changes to the database using:
 
 .. note:: If you omit to prepopulate the ordering field with unique values, after adding this field
 		to an existing model, then attempting to reorder field manually will fail.
+		If you want to make your migration reversible just add the 
+		reverse_code=migrations.RunPython.noop as the second param.
 
 
 Note on unique indices on the position field
