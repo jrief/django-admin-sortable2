@@ -4,6 +4,10 @@
 Release history
 ===============
 
+0.7.2
+-----
+* Fully adopted and tested with Django-2.2
+
 0.7.1
 -----
 * Fix issue with JavaScript loading in Django-2.2.
