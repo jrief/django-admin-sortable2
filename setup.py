@@ -51,7 +51,9 @@ setup(
     keywords=['django'],
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
-    install_requires=[],
+    install_requires=[
+        'Django>=1.8,<3',
+    ],
     packages=find_packages(exclude=['example', 'docs']),
     include_package_data=True,
     zip_safe=False,
