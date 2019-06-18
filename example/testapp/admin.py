@@ -21,17 +21,17 @@ class NotesInline(admin.TabularInline):
 @admin.register(models.SortableBook)
 class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_per_page = 12
-    list_display = ('author', 'title', 'my_order',)
-    list_display_links = ('title',)
-    inlines = (ChapterInline, NotesInline,)
+    list_display = ['author', 'title', 'my_order']
+    list_display_links = ['title']
+    inlines = [ChapterInline, NotesInline]
 
 
 @admin.register(models.Author)
 class AuthorAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ['name']
 
 
 @admin.register(models.Notes)
 class NoteAdmin(SortableAdminMixin, admin.ModelAdmin):
-    list_display = ('note',)
-    ordering = ('note',)
+    list_display = ['note']
+    ordering = ['note']
