@@ -14,7 +14,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
 try:
     from django.urls import reverse
-except ImportError:  # Django<2.0
+except ImportError:  # Django<1.11
     from django.core.urlresolvers import reverse
 from django.db import router, transaction
 from django.db.models import Max, F
@@ -98,6 +98,8 @@ class SortableAdminMixin(SortableAdminBase):
             self.exclude = [self.default_order_field]
         elif not self.exclude or self.default_order_field != self.exclude[0]:
             self.exclude = [self.default_order_field] + list(self.exclude)
+        if not self.list_display_links:
+            self.list_display_links = [self.list_display[0]]
         self._add_reorder_method()
         self.list_display = list(self.list_display)
 
