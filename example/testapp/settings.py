@@ -12,6 +12,8 @@ DATABASES = {
 
 SITE_ID = 1
 
+ALLOWED_HOSTS = ['*']
+
 ROOT_URLCONF = 'testapp.urls'
 
 SECRET_KEY = 'secret'
