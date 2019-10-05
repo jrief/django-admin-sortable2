@@ -137,6 +137,6 @@ django.jQuery(function($) {
 	if ($grp_form) {
 		$grp_form.attr('novalidate', 'novalidate');
 	}
-	var $form = $('#changelist-form') || $grp_form;
-	$form.find('select[name="action"]').change(display_fields);
+    var $form = $('#changelist-form').length ? $('#changelist-form') : $grp_form;
+    $form.find('select[name="action"]').change(display_fields);
 });
