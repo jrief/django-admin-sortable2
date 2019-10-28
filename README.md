@@ -6,7 +6,7 @@ A replacement for django-admin-sortable using an unintrusive approach.
 [![PyPI version](https://img.shields.io/pypi/v/django-admin-sortable2.svg)](https://pypi.python.org/pypi/django-admin-sortable2)
 [![Python versions](https://img.shields.io/pypi/pyversions/django-admin-sortable2.svg)](https://pypi.python.org/pypi/django-admin-sortable2)
 [![Downloads](https://img.shields.io/pypi/dm/django-admin-sortable2.svg)](https://img.shields.io/pypi/dm/django-admin-sortable2.svg)
-[![Software license](https://img.shields.io/pypi/l/django-admin-sortable2.svg)](https://github.com/jrief/django-admin-sortable2/blob/master/LICENSE-MIT)
+[![Software license](https://img.shields.io/pypi/l/django-admin-sortable2.svg)](https://github.com/jrief/django-admin-sortable2/blob/master/LICENSE)
 [![Twitter Follow](https://img.shields.io/twitter/follow/jacobrief.svg?style=social&label=Jacob+Rief)](https://twitter.com/jacobrief)
 
 This plugin is a generic drag-and-drop ordering module for sorting objects in the List, the Stacked-
