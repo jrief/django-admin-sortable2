@@ -6,7 +6,8 @@ Release history
 
 0.7.4
 -----
-* Fix #208: Correctly apply custom css classes from the ``InlineModelAdmin.classes`` attribute then using ``StackedInline``
+* Fix #208: Correctly apply custom css classes from the ``InlineModelAdmin.classes`` attribute then using
+  ``StackedInline``.
 
 0.7.3
 -----
