@@ -4,6 +4,10 @@
 Release history
 ===============
 
+0.7.5
+-----
+* Add support for Django-3.0.
+
 0.7.4
 -----
 * Fix #208: Correctly apply custom css classes from the ``InlineModelAdmin.classes`` attribute then using
