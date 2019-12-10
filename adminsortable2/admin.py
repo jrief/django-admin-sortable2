@@ -7,7 +7,12 @@ import json
 from types import MethodType
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+# Remove check when support for python < 3 is dropped.
+import sys
+if sys.version_info[0] >= 3:
+    from django.utils.translation import gettext_lazy as _
+else:
+    from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
