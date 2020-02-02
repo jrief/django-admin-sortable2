@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import os
 import json
+from itertools import chain
 
 from types import MethodType
 
@@ -248,26 +249,20 @@ class SortableAdminMixin(SortableAdminBase):
         return request.POST.get('o', request.GET.get('o', '1')).split('.')[0]
 
     def _move_item(self, request, startorder, endorder):
-        if self._get_order_direction(request) != '-1':
-            order_up, order_down = 0, 1
-        else:
-            order_up, order_down = 1, 0
-        if startorder < endorder - order_up:
-            finalorder = endorder - order_up
+        if endorder > startorder: # Drag down
             move_filter = {
-                '{0}__gte'.format(self.default_order_field): startorder,
-                '{0}__lte'.format(self.default_order_field): finalorder,
+                '{0}__gte'.format(self.default_order_field): startorder + 1,
+                '{0}__lte'.format(self.default_order_field): endorder,
             }
+            move_delta = -1
             order_by = self.default_order_field
-            move_update = {self.default_order_field: F(self.default_order_field) - 1}
-        elif startorder > endorder + order_down:
-            finalorder = endorder + order_down
+        elif endorder < startorder: # Drag up
             move_filter = {
-                '{0}__gte'.format(self.default_order_field): finalorder,
-                '{0}__lte'.format(self.default_order_field): startorder,
+                '{0}__gte'.format(self.default_order_field): endorder,
+                '{0}__lte'.format(self.default_order_field): startorder - 1,
             }
+            move_delta = +1
             order_by = '-{0}'.format(self.default_order_field)
-            move_update = {self.default_order_field: F(self.default_order_field) + 1}
         else:
             return self.model.objects.none()
         with transaction.atomic():
@@ -282,23 +277,20 @@ class SortableAdminMixin(SortableAdminBase):
                       "    python manage.py reorder {}\n"\
                       "to adjust this inconsistency."
                 raise self.model.MultipleObjectsReturned(msg.format(self.default_order_field, self.model._meta.label))
-            obj_qs = self.model.objects.filter(pk=obj.pk)
             move_qs = self.model.objects.filter(**move_filter).order_by(order_by)
-            for instance in move_qs:
+            move_objs = list(move_qs)
+            for instance in move_objs:
+                setattr(instance, self.default_order_field, getattr(instance, self.default_order_field) + move_delta)
+                # Do not run `instance.save()`, because it will be updated later in bulk by `move_qs.update`.
                 pre_save.send(
                     self.model,
                     instance=instance,
                     update_fields=[self.default_order_field],
                     raw=False,
-                    using=None or router.db_for_write(
-                        self.model,
-                        instance=instance),
+                    using=router.db_for_write(self.model, instance=instance),
                 )
-            # using qs.update avoid multi [pre|post]_save signal on obj.save()
-            obj_qs.update(**{self.default_order_field: self.get_max_order(request, obj) + 1})
-            move_qs.update(**move_update)
-            obj_qs.update(**{self.default_order_field: finalorder})
-            for instance in move_qs:
+            move_qs.update(**{self.default_order_field: F(self.default_order_field) + move_delta})
+            for instance in move_objs:
                 post_save.send(
                     self.model,
                     instance=instance,
@@ -307,8 +299,9 @@ class SortableAdminMixin(SortableAdminBase):
                     using=router.db_for_write(self.model, instance=instance),
                     created=False
                 )
-        query_set = self.model.objects.filter(**move_filter).order_by(self.default_order_field).values_list('pk', self.default_order_field)
-        return [dict(pk=pk, order=order) for pk, order in query_set]
+            setattr(obj, self.default_order_field, endorder)
+            obj.save(update_fields=[self.default_order_field])
+        return [dict(pk=instance.pk, order=getattr(instance, self.default_order_field)) for instance in chain(move_objs, [obj])]
 
     def get_extra_model_filters(self, request):
         """
@@ -341,7 +334,7 @@ class SortableAdminMixin(SortableAdminBase):
                 page = paginator.page(target_page)
                 endorder = getattr(objects[page.start_index() - 1], self.default_order_field)
                 if direction == -1:
-                    endorder += queryset.count()
+                    endorder += queryset.count() - 1
                     queryset = queryset.reverse()
             elif method == self.BACK:
                 page = paginator.page(page.number - step)
@@ -349,7 +342,7 @@ class SortableAdminMixin(SortableAdminBase):
                 direction = +1
             elif method == self.FORWARD:
                 page = paginator.page(page.number + step)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field) + queryset.count()
+                endorder = getattr(objects[page.start_index() - 1], self.default_order_field) + queryset.count() - 1
                 queryset = queryset.reverse()
                 direction = -1
             elif method == self.FIRST:
@@ -358,14 +351,13 @@ class SortableAdminMixin(SortableAdminBase):
                 direction = +1
             elif method == self.LAST:
                 page = paginator.page(paginator.num_pages)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field) + queryset.count()
+                endorder = getattr(objects[page.start_index() - 1], self.default_order_field) + queryset.count() - 1
                 queryset = queryset.reverse()
                 direction = -1
             else:
                 raise Exception('Invalid method')
         except EmptyPage:
             return
-        endorder -= 1
         for obj in queryset:
             startorder = getattr(obj, self.default_order_field)
             self._move_item(request, startorder, endorder)
