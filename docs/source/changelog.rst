@@ -6,9 +6,11 @@ Release history
 
 0.7.6 (unreleased)
 ------------------
-* Fix bug `#241`_.
+* Fix bugs `#241`_, `#242`_, `#243`_.
 
 .. _#241: https://github.com/jrief/django-admin-sortable2/issues/241
+.. _#242: https://github.com/jrief/django-admin-sortable2/issues/242
+.. _#243: https://github.com/jrief/django-admin-sortable2/issues/243
 
 0.7.5
 -----

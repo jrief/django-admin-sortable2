@@ -35,7 +35,7 @@ from django.http import (
     HttpRequest, HttpResponse, HttpResponseBadRequest,
     HttpResponseNotAllowed, HttpResponseForbidden)
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib import admin
+from django.contrib import admin, messages
 
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
@@ -343,48 +343,52 @@ class SortableAdminMixin(SortableAdminBase):
             return
         objects = self.model.objects.order_by(self.order_by)
         paginator = self.paginator(objects, self.list_per_page)
-        page = paginator.page(int(request.GET.get('p', 0)) + 1)
-        step = int(request.POST.get('step', 1))
-        try:
-            if method == self.EXACT:
-                target_page = int(request.POST.get('page', page))
-                if page.number == target_page:
-                    return
-                elif target_page > page.number:
-                    direction = -1
-                else:
-                    direction = +1
-                page = paginator.page(target_page)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field)
-                if direction == -1:
-                    endorder += queryset.count() - 1
-                    queryset = queryset.reverse()
-            elif method == self.BACK:
-                page = paginator.page(page.number - step)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field)
-                direction = +1
-            elif method == self.FORWARD:
-                page = paginator.page(page.number + step)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field) + queryset.count() - 1
-                queryset = queryset.reverse()
-                direction = -1
-            elif method == self.FIRST:
-                page = paginator.page(1)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field)
-                direction = +1
-            elif method == self.LAST:
-                page = paginator.page(paginator.num_pages)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field) + queryset.count() - 1
-                queryset = queryset.reverse()
-                direction = -1
-            else:
-                raise Exception('Invalid method')
-        except EmptyPage:
+        current_page_number = int(request.GET.get('p', 0)) + 1
+
+        if method == self.EXACT:
+            page_number = int(request.POST.get('page', current_page_number))
+            target_page_number = page_number
+        elif method == self.BACK:
+            step = int(request.POST.get('step', 1))
+            target_page_number = current_page_number - step
+        elif method == self.FORWARD:
+            step = int(request.POST.get('step', 1))
+            target_page_number = current_page_number + step
+        elif method == self.FIRST:
+            target_page_number = 1
+        elif method == self.LAST:
+            target_page_number = paginator.num_pages
+        else:
+            raise Exception('Invalid method')
+
+        if target_page_number == current_page_number:
+            # If you want the selected items to be moved to the start of the current page, then just do not return here.
             return
-        for obj in queryset:
+
+        try:
+            page = paginator.page(target_page_number)
+        except EmptyPage as ex:
+            self.message_user(request, str(ex), level=messages.ERROR)
+            return
+
+        queryset_size = queryset.count()
+        page_size = page.end_index() - page.start_index() + 1
+        if queryset_size > page_size:
+            msg = _("The target page size is {}. It is too small for {} items.").format(page_size, queryset_size)
+            self.message_user(request, msg, level=messages.ERROR)
+            return
+
+        endorders_start = getattr(objects[page.start_index() - 1], self.default_order_field)
+        endorders_step = -1 if self.order_by.startswith('-') else 1
+        endorders = range(endorders_start, endorders_start + endorders_step * queryset_size, endorders_step)
+
+        if page.number > current_page_number: # Move forward (like drag down)
+            queryset = queryset.reverse()
+            endorders = reversed(endorders)
+
+        for obj, endorder in zip(queryset, endorders):
             startorder = getattr(obj, self.default_order_field)
             self._move_item(request, startorder, endorder)
-            endorder += direction
 
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:

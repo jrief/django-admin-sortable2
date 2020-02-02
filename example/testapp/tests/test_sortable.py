@@ -298,6 +298,7 @@ class SortableBookTestCase(TestCase):
         post_data = {'action': ['move_to_last_page'], '_selected_action': [1, 2, 3, 4, 5, 6]}
         response = self.client.post(self.bulk_update_url, post_data, follow=True)
         self.assertOrder(order)
+        self.assertEqual(len(response.context['messages']), 1)
 
     def test_bulkMoveFirstPage(self):
         self.assertEqual(SortableBook.objects.get(pk=17).my_order, 17)
