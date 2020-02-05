@@ -4,6 +4,12 @@
 Release history
 ===============
 
+0.7.6 (unreleased)
+------------------
+* Fix bug `#241`_.
+
+.. _#241: https://github.com/jrief/django-admin-sortable2/issues/241
+
 0.7.5
 -----
 * Add support for Django-3.0.

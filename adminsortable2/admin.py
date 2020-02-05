@@ -6,8 +6,12 @@ import json
 from itertools import chain
 
 from types import MethodType
+from typing import Tuple, Optional
 
 from django import forms
+from django.contrib.admin import ModelAdmin
+from django.contrib.admin.views.main import ORDER_VAR
+from django.db.models import Model
 # Remove check when support for python < 3 is dropped.
 import sys
 if sys.version_info[0] >= 3:
@@ -28,7 +32,7 @@ from django.db.models.signals import post_save, pre_save
 from django.forms.models import BaseInlineFormSet
 from django.forms import widgets
 from django.http import (
-    HttpResponse, HttpResponseBadRequest,
+    HttpRequest, HttpResponse, HttpResponseBadRequest,
     HttpResponseNotAllowed, HttpResponseForbidden)
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib import admin
@@ -36,14 +40,14 @@ from django.contrib import admin
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
 
-def _get_default_ordering(model, model_admin):
+def _get_default_ordering(model: Model, model_admin: ModelAdmin) -> Tuple[str, str]:
     try:
         # first try with the model admin ordering
         none, prefix, field_name = model_admin.ordering[0].rpartition('-')
     except (AttributeError, IndexError, TypeError):
         pass
     else:
-        return '{}1'.format(prefix), field_name
+        return prefix, field_name
 
     try:
         # then try with the model ordering
@@ -51,8 +55,8 @@ def _get_default_ordering(model, model_admin):
     except (AttributeError, IndexError):
         msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class"
         raise ImproperlyConfigured(msg.format(model.__module__, model.__name__))
-
-    return '{}1'.format(prefix), field_name
+    else:
+        return prefix, field_name
 
 
 class MovePageActionForm(admin.helpers.ActionForm):
@@ -84,7 +88,6 @@ class SortableAdminBase(object):
 
 class SortableAdminMixin(SortableAdminBase):
     BACK, FORWARD, FIRST, LAST, EXACT = range(5)
-    enable_sorting = False
     action_form = MovePageActionForm
 
     @property
@@ -100,6 +103,8 @@ class SortableAdminMixin(SortableAdminBase):
     def __init__(self, model, admin_site):
         self.default_order_direction, self.default_order_field = _get_default_ordering(model, self)
         super(SortableAdminMixin, self).__init__(model, admin_site)
+        self.enable_sorting = False
+        self.order_by = None  # type: Optional[str]
         if not isinstance(self.exclude, (list, tuple)):
             self.exclude = [self.default_order_field]
         elif not self.exclude or self.default_order_field != self.exclude[0]:
@@ -112,9 +117,10 @@ class SortableAdminMixin(SortableAdminBase):
         # Insert the magic field into the same position as the first occurrence
         # of the default_order_field, or, if not present, at the start
         try:
-            self.list_display.insert(self.list_display.index(self.default_order_field), '_reorder')
+            self.default_order_field_index = self.list_display.index(self.default_order_field)
         except ValueError:
-            self.list_display.insert(0, '_reorder')
+            self.default_order_field_index = 0
+        self.list_display.insert(self.default_order_field_index, '_reorder')
 
         # Remove *all* occurrences of the field from `list_display`
         if self.list_display and self.default_order_field in self.list_display:
@@ -162,16 +168,36 @@ class SortableAdminMixin(SortableAdminBase):
         return actions
 
     def get_changelist(self, request, **kwargs):
-        order = self._get_order_direction(request)
-        if order == '1':
+        first_order_direction, first_order_field_index = self._get_first_ordering(request)
+        if first_order_field_index == self.default_order_field_index:
             self.enable_sorting = True
-            self.order_by = self.default_order_field
-        elif order == '-1':
-            self.enable_sorting = True
-            self.order_by = '-' + self.default_order_field
+            self.order_by = "{}{}".format(first_order_direction, self.default_order_field)
         else:
             self.enable_sorting = False
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
+
+    def _get_first_ordering(self, request: HttpRequest) -> Tuple[str, Optional[int]]:
+        """
+        Must be consistent with `django.contrib.admin.views.main.ChangeList.get_ordering`.
+        """
+        order_var = request.GET.get(ORDER_VAR)
+        if order_var is None:
+            first_order_field_index = self.default_order_field_index
+            first_order_direction = self.default_order_direction
+        else:
+            first_order_field_index = None
+            first_order_direction = ""
+            for p in order_var.split("."):
+                none, prefix, index = p.rpartition("-")
+                try:
+                    index = int(index)
+                except ValueError:
+                    continue  # skip it
+                else:
+                    first_order_field_index = index - 1
+                    first_order_direction = prefix
+                    break
+        return first_order_direction, first_order_field_index
 
     @property
     def media(self):
@@ -244,9 +270,6 @@ class SortableAdminMixin(SortableAdminBase):
     def move_to_last_page(self, request, queryset):
         self._bulk_move(request, queryset, self.LAST)
     move_to_last_page.short_description = _('Move selected to last page')
-
-    def _get_order_direction(self, request):
-        return request.POST.get('o', request.GET.get('o', '1')).split('.')[0]
 
     def _move_item(self, request, startorder, endorder):
         if endorder > startorder: # Drag down
