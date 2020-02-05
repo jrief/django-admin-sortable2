@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+from typing import List, Tuple
 
 from django import VERSION as DJANGO_VERSION
 try:
@@ -56,6 +57,11 @@ class SortableBookTestCase(TestCase):
             self.assertEqual(len(out_data), 0)
         else:
             self.assertEqual(len(out_data), abs(endorder - startorder) + 1)
+
+    def assertOrder(self, pk_order_pairs: List[Tuple[int, int]]) -> None:
+        expected = [order for _, order in pk_order_pairs]
+        actual = [SortableBook.objects.get(pk=pk).my_order for pk, _ in pk_order_pairs]
+        self.assertEqual(expected, actual)
 
     def test_default_order_position(self):
         """
@@ -201,7 +207,7 @@ class SortableBookTestCase(TestCase):
         self.assertEqual(SortableBook.objects.get(pk=14).my_order, 14)
         self.assertEqual(SortableBook.objects.get(pk=15).my_order, 15)
 
-    def test_bulkMovePreviousPage(self):
+    def test_bulkMovePreviousPage_asc(self):
         self.assertEqual(SortableBook.objects.get(pk=17).my_order, 17)
         self.assertEqual(SortableBook.objects.get(pk=18).my_order, 18)
         self.assertEqual(SortableBook.objects.get(pk=19).my_order, 19)
@@ -211,6 +217,25 @@ class SortableBookTestCase(TestCase):
         self.assertEqual(SortableBook.objects.get(pk=18).my_order, 2)
         self.assertEqual(SortableBook.objects.get(pk=19).my_order, 3)
 
+    def test_bulkMovePreviousPage_desc(self):
+        order_field_index = SortableBookAdmin.list_display.index('my_order')
+        self.assertOrder([
+            (12, 12),
+            (11, 11),
+            (10, 10),
+        ])
+        post_data = {'action': ['move_to_back_page'], 'step': 1, '_selected_action': [12, 11, 10]}
+        self.client.post("{0}?o=-{1}&p=1".format(self.bulk_update_url, order_field_index + 1), post_data)
+        self.assertOrder([
+            (12, 29),
+            (11, 28),
+            (10, 27),
+            # ...
+            (15, 12),
+            (14, 11),
+            (13, 10),
+        ])
+
     def test_bulkMoveForwardFromLastPage(self):
         self.assertEqual(SortableBook.objects.get(pk=19).my_order, 19)
         self.assertEqual(SortableBook.objects.get(pk=20).my_order, 20)
@@ -219,13 +244,32 @@ class SortableBookTestCase(TestCase):
         self.assertEqual(SortableBook.objects.get(pk=19).my_order, 19)
         self.assertEqual(SortableBook.objects.get(pk=20).my_order, 20)
 
-    def test_bulkMoveNextPage(self):
+    def test_bulkMoveNextPage_asc(self):
         self.assertEqual(SortableBook.objects.get(pk=11).my_order, 11)
         self.assertEqual(SortableBook.objects.get(pk=10).my_order, 10)
         post_data = {'action': ['move_to_forward_page'], 'step': 1, '_selected_action': [11, 10]}
         self.client.post(self.bulk_update_url, post_data)
         self.assertEqual(SortableBook.objects.get(pk=10).my_order, 13)
         self.assertEqual(SortableBook.objects.get(pk=11).my_order, 14)
+
+    def test_bulkMoveNextPage_desc(self):
+        order_field_index = SortableBookAdmin.list_display.index('my_order')
+        self.assertOrder([
+            (12, 12),
+            (11, 11),
+            (10, 10),
+        ])
+        post_data = {'action': ['move_to_forward_page'], 'step': 1, '_selected_action': [12, 11, 10]}
+        self.client.post("{0}?o=-{1}&p=1".format(self.bulk_update_url, order_field_index + 1), post_data)
+        self.assertOrder([
+            (9, 12),
+            (8, 11),
+            (7, 10),
+            # ...
+            (12, 5),
+            (11, 4),
+            (10, 3),
+        ])
 
     def test_bulkMoveLastPage(self):
         self.assertEqual(SortableBook.objects.get(pk=1).my_order, 1)
@@ -234,6 +278,26 @@ class SortableBookTestCase(TestCase):
         self.client.post(self.bulk_update_url, post_data)
         self.assertEqual(SortableBook.objects.get(pk=1).my_order, 25)
         self.assertEqual(SortableBook.objects.get(pk=6).my_order, 26)
+
+    def test_bulkMoveLastPage_too_much(self):
+        order = [
+            (1, 1),
+            (2, 2),
+            (3, 3),
+            (4, 4),
+            (5, 5),
+            (6, 6),
+             # ...
+            (25, 25),
+            (26, 26),
+            (27, 27),
+            (28, 28),
+            (29, 29),
+        ]
+        self.assertOrder(order)
+        post_data = {'action': ['move_to_last_page'], '_selected_action': [1, 2, 3, 4, 5, 6]}
+        response = self.client.post(self.bulk_update_url, post_data, follow=True)
+        self.assertOrder(order)
 
     def test_bulkMoveFirstPage(self):
         self.assertEqual(SortableBook.objects.get(pk=17).my_order, 17)
