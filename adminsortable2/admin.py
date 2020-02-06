@@ -4,9 +4,8 @@ from __future__ import unicode_literals
 import os
 import json
 from itertools import chain
-
 from types import MethodType
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Dict, Any, List
 
 from django import forms
 from django.contrib.admin import ModelAdmin
@@ -271,72 +270,82 @@ class SortableAdminMixin(SortableAdminBase):
         self._bulk_move(request, queryset, self.LAST)
     move_to_last_page.short_description = _('Move selected to last page')
 
-    def _move_item(self, request, startorder, endorder):
-        if endorder > startorder: # Drag down
+    def _move_item(self, request: HttpRequest, startorder: int, endorder: int) -> List[Dict[str, Any]]:
+        extra_model_filters = self.get_extra_model_filters(request)
+        return self.move_item(startorder, endorder, extra_model_filters)
+
+    def move_item(self, startorder: int, endorder: int, extra_model_filters: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        model = self.model
+        rank_field = self.default_order_field
+
+        if endorder < startorder: # Drag up
             move_filter = {
-                '{0}__gte'.format(self.default_order_field): startorder + 1,
-                '{0}__lte'.format(self.default_order_field): endorder,
-            }
-            move_delta = -1
-            order_by = self.default_order_field
-        elif endorder < startorder: # Drag up
-            move_filter = {
-                '{0}__gte'.format(self.default_order_field): endorder,
-                '{0}__lte'.format(self.default_order_field): startorder - 1,
+                '{0}__gte'.format(rank_field): endorder,
+                '{0}__lte'.format(rank_field): startorder - 1,
             }
             move_delta = +1
-            order_by = '-{0}'.format(self.default_order_field)
+            order_by = '-{0}'.format(rank_field)
+        elif endorder > startorder: # Drag down
+            move_filter = {
+                '{0}__gte'.format(rank_field): startorder + 1,
+                '{0}__lte'.format(rank_field): endorder,
+            }
+            move_delta = -1
+            order_by = rank_field
         else:
-            return self.model.objects.none()
-        with transaction.atomic():
-            extra_model_filters = self.get_extra_model_filters(request)
-            filters = {self.default_order_field: startorder}
-            filters.update(extra_model_filters)
+            return model.objects.none()
+
+        obj_filters = {rank_field: startorder}
+        if extra_model_filters is not None:
+            obj_filters.update(extra_model_filters)
             move_filter.update(extra_model_filters)
+
+        with transaction.atomic():
             try:
-                obj = self.model.objects.get(**filters)
-            except self.model.MultipleObjectsReturned as exc:
-                msg = "Detected non-unique values in field '{}' used for sorting this model.\nConsider to run \n"\
-                      "    python manage.py reorder {}\n"\
+                obj = model.objects.get(**obj_filters)
+            except model.MultipleObjectsReturned as exc:
+                msg = "Detected non-unique values in field '{0}' used for sorting this model.\nConsider to run \n"\
+                      "    python manage.py reorder {1}\n"\
                       "to adjust this inconsistency."
-                raise self.model.MultipleObjectsReturned(msg.format(self.default_order_field, self.model._meta.label))
-            move_qs = self.model.objects.filter(**move_filter).order_by(order_by)
+                # noinspection PyProtectedMember
+                raise model.MultipleObjectsReturned(msg.format(rank_field, model._meta.label))
+
+            move_qs = model.objects.filter(**move_filter).order_by(order_by)
             move_objs = list(move_qs)
             for instance in move_objs:
-                setattr(instance, self.default_order_field, getattr(instance, self.default_order_field) + move_delta)
+                setattr(instance, rank_field, getattr(instance, rank_field) + move_delta)
                 # Do not run `instance.save()`, because it will be updated later in bulk by `move_qs.update`.
                 pre_save.send(
-                    self.model,
+                    model,
                     instance=instance,
-                    update_fields=[self.default_order_field],
+                    update_fields=[rank_field],
                     raw=False,
-                    using=router.db_for_write(self.model, instance=instance),
+                    using=router.db_for_write(model, instance=instance),
                 )
-            move_qs.update(**{self.default_order_field: F(self.default_order_field) + move_delta})
+            move_qs.update(**{rank_field: F(rank_field) + move_delta})
             for instance in move_objs:
                 post_save.send(
-                    self.model,
+                    model,
                     instance=instance,
-                    update_fields=[self.default_order_field],
+                    update_fields=[rank_field],
                     raw=False,
-                    using=router.db_for_write(self.model, instance=instance),
-                    created=False
+                    using=router.db_for_write(model, instance=instance),
+                    created=False,
                 )
-            setattr(obj, self.default_order_field, endorder)
-            obj.save(update_fields=[self.default_order_field])
-        return [dict(pk=instance.pk, order=getattr(instance, self.default_order_field)) for instance in chain(move_objs, [obj])]
 
-    def get_extra_model_filters(self, request):
+            setattr(obj, rank_field, endorder)
+            obj.save(update_fields=[rank_field])
+
+        return [{'pk': instance.pk, 'order': getattr(instance, rank_field)} for instance in chain(move_objs, [obj])]
+
+    def get_extra_model_filters(self, request: HttpRequest) -> Dict[str, Any]:
         """
         Returns additional fields to filter sortable objects
         """
         return {}
 
-    def get_max_order(self, request, obj=None):
-        max_order = self.model.objects.aggregate(
-            max_order=Max(self.default_order_field)
-        )['max_order'] or 0
-        return max_order
+    def get_max_order(self, request: HttpRequest, obj=None) -> int:
+        return self.model.objects.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
 
     def _bulk_move(self, request, queryset, method):
         if not self.enable_sorting:
