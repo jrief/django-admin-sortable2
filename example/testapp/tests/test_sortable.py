@@ -87,22 +87,23 @@ class SortableBookTestCase(TestCase):
         position that the field is replaced by '_reorder' in the same location.
         """
         request = self.factory.get(self.bulk_update_url)
-        # old_list = list(SortableBookAdmin.list_display)
-        old_list = ['my_order', 'author', 'title']
-        new_list = old_list[:]
+        old_list = SortableBookAdmin.list_display
 
         # Ensure that `list_display` contains `my_order` in non-zero position.
         try:
             assert old_list.index('my_order') > 0
         except AssertionError:
             # `list_display` contains `my_order` at the start.
+            new_list = old_list.copy()
             new_list.insert(len(new_list), new_list.pop(0))
             SortableBookAdmin.list_display = new_list
         except ValueError:
             # `list_display` doesn't contain `my_order` at all.
+            new_list = old_list.copy()
             new_list.append('my_order')
             SortableBookAdmin.list_display = new_list
-        my_order_position = new_list.index('my_order')
+
+        my_order_position = SortableBookAdmin.list_display.index('my_order')
 
         # Ensure that `get_list_display()` no longer contains `my_order`, but
         # has `_reorder` in the position that used to contain `my_order`.
@@ -112,6 +113,7 @@ class SortableBookTestCase(TestCase):
                          'Field `my_order` is still in `get_list_display()`')
         self.assertEqual(final_list.index('_reorder'), my_order_position,
                          'The order field is not in the correct position')
+
         SortableBookAdmin.list_display = old_list
 
     def test_moveUp(self):
