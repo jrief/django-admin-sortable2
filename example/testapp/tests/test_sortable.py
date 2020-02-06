@@ -27,8 +27,9 @@ class SortableBookTestCase(TestCase):
         fixtures = ['data-20.json']
 
     admin_password = 'secret'
+    changelist_url = reverse('admin:testapp_sortablebook_changelist')
     ajax_update_url = reverse('admin:testapp_sortablebook_sortable_update')
-    bulk_update_url = reverse('admin:testapp_sortablebook_changelist')
+    bulk_update_url = changelist_url
     client = Client()
     http_headers = {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'}
 
@@ -107,6 +108,22 @@ class SortableBookTestCase(TestCase):
                          'The order field is not in the correct position')
 
         SortableBookAdmin.list_display = old_list
+
+    def test_get_changelist_asc(self):
+        order_field_index = SortableBookAdmin.list_display.index('my_order')
+        model_admin = SortableBookAdmin(SortableBook, self.site)
+        request = self.factory.get("{0}?o={1}".format(self.changelist_url, order_field_index + 1))
+        model_admin.get_changelist(request)
+        self.assertTrue(model_admin.enable_sorting)
+        self.assertEqual("my_order", model_admin.order_by)
+
+    def test_get_changelist_desc(self):
+        order_field_index = SortableBookAdmin.list_display.index('my_order')
+        model_admin = SortableBookAdmin(SortableBook, self.site)
+        request = self.factory.get("{0}?o=-{1}".format(self.changelist_url, order_field_index + 1))
+        model_admin.get_changelist(request)
+        self.assertTrue(model_admin.enable_sorting)
+        self.assertEqual("-my_order", model_admin.order_by)
 
     def test_moveUp(self):
         self.assertEqual(SortableBook.objects.get(pk=7).my_order, 7)
