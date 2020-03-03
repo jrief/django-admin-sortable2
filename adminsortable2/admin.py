@@ -69,15 +69,15 @@ class MovePageActionForm(admin.helpers.ActionForm):
 class SortableAdminBase(object):
     @property
     def media(self):
-        css = {'all': ('adminsortable2/css/sortable.css',)}
-        js = (
+        css = {'all': ['adminsortable2/css/sortable.css']}
+        js = [
             'admin/js/jquery.init.js',
             'adminsortable2/js/plugins/admincompat.js',
             'adminsortable2/js/libs/jquery.ui.core-1.11.4.js',
             'adminsortable2/js/libs/jquery.ui.widget-1.11.4.js',
             'adminsortable2/js/libs/jquery.ui.mouse-1.11.4.js',
             'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-        )
+        ]
         return super(SortableAdminBase, self).media + widgets.Media(css=css, js=js)
 
 
@@ -176,9 +176,10 @@ class SortableAdminMixin(SortableAdminBase):
     def media(self):
         m = super(SortableAdminMixin, self).media
         if self.enable_sorting:
-            m = m + widgets.Media(js=(
+            m = m + widgets.Media(js=[
                 'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-                'adminsortable2/js/list-sortable.js'))
+                'adminsortable2/js/list-sortable.js',
+            ])
         return m
 
     def _add_reorder_method(self):
