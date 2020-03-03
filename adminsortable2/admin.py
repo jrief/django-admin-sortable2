@@ -16,22 +16,24 @@ else:
     from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.conf.urls import url
+from django.contrib import admin, messages
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
+from django.core.serializers.json import DjangoJSONEncoder
 try:
     from django.urls import reverse
 except ImportError:  # Django<1.11
     from django.core.urlresolvers import reverse
 from django.db import router, transaction
-from django.db.models import Max, F
+from django.db.models.aggregates import Max
+from django.db.models.expressions import F
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save, pre_save
 from django.forms.models import BaseInlineFormSet
 from django.forms import widgets
 from django.http import (
     HttpResponse, HttpResponseBadRequest,
     HttpResponseNotAllowed, HttpResponseForbidden)
-from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib import admin, messages
 
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
