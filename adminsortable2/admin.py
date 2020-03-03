@@ -391,7 +391,7 @@ class SortableAdminMixin(SortableAdminBase):
         endorders_step = -1 if self.order_by.startswith('-') else 1
         endorders = range(endorders_start, endorders_start + endorders_step * queryset_size, endorders_step)
 
-        if page.number > current_page_number: # Move forward (like drag down)
+        if page.number > current_page_number:  # Move forward (like drag down)
             queryset = queryset.reverse()
             endorders = reversed(endorders)
 
