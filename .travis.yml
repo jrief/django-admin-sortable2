@@ -46,5 +46,11 @@ matrix:
       env: DJANGO="django<3.1"
     - python: 3.5
       env: DJANGO='https://github.com/django/django/archive/master.tar.gz'
+    - python: 3.8
+      env: DJANGO="django<1.11"
+    - python: 3.8
+      env: DJANGO="django<2.0"
+    - python: 3.8
+      env: DJANGO="django<2.1"
   allow_failures:
      - env: DJANGO='https://github.com/django/django/archive/master.tar.gz'
