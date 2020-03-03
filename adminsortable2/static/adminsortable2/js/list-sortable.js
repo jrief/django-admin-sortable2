@@ -14,17 +14,12 @@ django.jQuery(function($) {
 		}
 		return vars;
 	};
-	var ordering = getQueryParams()['o'];
 
 	try {
 		var config = JSON.parse($("#admin_sortable2_config").text());
 	}
 	catch (parse_error) {
 		return;  // configuration not initialized by change_list.html
-	}
-
-	if (ordering === undefined) {
-		ordering = config.default_order_direction;
 	}
 
 	$('#result_list').sortable({
@@ -39,6 +34,7 @@ django.jQuery(function($) {
 			$(this).find('thead tr th').each(function (index) {
 				$(dragged_rows.item[0].childNodes[index]).width($(this).width() - 10);
 			});
+
 			startindex = dragged_rows.item.index();
 		},
 		stop: function (event, dragged_rows) {
@@ -50,16 +46,15 @@ django.jQuery(function($) {
 			$result_list.find('tbody tr').each(function (index) {
 				$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
 			});
+
 			endindex = dragged_rows.item.index();
 
-			if (startindex == endindex) return;
-			else if (endindex == 0) {
-				if (ordering.split('.')[0] === '-1')
-					endorder = parseInt($(dragged_rows.item[0].nextElementSibling).find('div.drag').attr('order')) + 1;
-				else
-					endorder = parseInt($(dragged_rows.item[0].nextElementSibling).find('div.drag').attr('order')) - 1;
-			} else {
+			if (endindex < startindex) { // Drag up
+				endorder = $(dragged_rows.item[0].nextElementSibling).find('div.drag').attr('order');
+			} else if (endindex > startindex) { // Drag down
 				endorder = $(dragged_rows.item[0].previousElementSibling).find('div.drag').attr('order');
+			} else {
+				return;
 			}
 			startorder = $(dragged_rows.item[0]).find('div.drag').attr('order');
 
@@ -67,7 +62,6 @@ django.jQuery(function($) {
 				url: config.update_url,
 				type: 'POST',
 				data: {
-					o: ordering,
 					startorder: startorder,
 					endorder: endorder,
 					csrfmiddlewaretoken: csrfvalue

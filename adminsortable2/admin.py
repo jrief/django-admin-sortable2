@@ -3,10 +3,11 @@ from __future__ import unicode_literals
 
 import os
 import json
-
+from itertools import chain
 from types import MethodType
 
 from django import forms
+from django.contrib.admin.views.main import ORDER_VAR
 # Remove check when support for python < 3 is dropped.
 import sys
 if sys.version_info[0] >= 3:
@@ -30,7 +31,7 @@ from django.http import (
     HttpResponse, HttpResponseBadRequest,
     HttpResponseNotAllowed, HttpResponseForbidden)
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib import admin
+from django.contrib import admin, messages
 
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
@@ -42,7 +43,7 @@ def _get_default_ordering(model, model_admin):
     except (AttributeError, IndexError, TypeError):
         pass
     else:
-        return '{}1'.format(prefix), field_name
+        return prefix, field_name
 
     try:
         # then try with the model ordering
@@ -50,8 +51,8 @@ def _get_default_ordering(model, model_admin):
     except (AttributeError, IndexError):
         msg = "Model {0}.{1} requires a list or tuple 'ordering' in its Meta class"
         raise ImproperlyConfigured(msg.format(model.__module__, model.__name__))
-
-    return '{}1'.format(prefix), field_name
+    else:
+        return prefix, field_name
 
 
 class MovePageActionForm(admin.helpers.ActionForm):
@@ -83,7 +84,6 @@ class SortableAdminBase(object):
 
 class SortableAdminMixin(SortableAdminBase):
     BACK, FORWARD, FIRST, LAST, EXACT = range(5)
-    enable_sorting = False
     action_form = MovePageActionForm
 
     @property
@@ -99,6 +99,8 @@ class SortableAdminMixin(SortableAdminBase):
     def __init__(self, model, admin_site):
         self.default_order_direction, self.default_order_field = _get_default_ordering(model, self)
         super(SortableAdminMixin, self).__init__(model, admin_site)
+        self.enable_sorting = False
+        self.order_by = None
         if not isinstance(self.exclude, (list, tuple)):
             self.exclude = [self.default_order_field]
         elif not self.exclude or self.default_order_field != self.exclude[0]:
@@ -111,9 +113,10 @@ class SortableAdminMixin(SortableAdminBase):
         # Insert the magic field into the same position as the first occurrence
         # of the default_order_field, or, if not present, at the start
         try:
-            self.list_display.insert(self.list_display.index(self.default_order_field), '_reorder')
+            self.default_order_field_index = self.list_display.index(self.default_order_field)
         except ValueError:
-            self.list_display.insert(0, '_reorder')
+            self.default_order_field_index = 0
+        self.list_display.insert(self.default_order_field_index, '_reorder')
 
         # Remove *all* occurrences of the field from `list_display`
         if self.list_display and self.default_order_field in self.list_display:
@@ -161,16 +164,36 @@ class SortableAdminMixin(SortableAdminBase):
         return actions
 
     def get_changelist(self, request, **kwargs):
-        order = self._get_order_direction(request)
-        if order == '1':
+        first_order_direction, first_order_field_index = self._get_first_ordering(request)
+        if first_order_field_index == self.default_order_field_index:
             self.enable_sorting = True
-            self.order_by = self.default_order_field
-        elif order == '-1':
-            self.enable_sorting = True
-            self.order_by = '-' + self.default_order_field
+            self.order_by = "{}{}".format(first_order_direction, self.default_order_field)
         else:
             self.enable_sorting = False
         return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
+
+    def _get_first_ordering(self, request):
+        """
+        Must be consistent with `django.contrib.admin.views.main.ChangeList.get_ordering`.
+        """
+        order_var = request.GET.get(ORDER_VAR)
+        if order_var is None:
+            first_order_field_index = self.default_order_field_index
+            first_order_direction = self.default_order_direction
+        else:
+            first_order_field_index = None
+            first_order_direction = ""
+            for p in order_var.split("."):
+                none, prefix, index = p.rpartition("-")
+                try:
+                    index = int(index)
+                except ValueError:
+                    continue  # skip it
+                else:
+                    first_order_field_index = index - 1
+                    first_order_direction = prefix
+                    break
+        return first_order_direction, first_order_field_index
 
     @property
     def media(self):
@@ -245,71 +268,73 @@ class SortableAdminMixin(SortableAdminBase):
         self._bulk_move(request, queryset, self.LAST)
     move_to_last_page.short_description = _('Move selected to last page')
 
-    def _get_order_direction(self, request):
-        return request.POST.get('o', request.GET.get('o', '1')).split('.')[0]
-
     def _move_item(self, request, startorder, endorder):
-        if self._get_order_direction(request) != '-1':
-            order_up, order_down = 0, 1
-        else:
-            order_up, order_down = 1, 0
-        if startorder < endorder - order_up:
-            finalorder = endorder - order_up
+        extra_model_filters = self.get_extra_model_filters(request)
+        return self.move_item(startorder, endorder, extra_model_filters)
+
+    def move_item(self, startorder, endorder, extra_model_filters = None):
+        model = self.model
+        rank_field = self.default_order_field
+
+        if endorder < startorder: # Drag up
             move_filter = {
-                '{0}__gte'.format(self.default_order_field): startorder,
-                '{0}__lte'.format(self.default_order_field): finalorder,
+                '{0}__gte'.format(rank_field): endorder,
+                '{0}__lte'.format(rank_field): startorder - 1,
             }
-            order_by = self.default_order_field
-            move_update = {self.default_order_field: F(self.default_order_field) - 1}
-        elif startorder > endorder + order_down:
-            finalorder = endorder + order_down
+            move_delta = +1
+            order_by = '-{0}'.format(rank_field)
+        elif endorder > startorder: # Drag down
             move_filter = {
-                '{0}__gte'.format(self.default_order_field): finalorder,
-                '{0}__lte'.format(self.default_order_field): startorder,
+                '{0}__gte'.format(rank_field): startorder + 1,
+                '{0}__lte'.format(rank_field): endorder,
             }
-            order_by = '-{0}'.format(self.default_order_field)
-            move_update = {self.default_order_field: F(self.default_order_field) + 1}
+            move_delta = -1
+            order_by = rank_field
         else:
-            return self.model.objects.none()
-        with transaction.atomic():
-            extra_model_filters = self.get_extra_model_filters(request)
-            filters = {self.default_order_field: startorder}
-            filters.update(extra_model_filters)
+            return model.objects.none()
+
+        obj_filters = {rank_field: startorder}
+        if extra_model_filters is not None:
+            obj_filters.update(extra_model_filters)
             move_filter.update(extra_model_filters)
+
+        with transaction.atomic():
             try:
-                obj = self.model.objects.get(**filters)
-            except self.model.MultipleObjectsReturned as exc:
-                msg = "Detected non-unique values in field '{}' used for sorting this model.\nConsider to run \n"\
-                      "    python manage.py reorder {}\n"\
+                obj = model.objects.get(**obj_filters)
+            except model.MultipleObjectsReturned as exc:
+                msg = "Detected non-unique values in field '{0}' used for sorting this model.\nConsider to run \n"\
+                      "    python manage.py reorder {1}\n"\
                       "to adjust this inconsistency."
-                raise self.model.MultipleObjectsReturned(msg.format(self.default_order_field, self.model._meta.label))
-            obj_qs = self.model.objects.filter(pk=obj.pk)
-            move_qs = self.model.objects.filter(**move_filter).order_by(order_by)
-            for instance in move_qs:
+                # noinspection PyProtectedMember
+                raise model.MultipleObjectsReturned(msg.format(rank_field, model._meta.label))
+
+            move_qs = model.objects.filter(**move_filter).order_by(order_by)
+            move_objs = list(move_qs)
+            for instance in move_objs:
+                setattr(instance, rank_field, getattr(instance, rank_field) + move_delta)
+                # Do not run `instance.save()`, because it will be updated later in bulk by `move_qs.update`.
                 pre_save.send(
-                    self.model,
+                    model,
                     instance=instance,
-                    update_fields=[self.default_order_field],
+                    update_fields=[rank_field],
                     raw=False,
-                    using=None or router.db_for_write(
-                        self.model,
-                        instance=instance),
+                    using=router.db_for_write(model, instance=instance),
                 )
-            # using qs.update avoid multi [pre|post]_save signal on obj.save()
-            obj_qs.update(**{self.default_order_field: self.get_max_order(request, obj) + 1})
-            move_qs.update(**move_update)
-            obj_qs.update(**{self.default_order_field: finalorder})
-            for instance in move_qs:
+            move_qs.update(**{rank_field: F(rank_field) + move_delta})
+            for instance in move_objs:
                 post_save.send(
-                    self.model,
+                    model,
                     instance=instance,
-                    update_fields=[self.default_order_field],
+                    update_fields=[rank_field],
                     raw=False,
-                    using=router.db_for_write(self.model, instance=instance),
-                    created=False
+                    using=router.db_for_write(model, instance=instance),
+                    created=False,
                 )
-        query_set = self.model.objects.filter(**move_filter).order_by(self.default_order_field).values_list('pk', self.default_order_field)
-        return [dict(pk=pk, order=order) for pk, order in query_set]
+
+            setattr(obj, rank_field, endorder)
+            obj.save(update_fields=[rank_field])
+
+        return [{'pk': instance.pk, 'order': getattr(instance, rank_field)} for instance in chain(move_objs, [obj])]
 
     def get_extra_model_filters(self, request):
         """
@@ -318,59 +343,59 @@ class SortableAdminMixin(SortableAdminBase):
         return {}
 
     def get_max_order(self, request, obj=None):
-        max_order = self.model.objects.aggregate(
-            max_order=Max(self.default_order_field)
-        )['max_order'] or 0
-        return max_order
+        return self.model.objects.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
 
     def _bulk_move(self, request, queryset, method):
         if not self.enable_sorting:
             return
         objects = self.model.objects.order_by(self.order_by)
         paginator = self.paginator(objects, self.list_per_page)
-        page = paginator.page(int(request.GET.get('p', 0)) + 1)
-        step = int(request.POST.get('step', 1))
-        try:
-            if method == self.EXACT:
-                target_page = int(request.POST.get('page', page))
-                if page.number == target_page:
-                    return
-                elif target_page > page.number:
-                    direction = -1
-                else:
-                    direction = +1
-                page = paginator.page(target_page)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field)
-                if direction == -1:
-                    endorder += queryset.count()
-                    queryset = queryset.reverse()
-            elif method == self.BACK:
-                page = paginator.page(page.number - step)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field)
-                direction = +1
-            elif method == self.FORWARD:
-                page = paginator.page(page.number + step)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field) + queryset.count()
-                queryset = queryset.reverse()
-                direction = -1
-            elif method == self.FIRST:
-                page = paginator.page(1)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field)
-                direction = +1
-            elif method == self.LAST:
-                page = paginator.page(paginator.num_pages)
-                endorder = getattr(objects[page.start_index() - 1], self.default_order_field) + queryset.count()
-                queryset = queryset.reverse()
-                direction = -1
-            else:
-                raise Exception('Invalid method')
-        except EmptyPage:
+        current_page_number = int(request.GET.get('p', 0)) + 1
+
+        if method == self.EXACT:
+            page_number = int(request.POST.get('page', current_page_number))
+            target_page_number = page_number
+        elif method == self.BACK:
+            step = int(request.POST.get('step', 1))
+            target_page_number = current_page_number - step
+        elif method == self.FORWARD:
+            step = int(request.POST.get('step', 1))
+            target_page_number = current_page_number + step
+        elif method == self.FIRST:
+            target_page_number = 1
+        elif method == self.LAST:
+            target_page_number = paginator.num_pages
+        else:
+            raise Exception('Invalid method')
+
+        if target_page_number == current_page_number:
+            # If you want the selected items to be moved to the start of the current page, then just do not return here.
             return
-        endorder -= 1
-        for obj in queryset:
+
+        try:
+            page = paginator.page(target_page_number)
+        except EmptyPage as ex:
+            self.message_user(request, str(ex), level=messages.ERROR)
+            return
+
+        queryset_size = queryset.count()
+        page_size = page.end_index() - page.start_index() + 1
+        if queryset_size > page_size:
+            msg = _("The target page size is {}. It is too small for {} items.").format(page_size, queryset_size)
+            self.message_user(request, msg, level=messages.ERROR)
+            return
+
+        endorders_start = getattr(objects[page.start_index() - 1], self.default_order_field)
+        endorders_step = -1 if self.order_by.startswith('-') else 1
+        endorders = range(endorders_start, endorders_start + endorders_step * queryset_size, endorders_step)
+
+        if page.number > current_page_number: # Move forward (like drag down)
+            queryset = queryset.reverse()
+            endorders = reversed(endorders)
+
+        for obj, endorder in zip(queryset, endorders):
             startorder = getattr(obj, self.default_order_field)
             self._move_item(request, startorder, endorder)
-            endorder += direction
 
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:

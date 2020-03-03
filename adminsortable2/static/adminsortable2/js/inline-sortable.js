@@ -20,7 +20,7 @@ django.jQuery(function($) {
 					$(this).removeClass('row1 row2').addClass(index % 2 ? 'row2' : 'row1');
 				});
 				var originals = $result_list.find('tbody tr.has_original').get()
-				if (default_order_direction === '-1') {
+				if (default_order_direction === '-') {
 					originals.reverse();
 				}
 				$(originals).each(function (index) {
@@ -41,7 +41,7 @@ django.jQuery(function($) {
 			stop: function (event, dragged_rows) {
 				var $result_list = $(this);
 				var originals = $result_list.find('div.inline-related.has_original').get()
-				if (default_order_direction === '-1') {
+				if (default_order_direction === '-') {
 					originals.reverse();
 				}
 				$(originals).each(function (index) {
