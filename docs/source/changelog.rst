@@ -4,9 +4,11 @@
 Release history
 ===============
 
-0.7.6 (unreleased)
-------------------
-* Fix bugs `#241`_, `#242`_, `#243`_.
+0.7.6
+-----
+* Fix `#241`_: Move items when the order column is not first.
+* Fix `#242`_: Bulk move when sorting order is descending.
+* Fix `#243`_: Bulk move to last page when it is too small.
 
 .. _#241: https://github.com/jrief/django-admin-sortable2/issues/241
 .. _#242: https://github.com/jrief/django-admin-sortable2/issues/242
