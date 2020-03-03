@@ -49,9 +49,11 @@ django.jQuery(function($) {
 
 			endindex = dragged_rows.item.index();
 
-			if (endindex < startindex) { // Drag up
+			if (endindex < startindex) {
+				// drag up
 				endorder = $(dragged_rows.item[0].nextElementSibling).find('div.drag').attr('order');
-			} else if (endindex > startindex) { // Drag down
+			} else if (endindex > startindex) {
+				// drag down
 				endorder = $(dragged_rows.item[0].previousElementSibling).find('div.drag').attr('order');
 			} else {
 				return;
