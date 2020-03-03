@@ -345,7 +345,7 @@ class SortableAdminMixin(SortableAdminBase):
         return {}
 
     def get_max_order(self, request, obj=None):
-        return self.model.objects.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
+        return self.model.objects.aggregate(max_order=Coalesce(Max(self.default_order_field), 0))['max_order']
 
     def _bulk_move(self, request, queryset, method):
         if not self.enable_sorting:
@@ -422,9 +422,7 @@ class PolymorphicSortableAdminMixin(SortableAdminMixin):
     ``SortableAdminMixin``.
     """
     def get_max_order(self, request, obj=None):
-        return self.base_model.objects.aggregate(
-            max_order=Max(self.default_order_field)
-        )['max_order'] or 0
+        return self.base_model.objects.aggregate(max_order=Coalesce(Max(self.default_order_field), 0))['max_order']
 
 
 class CustomInlineFormSet(BaseInlineFormSet):
@@ -451,7 +449,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
         default_order_field = getattr(obj, self.default_order_field, None)
         if default_order_field is None or default_order_field >= 0:
             query_set = self.model.objects.filter(**{self.fk.get_attname(): self.instance.pk})
-            max_order = query_set.aggregate(max_order=Max(self.default_order_field))['max_order'] or 0
+            max_order = query_set.aggregate(max_order=Coalesce(Max(self.default_order_field), 0))['max_order']
             setattr(obj, self.default_order_field, max_order + 1)
         if commit:
             obj.save()
