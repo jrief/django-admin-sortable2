@@ -79,7 +79,7 @@ class SortableAdminBase(object):
             'adminsortable2/js/libs/jquery.ui.core-1.11.4.js',
             'adminsortable2/js/libs/jquery.ui.widget-1.11.4.js',
             'adminsortable2/js/libs/jquery.ui.mouse-1.11.4.js',
-            'adminsortable2/js/libs/jquery.ui.touch-punch.min-0.2.3.js',
+            'adminsortable2/js/libs/jquery.ui.touch-punch-0.2.3.js',
             'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
         ]
         return super(SortableAdminBase, self).media + widgets.Media(css=css, js=js)
