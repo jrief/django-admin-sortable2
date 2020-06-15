@@ -304,7 +304,7 @@ class SortableAdminMixin(SortableAdminBase):
         with transaction.atomic():
             try:
                 obj = model.objects.get(**obj_filters)
-            except model.MultipleObjectsReturned as exc:
+            except model.MultipleObjectsReturned:
                 msg = "Detected non-unique values in field '{0}' used for sorting this model.\nConsider to run \n"\
                       "    python manage.py reorder {1}\n"\
                       "to adjust this inconsistency."

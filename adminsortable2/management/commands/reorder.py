@@ -19,12 +19,16 @@ class Command(BaseCommand):
                 Model = apps.get_model(app_label, model_name)
             except ImportError:
                 raise CommandError('Unable to load model "%s"' % modelname)
+
             if not hasattr(Model._meta, 'ordering') or len(Model._meta.ordering) == 0:
                 raise CommandError('Model "{0}" does not define field "ordering" in its Meta class'.format(modelname))
+
             orderfield = Model._meta.ordering[0]
             if orderfield[0] == '-':
                 orderfield = orderfield[1:]
+
             for order, obj in enumerate(Model.objects.iterator(), start=1):
                 setattr(obj, orderfield, order)
                 obj.save()
+
             self.stdout.write('Successfully reordered model "{0}"'.format(modelname))
