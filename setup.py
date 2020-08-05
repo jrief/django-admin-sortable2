@@ -52,7 +52,7 @@ setup(
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
     install_requires=[
-        'Django>=1.8,<3.1',
+        'Django>=1.8,<3.2',
     ],
     packages=find_packages(exclude=['example', 'docs']),
     include_package_data=True,
