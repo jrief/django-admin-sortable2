@@ -4,6 +4,11 @@
 Release history
 ===============
 
+0.7.7
+-----
+* Add support for Django-3.1.
+
+
 0.7.6
 -----
 * Fix `#241`_: Move items when the order column is not first.
