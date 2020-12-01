@@ -38,7 +38,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.forms import (
     BaseGenericInlineFormSet,
 )
-from django.contrib.contenttypes.admin import GenericStackedInline
+from django.contrib.contenttypes.admin import (
+    GenericStackedInline, GenericTabularInline
+)
 
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
