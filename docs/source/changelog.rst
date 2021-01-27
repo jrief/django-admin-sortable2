@@ -4,6 +4,12 @@
 Release history
 ===============
 
+0.7.8
+-----
+* Fix `#207`_: Last item not displayed in stacked- and tabular inline admins,
+  if model doesn't have add permission.
+
+
 0.7.7
 -----
 * Add support for Django-3.1.
