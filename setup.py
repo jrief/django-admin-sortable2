@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import io
 from setuptools import setup, find_packages
 from adminsortable2 import __version__

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 import json
 from itertools import chain
@@ -82,7 +79,7 @@ class SortableAdminBase(object):
             'adminsortable2/js/libs/jquery.ui.touch-punch-0.2.3.js',
             'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
         ]
-        return super(SortableAdminBase, self).media + widgets.Media(css=css, js=js)
+        return super().media + widgets.Media(css=css, js=js)
 
 
 class SortableAdminMixin(SortableAdminBase):
@@ -101,7 +98,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def __init__(self, model, admin_site):
         self.default_order_direction, self.default_order_field = _get_default_ordering(model, self)
-        super(SortableAdminMixin, self).__init__(model, admin_site)
+        super().__init__(model, admin_site)
         self.enable_sorting = False
         self.order_by = None
         if not isinstance(self.exclude, (list, tuple)):
@@ -145,10 +142,10 @@ class SortableAdminMixin(SortableAdminBase):
                 self.admin_site.admin_view(self.update_order),
                 name=self._get_update_url_name()),
         ]
-        return my_urls + super(SortableAdminMixin, self).get_urls()
+        return my_urls + super().get_urls()
 
     def get_actions(self, request):
-        actions = super(SortableAdminMixin, self).get_actions(request)
+        actions = super().get_actions(request)
         paginator = self.get_paginator(request, self.get_queryset(request), self.list_per_page)
         if len(paginator.page_range) > 1 and 'all' not in request.GET and self.enable_sorting:
             # add actions for moving items to other pages
@@ -173,7 +170,7 @@ class SortableAdminMixin(SortableAdminBase):
             self.order_by = "{}{}".format(first_order_direction, self.default_order_field)
         else:
             self.enable_sorting = False
-        return super(SortableAdminMixin, self).get_changelist(request, **kwargs)
+        return super().get_changelist(request, **kwargs)
 
     def _get_first_ordering(self, request):
         """
@@ -200,7 +197,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     @property
     def media(self):
-        m = super(SortableAdminMixin, self).media
+        m = super().media
         if self.enable_sorting:
             m = m + widgets.Media(js=[
                 'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
@@ -249,7 +246,7 @@ class SortableAdminMixin(SortableAdminBase):
     def save_model(self, request, obj, form, change):
         if not change:
             setattr(obj, self.default_order_field, self.get_max_order(request, obj) + 1)
-        super(SortableAdminMixin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
 
     def move_to_exact_page(self, request, queryset):
         self._bulk_move(request, queryset, self.EXACT)
@@ -406,7 +403,7 @@ class SortableAdminMixin(SortableAdminBase):
 
         extra_context['sortable_update_url'] = self.get_update_url(request)
         extra_context['default_order_direction'] = self.default_order_direction
-        return super(SortableAdminMixin, self).changelist_view(request, extra_context)
+        return super().changelist_view(request, extra_context)
 
     def get_update_url(self, request):
         """
@@ -437,7 +434,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
         self.form.base_fields[self.default_order_field].required = False
         self.form.base_fields[self.default_order_field].widget = widgets.HiddenInput()
 
-        super(CustomInlineFormSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def save_new(self, form, commit=True):
         """
@@ -446,7 +443,7 @@ class CustomInlineFormSet(BaseInlineFormSet):
         Strange behaviour when field has a default, this might be evaluated on new object and the value
         will be not None, but the default value.
         """
-        obj = super(CustomInlineFormSet, self).save_new(form, commit=False)
+        obj = super().save_new(form, commit=False)
         default_order_field = getattr(obj, self.default_order_field, None)
         if default_order_field is None or default_order_field >= 0:
             query_set = self.model.objects.filter(**{self.fk.get_attname(): self.instance.pk})
@@ -464,7 +461,7 @@ class SortableInlineAdminMixin(SortableAdminBase):
     formset = CustomInlineFormSet
 
     def get_fields(self, request, obj=None):
-        fields = super(SortableInlineAdminMixin, self).get_fields(request, obj)
+        fields = super().get_fields(request, obj)
         _, default_order_field = _get_default_ordering(self.model, self)
         fields = list(fields)
 
@@ -491,9 +488,9 @@ class SortableInlineAdminMixin(SortableAdminBase):
     @property
     def media(self):
         shared = (
-            super(SortableInlineAdminMixin, self).media
-            + widgets.Media(js=('adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-                                'adminsortable2/js/inline-sortable.js')))
+            super().media + widgets.Media(
+                js=('adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
+                    'adminsortable2/js/inline-sortable.js')))
         if isinstance(self, admin.StackedInline):
             return shared + widgets.Media(
                 js=('adminsortable2/js/inline-sortable.js',
