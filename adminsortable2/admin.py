@@ -34,6 +34,7 @@ from django.forms import widgets
 from django.http import (
     HttpResponse, HttpResponseBadRequest,
     HttpResponseNotAllowed, HttpResponseForbidden)
+from . import encoders
 
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
@@ -88,6 +89,11 @@ class SortableAdminBase(object):
 class SortableAdminMixin(SortableAdminBase):
     BACK, FORWARD, FIRST, LAST, EXACT = range(5)
     action_form = MovePageActionForm
+
+    if encoders.HAS_HASHID:
+        encoder = encoders.HashidJSONEncoder
+    else:
+        encoder = DjangoJSONEncoder
 
     @property
     def change_list_template(self):
@@ -244,7 +250,7 @@ class SortableAdminMixin(SortableAdminBase):
         startorder = int(request.POST.get('startorder'))
         endorder = int(request.POST.get('endorder', 0))
         moved_items = list(self._move_item(request, startorder, endorder))
-        return HttpResponse(json.dumps(moved_items, cls=DjangoJSONEncoder), content_type='application/json;charset=UTF-8')
+        return HttpResponse(json.dumps(moved_items, cls=self.encoder), content_type='application/json;charset=UTF-8')
 
     def save_model(self, request, obj, form, change):
         if not change:
