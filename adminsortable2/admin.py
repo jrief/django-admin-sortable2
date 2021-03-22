@@ -34,6 +34,13 @@ from django.forms import widgets
 from django.http import (
     HttpResponse, HttpResponseBadRequest,
     HttpResponseNotAllowed, HttpResponseForbidden)
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.forms import (
+    BaseGenericInlineFormSet,
+)
+from django.contrib.contenttypes.admin import (
+    GenericStackedInline, GenericTabularInline
+)
 
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
@@ -426,7 +433,7 @@ class PolymorphicSortableAdminMixin(SortableAdminMixin):
         return self.base_model.objects.aggregate(max_order=Coalesce(Max(self.default_order_field), 0))['max_order']
 
 
-class CustomInlineFormSet(BaseInlineFormSet):
+class CustomInlineFormSetMixin():
     def __init__(self, *args, **kwargs):
         self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
 
@@ -437,7 +444,11 @@ class CustomInlineFormSet(BaseInlineFormSet):
         self.form.base_fields[self.default_order_field].required = False
         self.form.base_fields[self.default_order_field].widget = widgets.HiddenInput()
 
-        super(CustomInlineFormSet, self).__init__(*args, **kwargs)
+        super(CustomInlineFormSetMixin, self).__init__(*args, **kwargs)
+
+    def get_max_order(self):
+        query_set = self.model.objects.filter(**{self.fk.get_attname(): self.instance.pk})
+        return query_set.aggregate(max_order=Coalesce(Max(self.default_order_field), 0))['max_order']
 
     def save_new(self, form, commit=True):
         """
@@ -446,11 +457,10 @@ class CustomInlineFormSet(BaseInlineFormSet):
         Strange behaviour when field has a default, this might be evaluated on new object and the value
         will be not None, but the default value.
         """
-        obj = super(CustomInlineFormSet, self).save_new(form, commit=False)
+        obj = super(CustomInlineFormSetMixin, self).save_new(form, commit=False)
         default_order_field = getattr(obj, self.default_order_field, None)
         if default_order_field is None or default_order_field >= 0:
-            query_set = self.model.objects.filter(**{self.fk.get_attname(): self.instance.pk})
-            max_order = query_set.aggregate(max_order=Coalesce(Max(self.default_order_field), 0))['max_order']
+            max_order = self.get_max_order()
             setattr(obj, self.default_order_field, max_order + 1)
         if commit:
             obj.save()
@@ -459,6 +469,8 @@ class CustomInlineFormSet(BaseInlineFormSet):
             form.save_m2m()
         return obj
 
+class CustomInlineFormSet(CustomInlineFormSetMixin, BaseInlineFormSet):
+    pass
 
 class SortableInlineAdminMixin(SortableAdminBase):
     formset = CustomInlineFormSet
@@ -489,24 +501,51 @@ class SortableInlineAdminMixin(SortableAdminBase):
         return fields
 
     @property
+    def is_stacked(self):
+        return isinstance(self, admin.StackedInline)
+
+    @property
+    def is_tabular(self):
+        return isinstance(self, admin.TabularInline)
+
+    @property
     def media(self):
         shared = (
             super(SortableInlineAdminMixin, self).media
             + widgets.Media(js=('adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
                                 'adminsortable2/js/inline-sortable.js')))
-        if isinstance(self, admin.StackedInline):
+        if self.is_stacked:
             return shared + widgets.Media(
                 js=('adminsortable2/js/inline-sortable.js',
                     'adminsortable2/js/inline-stacked.js'))
-        if isinstance(self, admin.TabularInline):
+        else:
+            # assume TabularInline (don't return None in any case)
             return shared + widgets.Media(
                 js=('adminsortable2/js/inline-sortable.js',
                     'adminsortable2/js/inline-tabular.js'))
 
     @property
     def template(self):
-        if isinstance(self, admin.StackedInline):
+        if self.is_stacked:
             return 'adminsortable2/stacked.html'
-        if isinstance(self, admin.TabularInline):
+        elif self.is_tabular:
             return 'adminsortable2/tabular.html'
         raise ImproperlyConfigured('Class {0}.{1} must also derive from admin.TabularInline or admin.StackedInline'.format(self.__module__, self.__class__))
+
+
+class CustomGenericInlineFormSet(CustomInlineFormSetMixin, BaseGenericInlineFormSet):
+    def get_max_order(self):
+        query_set = self.model.objects.filter(**{self.ct_fk_field.name: self.instance.pk,
+            self.ct_field.name: ContentType.objects.get_for_model(self.instance, for_concrete_model=self.for_concrete_model)})
+        return query_set.aggregate(max_order=Coalesce(Max(self.default_order_field), 0))['max_order']
+
+class SortableGenericInlineAdminMixin(SortableInlineAdminMixin):
+    formset = CustomGenericInlineFormSet
+
+    @property
+    def is_stacked(self):
+        return isinstance(self, GenericStackedInline)
+
+    @property
+    def is_tabular(self):
+        return isinstance(self, GenericTabularInline)
