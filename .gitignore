@@ -8,6 +8,8 @@
 .DS_Store
 .tmp*
 .tox
+.venv
+env
 local_settings.py
 build
 docs/_build

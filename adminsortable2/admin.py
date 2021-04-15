@@ -12,7 +12,7 @@ if sys.version_info[0] >= 3:
 else:
     from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from django.conf.urls import url
+from django.urls import path
 from django.contrib import admin, messages
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
@@ -145,9 +145,11 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_urls(self):
         my_urls = [
-            url(r'^adminsortable2_update/$',
+            path(
+                'adminsortable2_update/',
                 self.admin_site.admin_view(self.update_order),
-                name=self._get_update_url_name()),
+                name=self._get_update_url_name()
+            ),
         ]
         return my_urls + super().get_urls()
 
