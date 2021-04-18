@@ -3,9 +3,11 @@ import io
 from setuptools import setup, find_packages
 from adminsortable2 import __version__
 
+
 def readfile(filename):
     with io.open(filename, encoding='utf-8') as fd:
         return fd.read()
+
 
 DESCRIPTION = 'Generic drag-and-drop sorting for the List, the Stacked- and the Tabular-Inlines Views in the Django Admin'
 
@@ -27,6 +29,7 @@ CLASSIFIERS = [
     'Framework :: Django :: 2.2',
     'Framework :: Django :: 3.0',
     'Framework :: Django :: 3.1',
+    'Framework :: Django :: 3.2',
 ]
 
 
@@ -44,7 +47,7 @@ setup(
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
     install_requires=[
-        'Django>=1.8,<3.2',
+        'Django>=1.8,<3.3',
     ],
     packages=find_packages(exclude=['example', 'docs']),
     include_package_data=True,

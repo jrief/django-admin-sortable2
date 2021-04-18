@@ -10,6 +10,7 @@ env:
   - DJANGO="django<2.3"
   - DJANGO="django<3.1"
   - DJANGO="django<3.2"
+  - DJANGO="django<3.3"
   - DJANGO='https://github.com/django/django/archive/master.tar.gz'
 
 install:
