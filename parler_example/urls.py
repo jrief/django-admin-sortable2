@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from django.conf.urls import url, include
 from django.contrib import admin
+from django.urls import path, re_path
 from django.views.generic import RedirectView
 
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^.*$', RedirectView.as_view(url='/admin/')),
+    path('admin/', admin.site.urls),
+    re_path(r'^.*$', RedirectView.as_view(url='/admin/')),
 ]

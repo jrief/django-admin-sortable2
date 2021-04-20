@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # adminsortable2 documentation build configuration file, created by
 # sphinx-quickstart on Sat Apr 26 22:01:07 2014.
 #
