@@ -11,7 +11,7 @@ indent_style = tab
 indent_size = 4
 
 [*.py]
-line_length=119
+max_line_length = 119
 indent_style = space
 
 [*.json]
