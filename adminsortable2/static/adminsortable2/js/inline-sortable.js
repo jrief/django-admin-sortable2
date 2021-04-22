@@ -9,7 +9,7 @@ django.jQuery(function($) {
 		var tabular_inlines = $(this).find('div.tabular table');
 		tabular_inlines.sortable({
 			handle: $(this).find('tbody .drag'),
-			items: 'tr.form-row.has_original',
+			items: 'tr.adminsortable2-form-row.has_original',
 			axis: 'y',
 			scroll: true,
 			cursor: 'ns-resize',
