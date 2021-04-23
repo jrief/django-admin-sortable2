@@ -5,7 +5,7 @@
     {% endif %}
     {% for line in fieldset %}
         {# Its an ugly hack to hide hidden input fields using style "display: none;", but unless https://code.djangoproject.com/ticket/11277 is solved, it currently the only possible workaround #}
-        <div class="adminsortable2-form-row{% if line.fields|length_is:'1' and line.errors %} errors{% endif %}{% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if field.field.is_hidden %} is_hidden{% endif %}{% endfor %}">
+        <div class="form-row{% if line.fields|length_is:'1' and line.errors %} errors{% endif %}{% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if field.field.is_hidden %} is_hidden{% endif %}{% endfor %}">
             {% if line.fields|length_is:'1' %}{{ line.errors }}{% endif %}
             {% for field in line %}
                 {% if field.field.is_hidden %}{{ field.field }}{% else %}

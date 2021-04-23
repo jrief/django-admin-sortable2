@@ -14,17 +14,17 @@
 	cursor: pointer;
 }
 /* styles for tabular inlines */
-div.inline-group table.ui-sortable tr.adminsortable2-form-row.has_original td.drag {
+div.inline-group table.ui-sortable tr.form-row.has_original td.drag {
 	cursor: pointer;
 	background-image: url(../icons/drag.png);
 	background-repeat: repeat;
 	width: 20px;
 }
-div.inline-group table.ui-sortable tr.adminsortable2-form-row.has_original td.original p {
+div.inline-group table.ui-sortable tr.form-row.has_original td.original p {
 	left: initial;
 }
 
-div.inline-group table.ui-sortable tr.adminsortable2-form-row td.is_hidden {
+div.inline-group table.ui-sortable tr.form-row td.is_hidden {
 	display: none;
 }
 /* styles for stacked inlines */
@@ -34,6 +34,6 @@ div.inline-group.ui-sortable div.inline-related.has_original h3 {
 div.inline-group.ui-sortable div.inline-related.has_original h3:hover {
 	cursor: pointer;
 }
-div.inline-group.ui-sortable div.adminsortable2-form-row.is_hidden {
+div.inline-group.ui-sortable div.form-row.is_hidden {
 	display: none;
 }
