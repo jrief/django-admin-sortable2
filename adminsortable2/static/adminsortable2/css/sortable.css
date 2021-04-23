@@ -14,6 +14,13 @@
 	cursor: pointer;
 }
 /* styles for tabular inlines */
+
+/* This is to override display:flex; on class form-row which is inherited
+if a bootstrap based admin theme is used */
+div.inline-group table.ui-sortable tr.form-row {
+	display:table-row;
+}
+
 div.inline-group table.ui-sortable tr.form-row.has_original td.drag {
 	cursor: pointer;
 	background-image: url(../icons/drag.png);
