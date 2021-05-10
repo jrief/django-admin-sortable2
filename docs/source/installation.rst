@@ -28,3 +28,9 @@ Add ``'adminsortable2'`` to the list of ``INSTALLED_APPS`` in your project's ``s
 	    'adminsortable2',
 	    ...
 	)
+
+To collect static files run:
+
+.. code-block:: bash
+
+    python manage.py collectstatic
