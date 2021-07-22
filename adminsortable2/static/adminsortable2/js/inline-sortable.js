@@ -23,8 +23,9 @@ django.jQuery(function($) {
 				if (default_order_direction === '-') {
 					originals.reverse();
 				}
-				$(originals).each(function (index) {
-					$(this).find(order_input_field).val(index + 1);
+              	// originally .find looked for order_input_field which comes as empty string for some reason, hence had to be replaced with the adequate selector
+ 				$(originals).each(function (index) {
+					$(this).find('.vIntegerField').val(index + 1);
 				});
 			}
 		});
