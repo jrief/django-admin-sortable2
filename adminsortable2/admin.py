@@ -83,6 +83,7 @@ class SortableAdminBase:
 class SortableAdminMixin(SortableAdminBase):
     BACK, FORWARD, FIRST, LAST, EXACT = range(5)
     action_form = MovePageActionForm
+    active_database = 'default'
 
     @property
     def change_list_template(self):
@@ -139,6 +140,12 @@ class SortableAdminMixin(SortableAdminBase):
         rev_field = '-' + self.default_order_field
         if self.ordering and rev_field in self.ordering:
             self.ordering = [f for f in self.ordering if f != rev_field]
+
+        # set active database in case of multi database setup
+        if model._meta.db_tablespace != "":
+            self.active_database = model._meta.db_tablespace
+        #.using(self.active_database)
+
 
     def _get_update_url_name(self):
         return f'{self.model._meta.app_label}_{self.model._meta.model_name}_sortable_update'
@@ -319,7 +326,7 @@ class SortableAdminMixin(SortableAdminBase):
 
         with transaction.atomic():
             try:
-                obj = model.objects.get(**obj_filters)
+                obj = model.objects.using(self.active_database).get(**obj_filters)
             except model.MultipleObjectsReturned:
 
                 # noinspection PyProtectedMember
@@ -329,7 +336,7 @@ class SortableAdminMixin(SortableAdminBase):
                     "to adjust this inconsistency."
                 )
 
-            move_qs = model.objects.filter(**move_filter).order_by(order_by)
+            move_qs = model.objects.using(self.active_database).filter(**move_filter).order_by(order_by)
             move_objs = list(move_qs)
             for instance in move_objs:
                 setattr(
@@ -372,14 +379,15 @@ class SortableAdminMixin(SortableAdminBase):
         return {}
 
     def get_max_order(self, request, obj=None):
-        return self.model.objects.aggregate(
+        return self.model.objects.using(self.active_database).aggregate(
             max_order=Coalesce(Max(self.default_order_field), 0)
         )['max_order']
 
     def _bulk_move(self, request, queryset, method):
         if not self.enable_sorting:
             return
-        objects = self.model.objects.order_by(self.order_by)
+
+        objects = self.model.objects.using(self.active_database).order_by(self.order_by)
         paginator = self.paginator(objects, self.list_per_page)
         current_page_number = int(request.GET.get('p', 0)) + 1
 
@@ -456,12 +464,21 @@ class PolymorphicSortableAdminMixin(SortableAdminMixin):
     rather than ``SortableAdminMixin``.
     """
     def get_max_order(self, request, obj=None):
-        return self.base_model.objects.aggregate(
+
+        using_database = 'default'
+        if self.base_model._meta.db_tablespace != "":
+            using_database = self.base_model._meta.db_tablespace
+        #.using(using_database)
+
+        return self.base_model.objects.using(using_database).aggregate(
             max_order=Coalesce(Max(self.default_order_field), 0)
         )['max_order']
 
 
 class CustomInlineFormSetMixin:
+
+    active_database = 'default'
+
     def __init__(self, *args, **kwargs):
         self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
 
@@ -473,10 +490,15 @@ class CustomInlineFormSetMixin:
         self.form.base_fields[self.default_order_field].required = False
         self.form.base_fields[self.default_order_field].widget = widgets.HiddenInput()
 
+        if self.model._meta.db_tablespace != "":
+            self.active_database = self.model._meta.db_tablespace
+        #.using(self.active_database)
+
         super().__init__(*args, **kwargs)
 
     def get_max_order(self):
-        query_set = self.model.objects.filter(
+
+        query_set = self.model.objects.using(self.active_database).filter(
             **{self.fk.get_attname(): self.instance.pk}
         )
         return query_set.aggregate(
@@ -576,7 +598,13 @@ class SortableInlineAdminMixin(SortableAdminBase):
 
 class CustomGenericInlineFormSet(CustomInlineFormSetMixin, BaseGenericInlineFormSet):
     def get_max_order(self):
-        query_set = self.model.objects.filter(
+
+        using_database = 'default'
+        if self.model._meta.db_tablespace != "":
+            using_database = self.model._meta.db_tablespace
+        #.using(using_database)
+
+        query_set = self.model.objects.using(using_database).filter(
             **{
                 self.ct_fk_field.name: self.instance.pk,
                 self.ct_field.name: ContentType.objects.get_for_model(
