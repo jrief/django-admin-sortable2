@@ -9,6 +9,7 @@ Release history
 -----
 * Fix CSS classes change introduced in Django-2.1.
 * Prepared to run on Django-4.0.
+* Ditch Travis-CI in favor of GitHub Actions.
 
 
 1.0
