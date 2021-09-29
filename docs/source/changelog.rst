@@ -5,6 +5,12 @@ Release history
 ===============
 
 
+1.0.1
+-----
+* Fix CSS classes change introduced in Django-2.1.
+* Prepared to run on Django-4.0.
+
+
 1.0
 ---
 * Drop support for Python-2.7, 3.4 and 3.5.

@@ -245,7 +245,7 @@ class SortableAdminMixin(SortableAdminBase):
         setattr(self, '_reorder', MethodType(func, self))
 
     def update_order(self, request):
-        if not request.is_ajax() or request.method != 'POST':
+        if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
             return HttpResponseBadRequest('Not an XMLHttpRequest')
         if request.method != 'POST':
             return HttpResponseNotAllowed('Must be a POST request')
