@@ -5,7 +5,7 @@ Release history
 ===============
 
 
-0.8
+1.0
 ---
 * Drop support for Python-2.7, 3.4 and 3.5.
 * Drop support for Django-1.10, 1.11, 2.0 and 2.1.
