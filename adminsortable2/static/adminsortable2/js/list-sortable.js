@@ -129,10 +129,11 @@ django.jQuery(function($) {
 		}
 	}
 
+	var $form = $('#changelist-form');
 	var $grp_form = $('#grp-changelist-form'); // Grappelli support
 	if ($grp_form) {
 		$grp_form.attr('novalidate', 'novalidate');
+		$form = $grp_form;
 	}
-	var $form = $('#changelist-form') || $grp_form;
 	$form.find('select[name="action"]').change(display_fields);
 });
