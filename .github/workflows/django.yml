@@ -25,7 +25,7 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install Django${{ matrix.Django-version }}
+        pip install "Django${{ matrix.Django-version }}"
         python setup.py install
     - name: Run Tests
       run: |
