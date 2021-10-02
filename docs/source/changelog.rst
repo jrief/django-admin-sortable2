@@ -5,6 +5,11 @@ Release history
 ===============
 
 
+1.0.2
+-----
+* Fix regression introduced in 1.0.1, adding double item rows on SortableInlineAdminMixin and
+  TabularInline.
+
 1.0.1
 -----
 * Fix CSS classes change introduced in Django-2.1.
