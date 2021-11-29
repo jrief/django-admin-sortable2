@@ -159,7 +159,10 @@ class SortableAdminMixin(SortableAdminBase):
         if len(paginator.page_range) > 1 and 'all' not in request.GET and self.enable_sorting:
             # add actions for moving items to other pages
             move_actions = ['move_to_exact_page']
-            cur_page = int(request.GET.get('p', 0)) + 1
+            try:
+                cur_page = int(request.GET.get('p', 0)) + 1
+            except ValueError:
+                return actions
             if len(paginator.page_range) > 2 and cur_page > paginator.page_range[1]:
                 move_actions.append('move_to_first_page')
             if cur_page > paginator.page_range[0]:
