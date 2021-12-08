@@ -162,7 +162,7 @@ class SortableAdminMixin(SortableAdminBase):
             try:
                 cur_page = int(request.GET.get('p', 0)) + 1
             except ValueError:
-                return actions
+                cur_page = 1
             if len(paginator.page_range) > 2 and cur_page > paginator.page_range[1]:
                 move_actions.append('move_to_first_page')
             if cur_page > paginator.page_range[0]:
