@@ -7,7 +7,7 @@ Release history
 
 1.0.3
 -----
-* Adding support for Django 4.
+* Adding support for Django 4 and Python 3.10.
 
 1.0.2
 -----
