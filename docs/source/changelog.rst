@@ -5,6 +5,10 @@ Release history
 ===============
 
 
+1.0.3
+-----
+* Adding support for Django 4 and Python 3.10.
+
 1.0.2
 -----
 * Fix regression introduced in 1.0.1, adding double item rows on SortableInlineAdminMixin and
