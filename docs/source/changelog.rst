@@ -5,6 +5,12 @@ Release history
 ===============
 
 
+1.0.4
+-----
+* Fix `#294`_: issue in 1.0.3 where ``install_requires`` unintentionally dropped django 2.2
+
+.. _#294: https://github.com/jrief/django-admin-sortable2/issues/294
+
 1.0.3
 -----
 * Adding support for Django 4 and Python 3.10.
@@ -34,6 +40,7 @@ Release history
 * Fix `#207`_: Last item not displayed in stacked- and tabular inline admins,
   if model doesn't have add permission.
 
+.. _#207: https://github.com/jrief/django-admin-sortable2/issues/207
 
 0.7.7
 -----
