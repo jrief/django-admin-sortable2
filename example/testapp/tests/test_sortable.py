@@ -1,10 +1,6 @@
 import json
 
-from django import VERSION as DJANGO_VERSION
-try:
-    from django.urls import reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.admin import AdminSite
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save, pre_save
@@ -18,13 +14,7 @@ User = get_user_model()
 
 
 class SortableBookTestCase(TestCase):
-    if DJANGO_VERSION < (1, 10):
-        fixtures = ['data-19.json']
-    elif DJANGO_VERSION < (1, 11):
-        fixtures = ['data-110.json']
-    else:
-        fixtures = ['data-20.json']
-
+    fixtures = ['data.json']
     admin_password = 'secret'
     changelist_url = reverse('admin:testapp_sortablebook_changelist')
     ajax_update_url = reverse('admin:testapp_sortablebook_sortable_update')
