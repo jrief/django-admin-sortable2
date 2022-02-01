@@ -11,7 +11,6 @@ from django.contrib.contenttypes.forms import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import router, transaction
 from django.db.models.aggregates import Max
 from django.db.models.expressions import F
@@ -19,10 +18,7 @@ from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save, pre_save
 from django.forms import widgets
 from django.forms.models import BaseInlineFormSet
-from django.http import (
-    HttpResponse, HttpResponseBadRequest,
-    HttpResponseNotAllowed, HttpResponseForbidden
-)
+from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseForbidden
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.urls import path, reverse
@@ -68,15 +64,7 @@ class SortableAdminBase:
     @property
     def media(self):
         css = {'all': ['adminsortable2/css/sortable.css']}
-        js = [
-            'admin/js/jquery.init.js',
-            'adminsortable2/js/plugins/admincompat.js',
-            'adminsortable2/js/libs/jquery.ui.core-1.11.4.js',
-            'adminsortable2/js/libs/jquery.ui.widget-1.11.4.js',
-            'adminsortable2/js/libs/jquery.ui.mouse-1.11.4.js',
-            'adminsortable2/js/libs/jquery.ui.touch-punch-0.2.3.js',
-            'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-        ]
+        js = ['adminsortable2/js/Sortable.min.js']
         return super().media + widgets.Media(css=css, js=js)
 
 
@@ -209,10 +197,7 @@ class SortableAdminMixin(SortableAdminBase):
     def media(self):
         m = super().media
         if self.enable_sorting:
-            m = m + widgets.Media(js=[
-                'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-                'adminsortable2/js/list-sortable.js',
-            ])
+            m = m + widgets.Media(js=['adminsortable2/js/list-sortable.js'])
         return m
 
     def _add_reorder_method(self):
@@ -245,19 +230,15 @@ class SortableAdminMixin(SortableAdminBase):
         setattr(self, '_reorder', MethodType(func, self))
 
     def update_order(self, request):
-        if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
-            return HttpResponseBadRequest('Not an XMLHttpRequest')
         if request.method != 'POST':
-            return HttpResponseNotAllowed('Must be a POST request')
+            return HttpResponseNotAllowed(f"Method {request.method} not allowed")
         if not self.has_change_permission(request):
             return HttpResponseForbidden('Missing permissions to perform this request')
-        startorder = int(request.POST.get('startorder'))
-        endorder = int(request.POST.get('endorder', 0))
+        body = json.loads(request.body)
+        startorder = int(body.get('startorder'))
+        endorder = int(body.get('endorder', 0))
         moved_items = list(self._move_item(request, startorder, endorder))
-        return HttpResponse(
-            json.dumps(moved_items, cls=DjangoJSONEncoder),
-            content_type='application/json;charset=UTF-8'
-        )
+        return JsonResponse(moved_items, safe=False)
 
     def save_model(self, request, obj, form, change):
         if not change:

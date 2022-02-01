@@ -1,5 +1,57 @@
 "use strict";
 
+document.addEventListener('DOMContentLoaded', function() {
+	const csrfToken = document.querySelector('form input[name="csrfmiddlewaretoken"]').value;
+	try {
+		var config = JSON.parse(document.getElementById('admin_sortable2_config').textContent);
+	} catch (parse_error) {
+		return;  // configuration not initialized by change_list.html
+	}
+	const tableBody = document.querySelector('#result_list tbody');
+	new Sortable(tableBody, {
+		animation: 150,
+		handle: '.drag',
+		draggable: 'tr',
+		onEnd: async function(evt) {
+			var endorder;
+			if (evt.newIndex < evt.oldIndex) {
+				// drag up
+				endorder = evt.item.nextElementSibling.querySelector('.drag').getAttribute('order');
+			} else if (evt.newIndex > evt.oldIndex) {
+				// drag down
+				endorder = evt.item.previousElementSibling.querySelector('.drag').getAttribute('order');
+			} else {
+				return;
+			}
+			const startorder = evt.item.querySelector('.drag').getAttribute('order');
+			console.log(`${startorder} => ${endorder}`);
+			const headers = new Headers();
+			headers.append('Accept', 'application/json');
+			headers.append('Content-Type', 'application/json');
+			headers.append('X-CSRFToken', csrfToken);
+			var response = await fetch(config.update_url, {
+				method: 'POST',
+				headers: headers,
+				body: JSON.stringify({
+					startorder: startorder,
+					endorder: endorder,
+				})
+			});
+			if (response.status === 200) {
+				const movedItems = await response.json();
+				console.log(movedItems);
+				movedItems.forEach(item => {
+					const tableRow = tableBody.querySelector(`tr .js-reorder-${item.pk}`).closest('tr');
+					tableRow.querySelector('.drag').setAttribute('order', item.order);
+				});
+			}
+		}
+	});
+
+});
+
+
+/*
 django.jQuery(function($) {
 	// make list view sortable
 	var startindex, startorder, endindex, endorder;
@@ -137,3 +189,4 @@ django.jQuery(function($) {
 	}
 	$form.find('select[name="action"]').change(display_fields);
 });
+*/

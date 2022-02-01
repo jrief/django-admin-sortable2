@@ -4,6 +4,8 @@ from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
 
 from . import models
 
+admin.site.enable_nav_sidebar = False
+
 
 class ChapterInline(SortableInlineAdminMixin, admin.StackedInline):
     model = models.Chapter
