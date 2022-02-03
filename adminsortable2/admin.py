@@ -64,7 +64,7 @@ class SortableAdminBase:
     @property
     def media(self):
         css = {'all': ['adminsortable2/css/sortable.css']}
-        js = ['adminsortable2/js/Sortable.min.js']
+        js = ['adminsortable2/js/adminsortable2.js']
         return super().media + widgets.Media(css=css, js=js)
 
 
@@ -197,7 +197,11 @@ class SortableAdminMixin(SortableAdminBase):
     def media(self):
         m = super().media
         if self.enable_sorting:
-            m = m + widgets.Media(js=['adminsortable2/js/list-sortable.js'])
+            m = m + widgets.Media(js=[
+                'admin/js/jquery.init.js',
+                'adminsortable2/js/plugins/admincompat.js',
+                'adminsortable2/js/list-sortable.js',
+            ])
         return m
 
     def _add_reorder_method(self):
@@ -527,21 +531,21 @@ class SortableInlineAdminMixin(SortableAdminBase):
     def is_tabular(self):
         return isinstance(self, admin.TabularInline)
 
-    @property
-    def media(self):
-        shared = (
-            super().media + widgets.Media(
-                js=('adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-                    'adminsortable2/js/inline-sortable.js')))
-        if isinstance(self, admin.StackedInline):
-            return shared + widgets.Media(
-                js=('adminsortable2/js/inline-sortable.js',
-                    'adminsortable2/js/inline-stacked.js'))
-        else:
-            # assume TabularInline (don't return None in any case)
-            return shared + widgets.Media(
-                js=('adminsortable2/js/inline-sortable.js',
-                    'adminsortable2/js/inline-tabular.js'))
+    # @property
+    # def media(self):
+    #     shared = (
+    #         super().media + widgets.Media(
+    #             js=('adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
+    #                 'adminsortable2/js/inline-sortable.js')))
+    #     if isinstance(self, admin.StackedInline):
+    #         return shared + widgets.Media(
+    #             js=('adminsortable2/js/inline-sortable.js',
+    #                 'adminsortable2/js/inline-stacked.js'))
+    #     else:
+    #         # assume TabularInline (don't return None in any case)
+    #         return shared + widgets.Media(
+    #             js=('adminsortable2/js/inline-sortable.js',
+    #                 'adminsortable2/js/inline-tabular.js'))
 
     @property
     def template(self):
