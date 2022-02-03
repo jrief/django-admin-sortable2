@@ -64,7 +64,7 @@ class SortableAdminBase:
     @property
     def media(self):
         css = {'all': ['adminsortable2/css/sortable.css']}
-        js = ['adminsortable2/js/Sortable.min.js']
+        js = ['adminsortable2/js/adminsortable2.js']
         return super().media + widgets.Media(css=css, js=js)
 
 
@@ -146,16 +146,18 @@ class SortableAdminMixin(SortableAdminBase):
         paginator = self.get_paginator(request, self.get_queryset(request), self.list_per_page)
         if len(paginator.page_range) > 1 and 'all' not in request.GET and self.enable_sorting:
             # add actions for moving items to other pages
-            move_actions = ['move_to_exact_page']
-            cur_page = int(request.GET.get('p', 0)) + 1
-            if len(paginator.page_range) > 2 and cur_page > paginator.page_range[1]:
+            move_actions = []
+            cur_page = int(request.GET.get('p', 1))
+            if cur_page > 1:
                 move_actions.append('move_to_first_page')
-            if cur_page > paginator.page_range[0]:
+            if cur_page > paginator.page_range[1]:
                 move_actions.append('move_to_back_page')
-            if cur_page < paginator.page_range[-1]:
+            if cur_page < paginator.page_range[-2]:
                 move_actions.append('move_to_forward_page')
-            if len(paginator.page_range) > 2 and cur_page < paginator.page_range[-2]:
+            if cur_page < paginator.page_range[-1]:
                 move_actions.append('move_to_last_page')
+            if len(paginator.page_range) > 4:
+                move_actions.append('move_to_exact_page')
             for fname in move_actions:
                 actions.update({fname: self.get_action(fname)})
         return actions
@@ -193,12 +195,16 @@ class SortableAdminMixin(SortableAdminBase):
                     break
         return first_order_direction, first_order_field_index
 
-    @property
-    def media(self):
-        m = super().media
-        if self.enable_sorting:
-            m = m + widgets.Media(js=['adminsortable2/js/list-sortable.js'])
-        return m
+    # @property
+    # def media(self):
+    #     m = super().media
+    #     if self.enable_sorting:
+    #         m = m + widgets.Media(js=[
+    #             'admin/js/jquery.init.js',
+    #             'adminsortable2/js/plugins/admincompat.js',
+    #             'adminsortable2/js/list-sortable.js',
+    #         ])
+    #     return m
 
     def _add_reorder_method(self):
         """
@@ -362,7 +368,7 @@ class SortableAdminMixin(SortableAdminBase):
             return
         objects = self.model.objects.order_by(self.order_by)
         paginator = self.paginator(objects, self.list_per_page)
-        current_page_number = int(request.GET.get('p', 0)) + 1
+        current_page_number = int(request.GET.get('p', 1))
 
         if method == self.EXACT:
             page_number = int(request.POST.get('page', current_page_number))
@@ -527,21 +533,21 @@ class SortableInlineAdminMixin(SortableAdminBase):
     def is_tabular(self):
         return isinstance(self, admin.TabularInline)
 
-    @property
-    def media(self):
-        shared = (
-            super().media + widgets.Media(
-                js=('adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-                    'adminsortable2/js/inline-sortable.js')))
-        if isinstance(self, admin.StackedInline):
-            return shared + widgets.Media(
-                js=('adminsortable2/js/inline-sortable.js',
-                    'adminsortable2/js/inline-stacked.js'))
-        else:
-            # assume TabularInline (don't return None in any case)
-            return shared + widgets.Media(
-                js=('adminsortable2/js/inline-sortable.js',
-                    'adminsortable2/js/inline-tabular.js'))
+    # @property
+    # def media(self):
+    #     shared = (
+    #         super().media + widgets.Media(
+    #             js=('adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
+    #                 'adminsortable2/js/inline-sortable.js')))
+    #     if isinstance(self, admin.StackedInline):
+    #         return shared + widgets.Media(
+    #             js=('adminsortable2/js/inline-sortable.js',
+    #                 'adminsortable2/js/inline-stacked.js'))
+    #     else:
+    #         # assume TabularInline (don't return None in any case)
+    #         return shared + widgets.Media(
+    #             js=('adminsortable2/js/inline-sortable.js',
+    #                 'adminsortable2/js/inline-tabular.js'))
 
     @property
     def template(self):

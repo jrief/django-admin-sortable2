@@ -126,11 +126,60 @@
   }
 },
 {
+  "model": "testapp.author",
+  "pk": 20,
+  "fields": {
+    "name": "Daniel & Audrey Roy Greenfield"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 21,
+  "fields": {
+    "name": "Wes McKinney"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 22,
+  "fields": {
+    "name": "Matt Harrison"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 23,
+  "fields": {
+    "name": "Luciano Ramalho"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 24,
+  "fields": {
+    "name": "Alex Martelli"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 25,
+  "fields": {
+    "name": "William S. Vincent"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 26,
+  "fields": {
+    "name": "Dennis Byrne"
+  }
+},
+{
   "model": "testapp.sortablebook",
   "pk": 1,
   "fields": {
     "title": "The Mythical Man-Month",
-    "my_order": 1,
+    "my_order": 15,
     "author": 3
   }
 },
@@ -139,7 +188,7 @@
   "pk": 2,
   "fields": {
     "title": "Design Patterns",
-    "my_order": 2,
+    "my_order": 12,
     "author": 4
   }
 },
@@ -148,7 +197,7 @@
   "pk": 3,
   "fields": {
     "title": "The Pragmatic Programmer",
-    "my_order": 3,
+    "my_order": 4,
     "author": 8
   }
 },
@@ -157,7 +206,7 @@
   "pk": 4,
   "fields": {
     "title": "Code Complete",
-    "my_order": 4,
+    "my_order": 20,
     "author": 6
   }
 },
@@ -166,7 +215,7 @@
   "pk": 5,
   "fields": {
     "title": "Test Driven Development",
-    "my_order": 5,
+    "my_order": 7,
     "author": 7
   }
 },
@@ -175,7 +224,7 @@
   "pk": 6,
   "fields": {
     "title": "Refactoring",
-    "my_order": 6,
+    "my_order": 21,
     "author": 7
   }
 },
@@ -184,7 +233,7 @@
   "pk": 7,
   "fields": {
     "title": "Extreme Programming Explained",
-    "my_order": 7,
+    "my_order": 14,
     "author": 7
   }
 },
@@ -193,7 +242,7 @@
   "pk": 8,
   "fields": {
     "title": "Succeeding with Agile",
-    "my_order": 8,
+    "my_order": 3,
     "author": 5
   }
 },
@@ -202,7 +251,7 @@
   "pk": 9,
   "fields": {
     "title": "The Deadline",
-    "my_order": 9,
+    "my_order": 25,
     "author": 9
   }
 },
@@ -211,7 +260,7 @@
   "pk": 10,
   "fields": {
     "title": "Essential Scrum",
-    "my_order": 10,
+    "my_order": 13,
     "author": 10
   }
 },
@@ -220,7 +269,7 @@
   "pk": 11,
   "fields": {
     "title": "Effective Project Management",
-    "my_order": 11,
+    "my_order": 19,
     "author": 11
   }
 },
@@ -229,7 +278,7 @@
   "pk": 12,
   "fields": {
     "title": "Effective Work Breakdown Structures",
-    "my_order": 12,
+    "my_order": 8,
     "author": 12
   }
 },
@@ -238,7 +287,7 @@
   "pk": 13,
   "fields": {
     "title": "Strategic Project Management Made Simple",
-    "my_order": 13,
+    "my_order": 17,
     "author": 13
   }
 },
@@ -247,7 +296,7 @@
   "pk": 14,
   "fields": {
     "title": "Learning Python",
-    "my_order": 14,
+    "my_order": 18,
     "author": 14
   }
 },
@@ -256,7 +305,7 @@
   "pk": 15,
   "fields": {
     "title": "Django Design Patterns",
-    "my_order": 15,
+    "my_order": 22,
     "author": 15
   }
 },
@@ -265,7 +314,7 @@
   "pk": 16,
   "fields": {
     "title": "Learning jQuery",
-    "my_order": 16,
+    "my_order": 6,
     "author": 16
   }
 },
@@ -274,7 +323,7 @@
   "pk": 17,
   "fields": {
     "title": "JavaScript: The Good Parts",
-    "my_order": 17,
+    "my_order": 9,
     "author": 1
   }
 },
@@ -283,7 +332,7 @@
   "pk": 18,
   "fields": {
     "title": "The C++ Programming Language",
-    "my_order": 18,
+    "my_order": 5,
     "author": 17
   }
 },
@@ -292,7 +341,7 @@
   "pk": 19,
   "fields": {
     "title": "C Programming Language",
-    "my_order": 19,
+    "my_order": 10,
     "author": 18
   }
 },
@@ -301,7 +350,7 @@
   "pk": 20,
   "fields": {
     "title": "Clean Code",
-    "my_order": 20,
+    "my_order": 23,
     "author": 19
   }
 },
@@ -310,7 +359,7 @@
   "pk": 21,
   "fields": {
     "title": "Peopleware",
-    "my_order": 21,
+    "my_order": 24,
     "author": 9
   }
 },
@@ -319,7 +368,7 @@
   "pk": 22,
   "fields": {
     "title": "Slack",
-    "my_order": 22,
+    "my_order": 26,
     "author": 9
   }
 },
@@ -328,7 +377,7 @@
   "pk": 23,
   "fields": {
     "title": "Agile Software Development",
-    "my_order": 23,
+    "my_order": 16,
     "author": 19
   }
 },
@@ -337,7 +386,7 @@
   "pk": 24,
   "fields": {
     "title": "UML for Java Programmers",
-    "my_order": 24,
+    "my_order": 11,
     "author": 19
   }
 },
@@ -346,7 +395,7 @@
   "pk": 25,
   "fields": {
     "title": "Designing Object Oriented C++ Applications",
-    "my_order": 25,
+    "my_order": 27,
     "author": 19
   }
 },
@@ -355,7 +404,7 @@
   "pk": 26,
   "fields": {
     "title": "More C++ Gems",
-    "my_order": 26,
+    "my_order": 28,
     "author": 19
   }
 },
@@ -364,7 +413,7 @@
   "pk": 27,
   "fields": {
     "title": "Pragmatic Thinking and Learning",
-    "my_order": 27,
+    "my_order": 29,
     "author": 8
   }
 },
@@ -373,7 +422,7 @@
   "pk": 28,
   "fields": {
     "title": "Practices of an Agile Developer",
-    "my_order": 28,
+    "my_order": 30,
     "author": 8
   }
 },
@@ -382,8 +431,89 @@
   "pk": 29,
   "fields": {
     "title": "Learn to Program with Minecraft Plugins",
-    "my_order": 29,
+    "my_order": 31,
     "author": 8
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 30,
+  "fields": {
+    "title": "Two Scoops of Django",
+    "my_order": 32,
+    "author": 20
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 31,
+  "fields": {
+    "title": "Python for Data Analysis",
+    "my_order": 33,
+    "author": 21
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 32,
+  "fields": {
+    "title": "Effective Pandas",
+    "my_order": 34,
+    "author": 22
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 33,
+  "fields": {
+    "title": "Fluent Python",
+    "my_order": 35,
+    "author": 23
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 34,
+  "fields": {
+    "title": "Python in a Nutshell",
+    "my_order": 36,
+    "author": 24
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 35,
+  "fields": {
+    "title": "Django for Beginners",
+    "my_order": 38,
+    "author": 25
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 36,
+  "fields": {
+    "title": "Django for Professionals",
+    "my_order": 1,
+    "author": 25
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 37,
+  "fields": {
+    "title": "Django for APIs",
+    "my_order": 2,
+    "author": 25
+  }
+},
+{
+  "model": "testapp.sortablebook",
+  "pk": 38,
+  "fields": {
+    "title": "Full Stack Python Security",
+    "my_order": 37,
+    "author": 26
   }
 },
 {

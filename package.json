@@ -1,0 +1,21 @@
+{
+  "name": "django-admin-sortable2",
+  "version": "2.0.0",
+  "description": "django-admin-sortable2",
+  "scripts": {
+    "build": "node client/build.cjs",
+    "uglify": "uglifyjs adminsortable2/static/adminsortable2/js/adminsortable2.js --compress --mangle -o adminsortable2/static/adminsortable2/js/adminsortable2.min.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.11.23",
+    "playwright": "^1.18.0",
+    "tslib": "^2.2.0",
+    "typescript": "^4.1.4",
+    "uglify-js": "^3.13.8"
+  },
+  "dependencies": {
+    "@types/sortablejs": "^1.10.7",
+    "sortablejs": "^1.14.0"
+  }
+}
