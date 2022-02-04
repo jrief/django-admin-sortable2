@@ -11,7 +11,12 @@
 
 #result_list div.drag {
 	background: url(../icons/drag.png) repeat 0px 0px;
-	cursor: pointer;
+	cursor: no-drop;
+	opacity: 0.5;
+}
+#result_list div.drag.handle {
+	cursor: ns-resize;
+	opacity: 1;
 }
 /* styles for tabular inlines */
 div.inline-group table.ui-sortable tr.form-row.has_original td.drag {

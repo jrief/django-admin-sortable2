@@ -19,7 +19,7 @@ class SortableBook(models.Model):
     my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
     author = models.ForeignKey(Author, null=True, on_delete=models.CASCADE)
 
-    class Meta(object):
+    class Meta:
         ordering = ['my_order']
 
     def __str__(self):
@@ -34,7 +34,7 @@ class Chapter(models.Model):
     book = models.ForeignKey(SortableBook, null=True, on_delete=models.CASCADE)
     my_order = models.PositiveIntegerField(blank=False, null=False)
 
-    class Meta(object):
+    class Meta:
         ordering = ['my_order']
 
     def __str__(self):

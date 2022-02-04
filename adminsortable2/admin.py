@@ -29,7 +29,7 @@ __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 def _get_default_ordering(model, model_admin):
     try:
         # first try with the model admin ordering
-        none, prefix, field_name = model_admin.ordering[0].rpartition('-')
+        _, prefix, field_name = model_admin.ordering[0].rpartition('-')
     except (AttributeError, IndexError, TypeError):
         pass
     else:
@@ -37,7 +37,7 @@ def _get_default_ordering(model, model_admin):
 
     try:
         # then try with the model ordering
-        none, prefix, field_name = model._meta.ordering[0].rpartition('-')
+        _, prefix, field_name = model._meta.ordering[0].rpartition('-')
     except (AttributeError, IndexError):
         raise ImproperlyConfigured(
             f"Model {model.__module__}.{model.__name__} requires a list or tuple 'ordering' in its Meta class"
@@ -87,46 +87,68 @@ class SortableAdminMixin(SortableAdminBase):
         super().__init__(model, admin_site)
         self.enable_sorting = False
         self.order_by = None
-        if not isinstance(self.exclude, (list, tuple)):
-            self.exclude = [self.default_order_field]
-        elif not self.exclude or self.default_order_field != self.exclude[0]:
-            self.exclude = [self.default_order_field] + list(self.exclude)
-        if isinstance(self.list_display_links, (list, tuple)) and len(self.list_display_links) == 0:
-            self.list_display_links = [self.list_display[0]]
+        # if not isinstance(self.exclude, (list, tuple)):
+        #     self.exclude = [self.default_order_field]
+        # elif not self.exclude or self.default_order_field != self.exclude[0]:
+        #     self.exclude = [self.default_order_field] + list(self.exclude)
+        # if isinstance(self.list_display_links, (list, tuple)) and len(self.list_display_links) == 0:
+        #     self.list_display_links = [self.list_display[0]]
         self._add_reorder_method()
-        self.list_display = list(self.list_display)
+        #self.list_display = list(self.list_display)
 
         # Insert the magic field into the same position as the first occurrence
         # of the default_order_field, or, if not present, at the start
-        try:
-            self.default_order_field_index = self.list_display.index(
-                self.default_order_field
-            )
-        except ValueError:
-            self.default_order_field_index = 0
-        self.list_display.insert(self.default_order_field_index, '_reorder')
+        # try:
+        #     self.default_order_field_index = self.list_display.index(
+        #         self.default_order_field
+        #     )
+        # except ValueError:
+        #     self.default_order_field_index = 0
+        # self.list_display.insert(self.default_order_field_index, '_reorder')
 
         # Remove *all* occurrences of the field from `list_display`
-        if self.list_display and self.default_order_field in self.list_display:
-            self.list_display = [
-                f for f in self.list_display if f != self.default_order_field
-            ]
+        # if self.list_display and self.default_order_field in self.list_display:
+        #     self.list_display = [
+        #         f for f in self.list_display if f != self.default_order_field
+        #     ]
 
         # Remove *all* occurrences of the field from `list_display_links`
-        if self.list_display_links and self.default_order_field in self.list_display_links:
-            self.list_display_links = [
-                f for f in self.list_display_links if
-                f != self.default_order_field
-            ]
+        # if self.list_display_links and self.default_order_field in self.list_display_links:
+        #     self.list_display_links = [
+        #         f for f in self.list_display_links if
+        #         f != self.default_order_field
+        #     ]
 
         # Remove *all* occurrences of the field from `ordering`
-        if self.ordering and self.default_order_field in self.ordering:
-            self.ordering = [
-                f for f in self.ordering if f != self.default_order_field
-            ]
-        rev_field = '-' + self.default_order_field
-        if self.ordering and rev_field in self.ordering:
-            self.ordering = [f for f in self.ordering if f != rev_field]
+        # if self.ordering and self.default_order_field in self.ordering:
+        #     self.ordering = [
+        #         f for f in self.ordering if f != self.default_order_field
+        #     ]
+        # rev_field = '-' + self.default_order_field
+        # if self.ordering and rev_field in self.ordering:
+        #     self.ordering = [f for f in self.ordering if f != rev_field]
+
+    def get_list_display(self, request):
+        list_display = list(super().get_list_display(request))
+        try:
+            index = list_display.index(self.default_order_field)
+        except ValueError:
+            list_display.insert(0, '_reorder')
+        else:
+            list_display[index] = '_reorder'
+        return list_display
+
+    def get_list_display_links(self, request, list_display):
+        list_display_links = list(super().get_list_display_links(request, list_display))
+        if self.default_order_field in list_display_links:
+            list_display_links.remove(self.default_order_field)
+            if not list_display_links:
+                list_display_links = [list_display[0]]
+        return list_display_links
+
+    def get_ordering(self, request):
+        ordering = list(super().get_ordering(request))
+        return ordering
 
     def _get_update_url_name(self):
         return f'{self.model._meta.app_label}_{self.model._meta.model_name}_sortable_update'
@@ -143,8 +165,9 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_actions(self, request):
         actions = super().get_actions(request)
-        paginator = self.get_paginator(request, self.get_queryset(request), self.list_per_page)
-        if len(paginator.page_range) > 1 and 'all' not in request.GET and self.enable_sorting:
+        qs = self.get_queryset(request)
+        paginator = self.get_paginator(request, qs, self.list_per_page)
+        if paginator.num_pages > 1 and 'all' not in request.GET and self.enable_sorting:
             # add actions for moving items to other pages
             move_actions = []
             cur_page = int(request.GET.get('p', 1))
@@ -162,38 +185,40 @@ class SortableAdminMixin(SortableAdminBase):
                 actions.update({fname: self.get_action(fname)})
         return actions
 
-    def get_changelist(self, request, **kwargs):
-        first_order_direction, first_order_field_index = self._get_first_ordering(request)
-        if first_order_field_index == self.default_order_field_index:
+    def get_changelist_instance(self, request):
+        cl = super().get_changelist_instance(request)
+        qs = self.get_queryset(request)
+        _, order_direction, order_field = cl.get_ordering(request, qs)[0].rpartition('-')
+        if order_field == self.default_order_field:
             self.enable_sorting = True
-            self.order_by = f"{first_order_direction}{self.default_order_field}"
+            self.order_by = f'{order_direction}{order_field}'
         else:
             self.enable_sorting = False
-        return super().get_changelist(request, **kwargs)
+        return cl
 
-    def _get_first_ordering(self, request):
-        """
-        Must be consistent with
-        `django.contrib.admin.views.main.ChangeList.get_ordering`.
-        """
-        order_var = request.GET.get(ORDER_VAR)
-        if order_var is None:
-            first_order_field_index = self.default_order_field_index
-            first_order_direction = self.default_order_direction
-        else:
-            first_order_field_index = None
-            first_order_direction = ""
-            for p in order_var.split("."):
-                none, prefix, index = p.rpartition("-")
-                try:
-                    index = int(index)
-                except ValueError:
-                    continue  # skip it
-                else:
-                    first_order_field_index = index - 1
-                    first_order_direction = prefix
-                    break
-        return first_order_direction, first_order_field_index
+    # def _get_first_ordering(self, request):
+    #     """
+    #     Must be consistent with
+    #     `django.contrib.admin.views.main.ChangeList.get_ordering`.
+    #     """
+    #     order_var = request.GET.get(ORDER_VAR)
+    #     if order_var is None:
+    #         first_order_field_index = self.default_order_field_index
+    #         first_order_direction = self.default_order_direction
+    #     else:
+    #         first_order_field_index = None
+    #         first_order_direction = ""
+    #         for p in order_var.split("."):
+    #             none, prefix, index = p.rpartition("-")
+    #             try:
+    #                 index = int(index)
+    #             except ValueError:
+    #                 continue  # skip it
+    #             else:
+    #                 first_order_field_index = index - 1
+    #                 first_order_direction = prefix
+    #                 break
+    #     return first_order_direction, first_order_field_index
 
     # @property
     # def media(self):
@@ -215,15 +240,14 @@ class SortableAdminMixin(SortableAdminBase):
         to add dynamic attributes to bound methods.
         """
         def func(this, item):
-            html = ''
             if this.enable_sorting:
-                html = '<div class="drag js-reorder-{1}" order="{0}">' \
-                       '&nbsp;</div>'.format(getattr(item, this.default_order_field), item.pk)
+                order = getattr(item, this.default_order_field)
+                html = '<div class="drag handle" order="{0}">&nbsp;</div>'.format(order)
+            else:
+                html = '<div class="drag">&nbsp;</div>'
             return mark_safe(html)
 
-        setattr(func, 'allow_tags', True)
-        # if the field used for ordering has a verbose name use it,
-        # otherwise default to "Sort"
+        # if the field used for ordering has a verbose name use it, otherwise default to "Sort"
         for order_field in self.model._meta.fields:
             if order_field.name == self.default_order_field:
                 short_description = getattr(order_field, 'verbose_name', None)
@@ -231,7 +255,7 @@ class SortableAdminMixin(SortableAdminBase):
                     setattr(func, 'short_description', short_description)
                     break
         else:
-            setattr(func, 'short_description', _('Sort'))
+            setattr(func, 'short_description', _("Sort"))
         setattr(func, 'admin_order_field', self.default_order_field)
         setattr(self, '_reorder', MethodType(func, self))
 

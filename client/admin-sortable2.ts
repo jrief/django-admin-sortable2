@@ -19,7 +19,7 @@ class ListSortable extends SortableBase {
 		this.tableBody = table.querySelector('tbody')!;
 		this.sortable = Sortable.create(this.tableBody, {
 			animation: 150,
-			handle: '.drag',
+			handle: '.handle',
 			draggable: 'tr',
 			selectedClass: 'selected',
 			onEnd: event => this.onEnd(event),
@@ -33,14 +33,14 @@ class ListSortable extends SortableBase {
 		let endorder;
 		if (evt.newIndex < evt.oldIndex) {
 			// drag up
-			endorder = evt.item.nextElementSibling?.querySelector('.drag')?.getAttribute('order');
+			endorder = evt.item.nextElementSibling?.querySelector('.handle')?.getAttribute('order');
 		} else if (evt.newIndex > evt.oldIndex) {
 			// drag down
-			endorder = evt.item.previousElementSibling?.querySelector('.drag')?.getAttribute('order');
+			endorder = evt.item.previousElementSibling?.querySelector('.handle')?.getAttribute('order');
 		} else {
 			return;
 		}
-		const startorder = evt.item.querySelector('.drag')?.getAttribute('order');
+		const startorder = evt.item.querySelector('.handle')?.getAttribute('order');
 		const response = await fetch(this.config.update_url, {
 			method: 'POST',
 			headers: this.headers,
@@ -52,8 +52,8 @@ class ListSortable extends SortableBase {
 		if (response.status === 200) {
 			const movedItems = await response.json();
 			movedItems.forEach((item: any) => {
-				const tableRow = this.tableBody.querySelector(`tr .js-reorder-${item.pk}`)?.closest('tr');
-				tableRow?.querySelector('.drag')?.setAttribute('order', item.order);
+				const tableRow = this.tableBody.querySelector(`tr input[value="${item.pk}"]`)?.closest('tr');
+				tableRow?.querySelector('.handle')?.setAttribute('order', item.order);
 			});
 			this.resetActions();
 		} else {
