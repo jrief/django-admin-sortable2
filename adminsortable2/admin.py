@@ -484,14 +484,6 @@ class SortableInlineAdminMixin(SortableAdminBase):
 
         return fields
 
-    @property
-    def is_stacked(self):
-        return isinstance(self, admin.StackedInline)
-
-    @property
-    def is_tabular(self):
-        return isinstance(self, admin.TabularInline)
-
 
 class CustomGenericInlineFormSet(CustomInlineFormSetMixin, BaseGenericInlineFormSet):
     def get_max_order(self):
@@ -511,11 +503,3 @@ class CustomGenericInlineFormSet(CustomInlineFormSetMixin, BaseGenericInlineForm
 
 class SortableGenericInlineAdminMixin(SortableInlineAdminMixin):
     formset = CustomGenericInlineFormSet
-
-    @property
-    def is_stacked(self):
-        return isinstance(self, GenericStackedInline)
-
-    @property
-    def is_tabular(self):
-        return isinstance(self, GenericTabularInline)
