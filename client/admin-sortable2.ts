@@ -52,7 +52,7 @@ class ListSortable extends SortableBase {
 		if (response.status === 200) {
 			const movedItems = await response.json();
 			movedItems.forEach((item: any) => {
-				const tableRow = this.tableBody.querySelector(`tr input[value="${item.pk}"]`)?.closest('tr');
+				const tableRow = this.tableBody.querySelector(`tr td.field-_reorder_ div[pk="${item.pk}"]`)?.closest('tr');
 				tableRow?.querySelector('.handle')?.setAttribute('order', item.order);
 			});
 			this.resetActions();
@@ -136,6 +136,53 @@ class ActionForm extends SortableBase {
 	}
 }
 
+
+class InlineSortable {
+	private readonly sortable: Sortable;
+	private readonly reversed: boolean;
+	private readonly itemSelectors: string;
+
+	constructor(inlineFieldSet: HTMLFieldSetElement) {
+		this.reversed = inlineFieldSet.classList.contains('reversed');
+		const tBody = inlineFieldSet.querySelector('table tbody') as HTMLTableSectionElement;
+		if (tBody) {
+			// tabular inline
+			this.itemSelectors = 'tr.has_original'
+			this.sortable = Sortable.create(tBody, {
+				animation: 150,
+				handle: 'td.original p',
+				draggable: 'tr',
+				onEnd: event => this.onEnd(event),
+			});
+		} else {
+			// stacked inline
+			this.itemSelectors = '.inline-related.has_original'
+			this.sortable = Sortable.create(inlineFieldSet, {
+				animation: 150,
+				handle: 'h3',
+				draggable: '.inline-related.has_original',
+				onEnd: event => this.onEnd(event),
+			});
+		}
+	}
+
+	private onEnd(evt: SortableEvent) {
+		const originals = this.sortable.el.querySelectorAll(this.itemSelectors);
+		if (this.reversed) {
+			originals.forEach((element: Element, index: number) => {
+				const reorderInputElement = element.querySelector('input._reorder_') as HTMLInputElement;
+				reorderInputElement.value = `${originals.length - index}`;
+			});
+		} else {
+			originals.forEach((element: Element, index: number) => {
+				const reorderInputElement = element.querySelector('input._reorder_') as HTMLInputElement;
+				reorderInputElement.value = `${index + 1}`;
+			});
+		}
+	}
+}
+
+
 window.addEventListener('load', (event) => {
 	const table = document.getElementById('result_list');
 	if (table instanceof HTMLTableElement) {
@@ -145,5 +192,9 @@ window.addEventListener('load', (event) => {
 	const changelistForm = document.getElementById('changelist-form');
 	if (changelistForm) {
 		new ActionForm(changelistForm);
+	}
+
+	for (let inlineFieldSet of document.querySelectorAll('fieldset.sortable')) {
+		new InlineSortable(inlineFieldSet as HTMLFieldSetElement);
 	}
 });
