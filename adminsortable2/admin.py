@@ -343,22 +343,25 @@ class SortableAdminMixin(SortableAdminBase):
 
         queryset_size = queryset.count()
         page_size = page.end_index() - page.start_index() + 1
-        if queryset_size > page_size:
-            msg = _(f"The target page size is {page_size}. It is too small for {queryset_size} items.")
-            self.message_user(request, msg, level=messages.ERROR)
-            return
-
-        endorders_start = getattr(
-            objects[page.start_index() - 1], self.default_order_field
-        )
         endorders_step = -1 if self.order_by.startswith('-') else 1
-        endorders = range(
-            endorders_start,
-            endorders_start + endorders_step * queryset_size,
-            endorders_step
-        )
+        if queryset_size > page_size:
+            # move objects to last and penultimate page
+            endorders_end = getattr(objects[page.end_index() - 1], self.default_order_field) + endorders_step
+            endorders = range(
+                endorders_end - endorders_step * queryset_size,
+                endorders_end,
+                endorders_step
+            )
+        else:
+            endorders_start = getattr(objects[page.start_index() - 1], self.default_order_field)
+            endorders = range(
+                endorders_start,
+                endorders_start + endorders_step * queryset_size,
+                endorders_step
+            )
 
-        if page.number > current_page_number:  # Move forward (like drag down)
+        if page.number > current_page_number:
+            # Move forward
             queryset = queryset.reverse()
             endorders = reversed(endorders)
 
@@ -367,11 +370,8 @@ class SortableAdminMixin(SortableAdminBase):
             self._move_item(request, startorder, endorder)
 
     def changelist_view(self, request, extra_context=None):
-        if extra_context is None:
-            extra_context = {}
-
+        extra_context = extra_context or {}
         extra_context['sortable_update_url'] = self.get_update_url(request)
-        extra_context['default_order_direction'] = self.default_order_direction
         return super().changelist_view(request, extra_context)
 
     def get_update_url(self, request):
