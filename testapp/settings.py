@@ -1,6 +1,3 @@
-# Django settings for unit test project.
-import django
-
 DEBUG = True
 
 DATABASES = {

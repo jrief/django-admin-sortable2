@@ -32,7 +32,7 @@ class SortableBook(models.Model):
 class Chapter(models.Model):
     title = models.CharField('Title', null=True, blank=True, max_length=255)
     book = models.ForeignKey(SortableBook, null=True, on_delete=models.CASCADE)
-    my_order = models.PositiveIntegerField(blank=False, null=False)
+    my_order = models.PositiveIntegerField(blank=False, null=False, db_index=True)
 
     class Meta:
         ordering = ['my_order']
