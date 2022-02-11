@@ -7,6 +7,9 @@ from django.urls import reverse
 os.environ.setdefault('DJANGO_ALLOW_ASYNC_UNSAFE', 'true')
 
 
+pytestmark = pytest.mark.django_db
+
+
 class Connector:
     def __init__(self, live_server):
         print(f"\nStarting end-to-end test server at {live_server}\n")

@@ -7,6 +7,17 @@ from . import models
 admin.site.enable_nav_sidebar = False
 
 
+@admin.register(models.Author)
+class AuthorAdmin(admin.ModelAdmin):
+    list_display = ['name']
+
+
+@admin.register(models.Notes)
+class NoteAdmin(SortableAdminMixin, admin.ModelAdmin):
+    list_display = ['note']
+    ordering = ['note']
+
+
 class ChapterInline(SortableInlineAdminMixin, admin.StackedInline):
     model = models.Chapter
     extra = 1
@@ -17,21 +28,22 @@ class NotesInline(admin.TabularInline):
     extra = 1
 
 
-@admin.register(models.SortableBook)
 class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_per_page = 12
     list_display = ['author', 'title', 'my_order']
     list_display_links = ['title']
     inlines = [ChapterInline, NotesInline]
-    # ordering = ['my_order']
 
 
-@admin.register(models.Author)
-class AuthorAdmin(admin.ModelAdmin):
-    list_display = ['name']
+class UpOrderedSortableBookAdmin(SortableBookAdmin):
+    ordering = ['my_order']
 
 
-@admin.register(models.Notes)
-class NoteAdmin(SortableAdminMixin, admin.ModelAdmin):
-    list_display = ['note']
-    ordering = ['note']
+class DownOrderedSortableBookAdmin(SortableBookAdmin):
+    ordering = ['-my_order']
+
+
+admin.site.register(models.UpOrderedSortableBook, SortableBookAdmin)
+admin.site.register(models.DownOrderedSortableBook, SortableBookAdmin)
+admin.site.register(models.SortableBook, UpOrderedSortableBookAdmin)
+admin.site.register(models.UnorderedSortableBook, DownOrderedSortableBookAdmin)

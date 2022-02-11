@@ -19,14 +19,28 @@ class SortableBook(models.Model):
     my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
     author = models.ForeignKey(Author, null=True, on_delete=models.CASCADE)
 
-    class Meta:
-        ordering = ['my_order']
-
     def __str__(self):
         return self.title
 
     def __unicode__(self):
         return self.title
+
+
+class UnorderedSortableBook(SortableBook):
+    class Meta:
+        proxy = True
+
+
+class UpOrderedSortableBook(SortableBook):
+    class Meta:
+        proxy = True
+        ordering = ['my_order']
+
+
+class DownOrderedSortableBook(SortableBook):
+    class Meta:
+        proxy = True
+        ordering = ['-my_order']
 
 
 class Chapter(models.Model):
