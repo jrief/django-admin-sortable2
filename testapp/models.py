@@ -26,18 +26,23 @@ class SortableBook(models.Model):
         return self.title
 
 
-class UnorderedSortableBook(SortableBook):
+class SortableBook1(SortableBook):
     class Meta:
         proxy = True
 
 
-class UpOrderedSortableBook(SortableBook):
+class SortableBook2(SortableBook):
+    class Meta:
+        proxy = True
+
+
+class SortableBook3(SortableBook):
     class Meta:
         proxy = True
         ordering = ['my_order']
 
 
-class DownOrderedSortableBook(SortableBook):
+class SortableBook4(SortableBook):
     class Meta:
         proxy = True
         ordering = ['-my_order']

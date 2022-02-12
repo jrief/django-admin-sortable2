@@ -43,7 +43,7 @@ class DownOrderedSortableBookAdmin(SortableBookAdmin):
     ordering = ['-my_order']
 
 
-admin.site.register(models.UpOrderedSortableBook, SortableBookAdmin)
-admin.site.register(models.DownOrderedSortableBook, SortableBookAdmin)
-admin.site.register(models.SortableBook, UpOrderedSortableBookAdmin)
-admin.site.register(models.UnorderedSortableBook, DownOrderedSortableBookAdmin)
+admin.site.register(models.SortableBook1, UpOrderedSortableBookAdmin)
+admin.site.register(models.SortableBook2, DownOrderedSortableBookAdmin)
+admin.site.register(models.SortableBook3, SortableBookAdmin)
+admin.site.register(models.SortableBook4, SortableBookAdmin)

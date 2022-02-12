@@ -40,6 +40,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'testapp.urls'
 
+SILENCED_SYSTEM_CHECKS = ['admin.E408']
+
 # URL that handles the static files served from STATIC_ROOT.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'

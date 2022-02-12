@@ -7,9 +7,6 @@ from django.urls import reverse
 os.environ.setdefault('DJANGO_ALLOW_ASYNC_UNSAFE', 'true')
 
 
-pytestmark = pytest.mark.django_db
-
-
 class Connector:
     def __init__(self, live_server):
         print(f"\nStarting end-to-end test server at {live_server}\n")
@@ -40,6 +37,14 @@ def connector(live_server):
 
 
 @pytest.fixture
-def page(connector, viewname):
-    connector.page.goto(connector.live_server.url + reverse(viewname))
+def page(connector, viewname, p, o):
+    url = f'{connector.live_server.url}{reverse(viewname)}'
+    query = []
+    if p:
+        query.append(f'p={p}')
+    if o:
+        query.append(f'o={o}')
+    if query:
+        url = f"{url}?{'&'.join(query)}"
+    connector.page.goto(url)
     return connector.page
