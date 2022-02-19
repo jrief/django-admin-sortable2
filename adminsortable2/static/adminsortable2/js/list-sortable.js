@@ -81,7 +81,6 @@ django.jQuery(function($) {
 			});
 		}
 	});
-	$('#result_list, tbody, tr, td, th').disableSelection();
 });
 
 // Show and hide the step input field
