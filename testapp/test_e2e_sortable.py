@@ -81,8 +81,6 @@ def test_drag_down(page, viewname, p, o, direction):
     next_row_pk = table_locator.locator('tbody tr:nth-of-type(7) div.drag.handle').get_attribute('pk')
     drag_handle.drag_to(table_locator.locator('tbody tr:nth-of-type(9)'))
     sleep(0.2)
-    path = f"{viewname.replace(':', '_')}.png"
-    page.screenshot(path=path)
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
     assert drag_row_pk == table_locator.locator('tbody tr:nth-of-type(9) div.drag.handle').get_attribute('pk')
     assert next_row_pk == table_locator.locator('tbody tr:nth-of-type(6) div.drag.handle').get_attribute('pk')
@@ -118,3 +116,36 @@ def test_drag_up(page, viewname, p, o, direction):
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
     assert drag_row_pk == table_locator.locator('tbody tr:nth-of-type(3) div.drag.handle').get_attribute('pk')
     assert prev_row_pk == table_locator.locator('tbody tr:nth-of-type(6) div.drag.handle').get_attribute('pk')
+
+
+@pytest.mark.parametrize('viewname, p, o', [
+    ('admin:testapp_sortablebook1_changelist', None, None),
+    ('admin:testapp_sortablebook2_changelist', None, -3),
+    ('admin:testapp_sortablebook4_changelist', None, None),
+])
+def test_move_next_page(page, viewname, p, o, direction):
+    table_locator = page.locator('table#result_list')
+    assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
+    book_attributes = []
+    for n in range(2, 7, 2):
+        book_attributes.append((
+            int(table_locator.locator(f'tbody tr:nth-of-type({n}) div.drag.handle').element_handle().get_attribute('pk')),
+            int(table_locator.locator(f'tbody tr:nth-of-type({n}) div.drag.handle').element_handle().get_attribute('order')),
+        ))
+        table_locator.locator(f'tbody tr:nth-of-type({n}) input.action-select').click()
+    step_input_field = page.query_selector('#changelist-form .actions input[name="step"]')
+    assert step_input_field.is_hidden()
+    page.query_selector('#changelist-form .actions select[name="action"]').select_option('move_to_forward_page')
+    assert step_input_field.is_visible()
+    step_input_field.focus()
+    page.keyboard.press("Delete")
+    step_input_field.type("2")
+    page.query_selector('#changelist-form .actions button[type="submit"]').click()
+    sleep(0.2)
+    assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
+    for index, (pk, order) in enumerate(book_attributes):
+        book = SortableBook.objects.get(pk=pk)
+        if direction > 0:
+            assert book.my_order == 25 + index
+        else:
+            assert book.my_order == SortableBook.objects.count() - 24 - index

@@ -1,12 +1,11 @@
 {
   "name": "django-admin-sortable2",
-  "version": "2.0.0",
-  "description": "django-admin-sortable2",
+  "private": true,
+  "license": "MIT",
   "scripts": {
     "build": "node client/build.cjs",
     "uglify": "uglifyjs adminsortable2/static/adminsortable2/js/adminsortable2.js --compress --mangle -o adminsortable2/static/adminsortable2/js/adminsortable2.min.js"
   },
-  "license": "MIT",
   "devDependencies": {
     "esbuild": "^0.11.23",
     "playwright": "^1.18.0",

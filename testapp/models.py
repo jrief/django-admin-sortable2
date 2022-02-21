@@ -29,23 +29,31 @@ class SortableBook(models.Model):
 class SortableBook1(SortableBook):
     class Meta:
         proxy = True
+        verbose_name = "Book 1"
+        verbose_name_plural = "Books 1"
 
 
 class SortableBook2(SortableBook):
     class Meta:
         proxy = True
+        verbose_name = "Book 2"
+        verbose_name_plural = "Books 2"
 
 
 class SortableBook3(SortableBook):
     class Meta:
         proxy = True
         ordering = ['my_order']
+        verbose_name = "Book 3"
+        verbose_name_plural = "Books 3"
 
 
 class SortableBook4(SortableBook):
     class Meta:
         proxy = True
         ordering = ['-my_order']
+        verbose_name = "Book 4"
+        verbose_name_plural = "Books 4"
 
 
 class Chapter(models.Model):
