@@ -29,5 +29,4 @@ jobs:
         python setup.py install
     - name: Run Tests
       run: |
-        cd example
-        python manage.py test testapp
+        pytest -s testapp
