@@ -14,20 +14,29 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: ["3.7", "3.8", "3.9", "3.10"]
-        Django-version: [<3.0, <4.0, <4.1]  # Should use 2.2.x, 3.2.x, 4.0.x
+        Django-version: ["<3.0", "<4.0", "<4.1"]  # Should use 2.2.x, 3.2.x, 4.0.x
+        node-version: ["14.x"]
 
     steps:
     - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
       run: |
+        npm install --also=dev
         python -m pip install --upgrade pip
         python -m pip install "Django${{ matrix.Django-version }}"
         python -m pip install -r testapp/requirements.txt
         playwright install
+    - name: Build Client
+      run: |
+        npm run build
     - name: Test with pytest
       run: |
         python -m pytest testapp
