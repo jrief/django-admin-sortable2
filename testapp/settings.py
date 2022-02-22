@@ -22,13 +22,13 @@ INSTALLED_APPS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': Path(__file__).parent / 'test.db',  # live_server requires a file rather than :memory:
+        'NAME': str(Path(__file__).parent / 'test.db'),  # live_server requires a file rather than :memory:
     }
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-USE_TZ = False
+USE_TZ = True
 
 MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
