@@ -28,7 +28,7 @@ DATABASES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-USE_TZ = True
+USE_TZ = False
 
 MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
