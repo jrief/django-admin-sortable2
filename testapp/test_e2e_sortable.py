@@ -1,5 +1,6 @@
 import pytest
 
+from django import VERSION as DJANGO_VERSION
 from django.urls import reverse
 
 from testapp.models import SortableBook
@@ -14,12 +15,13 @@ def django_db_setup(django_db_blocker):
         call_command('loaddata', 'testapp/fixtures/data.json', verbosity=0)
 
 
+page_3 = 3 if DJANGO_VERSION >= (3, 0) else 2
 viewnames = [
     ('admin:testapp_sortablebook1_changelist', None, None),
     ('admin:testapp_sortablebook1_changelist', None, 3),
     ('admin:testapp_sortablebook1_changelist', None, -3),
-    ('admin:testapp_sortablebook1_changelist', 3, None),
-    ('admin:testapp_sortablebook1_changelist', 3, -3),
+    ('admin:testapp_sortablebook1_changelist', page_3, None),
+    ('admin:testapp_sortablebook1_changelist', page_3, -3),
     ('admin:testapp_sortablebook1_changelist', None, 2),
     ('admin:testapp_sortablebook2_changelist', None, None),
     ('admin:testapp_sortablebook2_changelist', None, 3),
@@ -32,18 +34,20 @@ viewnames = [
 
 
 def is_table_ordered(table_elem, page=None, direction=1):
-    page = 1 if page is None else page
+    if page is None:
+        page = 0
+    elif DJANGO_VERSION >= (3, 0):
+        page -= 1
     if direction == 1:
-        start_order = 12 * (page - 1) + 1
+        start_order = 12 * page + 1
     else:
-        start_order = SortableBook.objects.count() - 12 * (page - 1)
+        start_order = SortableBook.objects.count() - 12 * page
     for counter, row in enumerate(table_elem.query_selector_all('tbody tr')):
         drag_handle = row.query_selector('div.drag')
         order = start_order + direction * counter
         if drag_handle.get_attribute('order') != str(order):
             return False
     return True
-
 
 
 @pytest.fixture
