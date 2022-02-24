@@ -129,7 +129,7 @@ def test_drag_up(page, viewname, p, o, direction):
 
 @pytest.mark.parametrize('viewname, p, o', [
     ('admin:testapp_sortablebook1_changelist', None, None),
-    # ('admin:testapp_sortablebook2_changelist', None, -3),
+    ('admin:testapp_sortablebook2_changelist', None, -3),
     ('admin:testapp_sortablebook4_changelist', None, None),
 ])
 def test_move_next_page(page, viewname, p, o, direction):
@@ -149,10 +149,10 @@ def test_move_next_page(page, viewname, p, o, direction):
     step_input_field.focus()
     page.keyboard.press("Delete")
     step_input_field.type("2")
-    with page.expect_response(reverse(viewname)) as response_info:
+    with page.expect_response(page.url) as response_info:
         page.query_selector('#changelist-form .actions button[type="submit"]').click()
     assert response_info.value.status == 302
-    assert response_info.value.url.endswith(reverse(viewname))
+    assert response_info.value.url == page.url
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
     for index, (pk, order) in enumerate(book_attributes):
         book = SortableBook.objects.get(pk=pk)
