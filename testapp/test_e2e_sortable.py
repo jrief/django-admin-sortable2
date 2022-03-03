@@ -1,4 +1,5 @@
 import pytest
+from time import sleep
 
 from django import VERSION as DJANGO_VERSION
 from django.urls import reverse
@@ -71,6 +72,8 @@ def test_drag_to_end(page, viewname, p, o, direction):
     update_url = viewname.replace('_changelist', '_sortable_update')
     with page.expect_response(reverse(update_url)) as response_info:
         drag_handle.drag_to(table_locator.locator('tbody tr:last-of-type'))
+    while not response_info.is_done():
+        sleep(0.1)
     response = response_info.value
     assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
@@ -90,6 +93,8 @@ def test_drag_down(page, viewname, p, o, direction):
     update_url = viewname.replace('_changelist', '_sortable_update')
     with page.expect_response(reverse(update_url)) as response_info:
         drag_handle.drag_to(table_locator.locator('tbody tr:nth-of-type(9)'))
+    while not response_info.is_done():
+        sleep(0.1)
     response = response_info.value
     assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
@@ -109,6 +114,8 @@ def test_drag_to_start(page, viewname, p, o, direction):
     update_url = viewname.replace('_changelist', '_sortable_update')
     with page.expect_response(reverse(update_url)) as response_info:
         drag_handle.drag_to(table_locator.locator('tbody tr:first-of-type'))
+    while not response_info.is_done():
+        sleep(0.1)
     response = response_info.value
     assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
@@ -128,6 +135,8 @@ def test_drag_up(page, viewname, p, o, direction):
     update_url = viewname.replace('_changelist', '_sortable_update')
     with page.expect_response(reverse(update_url)) as response_info:
         drag_handle.drag_to(table_locator.locator('tbody tr:nth-of-type(3)'))
+    while not response_info.is_done():
+        sleep(0.1)
     response = response_info.value
     assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
@@ -159,6 +168,8 @@ def test_move_next_page(page, viewname, p, o, direction):
     step_input_field.type("2")
     with page.expect_response(page.url) as response_info:
         page.query_selector('#changelist-form .actions button[type="submit"]').click()
+    while not response_info.is_done():
+        sleep(0.1)
     response = response_info.value
     assert response.status == 302
     assert response.url == page.url
