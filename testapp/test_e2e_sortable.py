@@ -69,12 +69,10 @@ def test_drag_to_end(page, viewname, p, o, direction):
     drag_row_pk = drag_handle.get_attribute('pk')
     next_row_pk = table_locator.locator('tbody tr:nth-of-type(6) div.drag.handle').get_attribute('pk')
     update_url = viewname.replace('_changelist', '_sortable_update')
-    while True:
-        with page.expect_response(reverse(update_url)) as response_info:
-            drag_handle.drag_to(table_locator.locator('tbody tr:last-of-type'))
-        if response_info.is_done():
-            break
-    assert response_info.value.ok
+    with page.expect_response(reverse(update_url)) as response_info:
+        drag_handle.drag_to(table_locator.locator('tbody tr:last-of-type'))
+    response = response_info.value
+    assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
     assert drag_row_pk == table_locator.locator('tbody tr:last-of-type div.drag.handle').get_attribute('pk')
     assert next_row_pk == table_locator.locator('tbody tr:nth-of-type(5) div.drag.handle').get_attribute('pk')
@@ -90,12 +88,10 @@ def test_drag_down(page, viewname, p, o, direction):
     drag_row_pk = drag_handle.get_attribute('pk')
     next_row_pk = table_locator.locator('tbody tr:nth-of-type(7) div.drag.handle').get_attribute('pk')
     update_url = viewname.replace('_changelist', '_sortable_update')
-    while True:
-        with page.expect_response(reverse(update_url)) as response_info:
-            drag_handle.drag_to(table_locator.locator('tbody tr:nth-of-type(9)'))
-        if response_info.is_done():
-            break
-    assert response_info.value.ok
+    with page.expect_response(reverse(update_url)) as response_info:
+        drag_handle.drag_to(table_locator.locator('tbody tr:nth-of-type(9)'))
+    response = response_info.value
+    assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
     assert drag_row_pk == table_locator.locator('tbody tr:nth-of-type(9) div.drag.handle').get_attribute('pk')
     assert next_row_pk == table_locator.locator('tbody tr:nth-of-type(6) div.drag.handle').get_attribute('pk')
@@ -111,12 +107,10 @@ def test_drag_to_start(page, viewname, p, o, direction):
     drag_row_pk = drag_handle.get_attribute('pk')
     prev_row_pk = table_locator.locator('tbody tr:nth-of-type(4) div.drag.handle').get_attribute('pk')
     update_url = viewname.replace('_changelist', '_sortable_update')
-    while True:
-        with page.expect_response(reverse(update_url)) as response_info:
-            drag_handle.drag_to(table_locator.locator('tbody tr:first-of-type'))
-        if response_info.is_done():
-            break
-    assert response_info.value.ok
+    with page.expect_response(reverse(update_url)) as response_info:
+        drag_handle.drag_to(table_locator.locator('tbody tr:first-of-type'))
+    response = response_info.value
+    assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
     assert drag_row_pk == table_locator.locator('tbody tr:first-of-type div.drag.handle').get_attribute('pk')
     assert prev_row_pk == table_locator.locator('tbody tr:nth-of-type(5) div.drag.handle').get_attribute('pk')
@@ -132,12 +126,10 @@ def test_drag_up(page, viewname, p, o, direction):
     drag_row_pk = drag_handle.get_attribute('pk')
     prev_row_pk = table_locator.locator('tbody tr:nth-of-type(5) div.drag.handle').get_attribute('pk')
     update_url = viewname.replace('_changelist', '_sortable_update')
-    while True:
-        with page.expect_response(reverse(update_url)) as response_info:
-            drag_handle.drag_to(table_locator.locator('tbody tr:nth-of-type(3)'))
-        if response_info.is_done():
-            break
-    assert response_info.value.ok
+    with page.expect_response(reverse(update_url)) as response_info:
+        drag_handle.drag_to(table_locator.locator('tbody tr:nth-of-type(3)'))
+    response = response_info.value
+    assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
     assert drag_row_pk == table_locator.locator('tbody tr:nth-of-type(3) div.drag.handle').get_attribute('pk')
     assert prev_row_pk == table_locator.locator('tbody tr:nth-of-type(6) div.drag.handle').get_attribute('pk')
@@ -165,13 +157,11 @@ def test_move_next_page(page, viewname, p, o, direction):
     step_input_field.focus()
     page.keyboard.press("Delete")
     step_input_field.type("2")
-    while True:
-        with page.expect_response(page.url) as response_info:
-            page.query_selector('#changelist-form .actions button[type="submit"]').click()
-        if response_info.is_done():
-            break
-    assert response_info.value.status == 302
-    assert response_info.value.url == page.url
+    with page.expect_response(page.url) as response_info:
+        page.query_selector('#changelist-form .actions button[type="submit"]').click()
+    response = response_info.value
+    assert response.status == 302
+    assert response.url == page.url
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
     for index, (pk, order) in enumerate(book_attributes):
         book = SortableBook.objects.get(pk=pk)
