@@ -33,6 +33,7 @@ class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_display = ['author', 'title', 'my_order']
     list_display_links = ['title']
     inlines = [ChapterInline, NotesInline]
+    fields = ['title', 'author']
 
 
 class UpOrderedSortableBookAdmin(SortableBookAdmin):

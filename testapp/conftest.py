@@ -2,9 +2,16 @@ import os
 import pytest
 from playwright.sync_api import sync_playwright
 
-from django.urls import reverse
-
 os.environ.setdefault('DJANGO_ALLOW_ASYNC_UNSAFE', 'true')
+
+
+@pytest.fixture(scope='function')
+def django_db_setup(django_db_blocker):
+    from django.core.management import call_command
+
+    with django_db_blocker.unblock():
+        call_command('migrate', verbosity=0)
+        call_command('loaddata', 'testapp/fixtures/data.json', verbosity=0)
 
 
 class Connector:
@@ -34,17 +41,3 @@ class Connector:
 def connector(live_server):
     with Connector(live_server) as connector:
         yield connector
-
-
-@pytest.fixture
-def page(connector, viewname, p, o):
-    url = f'{connector.live_server.url}{reverse(viewname)}'
-    query = []
-    if p:
-        query.append(f'p={p}')
-    if o:
-        query.append(f'o={o}')
-    if query:
-        url = f"{url}?{'&'.join(query)}"
-    connector.page.goto(url)
-    return connector.page

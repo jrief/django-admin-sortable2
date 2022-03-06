@@ -7,15 +7,6 @@ from django.urls import reverse
 from testapp.models import SortableBook
 
 
-@pytest.fixture(scope='function')
-def django_db_setup(django_db_blocker):
-    from django.core.management import call_command
-
-    with django_db_blocker.unblock():
-        call_command('migrate', verbosity=0)
-        call_command('loaddata', 'testapp/fixtures/data.json', verbosity=0)
-
-
 page_3 = 3 if DJANGO_VERSION >= (3, 0) else 2
 viewnames = [
     ('admin:testapp_sortablebook1_changelist', None, None),
@@ -56,6 +47,20 @@ def direction(viewname, o):
     if o is None:
         return +1 if viewname in ['admin:testapp_sortablebook1_changelist', 'admin:testapp_sortablebook3_changelist'] else -1
     return +1 if o > 0 else -1
+
+
+@pytest.fixture
+def page(connector, viewname, p, o):
+    url = f'{connector.live_server.url}{reverse(viewname)}'
+    query = []
+    if p:
+        query.append(f'p={p}')
+    if o:
+        query.append(f'o={o}')
+    if query:
+        url = f"{url}?{'&'.join(query)}"
+    connector.page.goto(url)
+    return connector.page
 
 
 @pytest.mark.parametrize('viewname, p, o', viewnames)
