@@ -1,4 +1,5 @@
 import pytest
+from time import sleep
 
 from django.urls import reverse
 
@@ -12,8 +13,8 @@ def page(connector):
 
 def is_fieldset_ordered(inline_elem):
     for counter, row in enumerate(inline_elem.query_selector_all('div.inline-related.has_original'), 1):
-        order_field = row.as_element().query_selector('fieldset input._reorder_')
-        assert order_field is not None
+        while not (order_field := row.query_selector('fieldset input._reorder_')):
+            sleep(0.1)
         if order_field.input_value() != str(counter):
             return False
     return True
