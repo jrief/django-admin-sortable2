@@ -27,7 +27,7 @@ class Connector:
                 print(arg.json_value())
 
         self.playwright = sync_playwright().start()
-        self.browser = self.playwright.chromium.launch()
+        self.browser = self.playwright.chromium.launch(args=['--disable-dev-shm-usage'])
         self.page = self.browser.new_page()
         self.page.on('console', print_args)
         return self

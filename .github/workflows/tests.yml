@@ -40,6 +40,7 @@ jobs:
         python -m pip install "Django${{ matrix.Django-version }}"
         python -m pip install -r testapp/requirements.txt
         python -m playwright install
+        python -m playwright install-deps
     - name: Build Client
       run: |
         npm run build
