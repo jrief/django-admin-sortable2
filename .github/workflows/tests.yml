@@ -15,7 +15,7 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
         Django-version: ["<4.0", "<4.1"]  # Should use 3.2.x, 4.0.x
-        node-version: ["14.x"]
+        node-version: ["16.x"]
 
     steps:
     - uses: actions/checkout@v2
