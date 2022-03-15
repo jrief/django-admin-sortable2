@@ -19,13 +19,14 @@ def is_fieldset_ordered(inline_elem):
 
 def test_drag_down(page):
     inline_locator = page.locator('#chapter_set-group')
-    assert is_fieldset_ordered(inline_locator.element_handle())
-    assert inline_locator.locator('#chapter_set-0 input._reorder_').input_value() == '1'
+    inline_element = inline_locator.element_handle()
+    assert is_fieldset_ordered(inline_element)
+    assert inline_element.query_selector('#chapter_set-0 input._reorder_').input_value() == '1'
     drag_handle = inline_locator.locator('#chapter_set-0 > h3')
     drag_handle.drag_to(inline_locator.locator('#chapter_set-4'))
-    assert inline_locator.locator('#chapter_set-0 input._reorder_').input_value() == '5'
-    assert inline_locator.locator('#chapter_set-1 input._reorder_').input_value() == '1'
-    assert is_fieldset_ordered(inline_locator.element_handle())
+    assert inline_element.query_selector('#chapter_set-0 input._reorder_').input_value() == '5'
+    assert inline_element.query_selector('#chapter_set-1 input._reorder_').input_value() == '1'
+    assert is_fieldset_ordered(inline_element)
 
 
 def test_drag_up(page):
