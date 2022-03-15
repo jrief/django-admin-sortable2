@@ -50,8 +50,8 @@ def direction(viewname, o):
 
 
 @pytest.fixture
-def page(connector, viewname, p, o):
-    url = f'{connector.live_server.url}{reverse(viewname)}'
+def page(live_server, page, viewname, p, o):
+    url = f'{live_server.url}{reverse(viewname)}'
     query = []
     if p:
         query.append(f'p={p}')
@@ -59,8 +59,8 @@ def page(connector, viewname, p, o):
         query.append(f'o={o}')
     if query:
         url = f"{url}?{'&'.join(query)}"
-    connector.page.goto(url)
-    return connector.page
+    page.goto(url)
+    return page
 
 
 @pytest.mark.parametrize('viewname, p, o', viewnames)

@@ -4,10 +4,10 @@ from django.urls import reverse
 
 
 @pytest.fixture
-def page(connector):
+def page(live_server, page):
     url = reverse('admin:testapp_sortablebook1_change', args=(17,))
-    connector.page.goto(f'{connector.live_server.url}{url}')
-    return connector.page
+    page.goto(f'{live_server.url}{url}')
+    return page
 
 
 def is_fieldset_ordered(inline_elem):
