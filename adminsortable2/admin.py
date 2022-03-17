@@ -3,9 +3,7 @@ import json
 from itertools import chain
 from types import MethodType
 
-from django import forms
 from django.contrib import admin, messages
-from django.contrib.contenttypes.admin import GenericStackedInline, GenericTabularInline
 from django.contrib.contenttypes.forms import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
@@ -16,6 +14,7 @@ from django.db.models.expressions import F
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save, pre_save
 from django.forms import widgets
+from django.forms.fields import IntegerField
 from django.forms.models import BaseInlineFormSet
 from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseForbidden
 from django.utils.safestring import mark_safe
@@ -46,13 +45,13 @@ def _get_default_ordering(model, model_admin):
 
 
 class MovePageActionForm(admin.helpers.ActionForm):
-    step = forms.IntegerField(
+    step = IntegerField(
         required=False,
         initial=1,
         widget=widgets.NumberInput(attrs={'id': 'changelist-form-step'}),
         label=False
     )
-    page = forms.IntegerField(
+    page = IntegerField(
         required=False,
         widget=widgets.NumberInput(attrs={'id': 'changelist-form-page'}),
         label=False
@@ -469,20 +468,6 @@ class SortableInlineAdminMixin(SortableAdminBase):
     def __init__(self, parent_model, admin_site):
         self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
         super().__init__(parent_model, admin_site)
-
-    def get_fields(self, request, obj=None):
-        fields = list(super().get_fields(request, obj))
-        if self.default_order_field not in fields:
-            # If the order field is not in the field list, add it
-            fields.append(self.default_order_field)
-        elif fields[0] == self.default_order_field:
-            """
-            Remove the order field and add it again immediately to ensure it is not on first position.
-            This ensures that django's template for tabular inline renders the first column with colspan="2".
-            """
-            fields.append(fields.pop(0))
-
-        return fields
 
 
 class CustomGenericInlineFormSet(CustomInlineFormSetMixin, BaseGenericInlineFormSet):

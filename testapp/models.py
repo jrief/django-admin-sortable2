@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Author(models.Model):
-    name = models.CharField('Name', null=True, blank=True, max_length=255)
+    name = models.CharField("Name", null=True, blank=True, max_length=255)
 
     class Meta:
         ordering = ['name']
@@ -15,7 +15,7 @@ class Author(models.Model):
 
 
 class SortableBook(models.Model):
-    title = models.CharField('Title', null=True, blank=True, max_length=255)
+    title = models.CharField("Title", null=True, blank=True, max_length=255)
     my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
     author = models.ForeignKey(Author, null=True, on_delete=models.CASCADE)
 
