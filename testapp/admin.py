@@ -23,6 +23,12 @@ class ChapterInline(SortableInlineAdminMixin, admin.StackedInline):
     extra = 1
 
 
+class ChapterInlineReversed(SortableInlineAdminMixin, admin.StackedInline):
+    model = models.Chapter
+    extra = 1
+    ordering = ['-my_order']
+
+
 class NotesInline(admin.TabularInline):
     model = models.Notes
     extra = 1
@@ -41,6 +47,7 @@ class UpOrderedSortableBookAdmin(SortableBookAdmin):
 
 
 class DownOrderedSortableBookAdmin(SortableBookAdmin):
+    inlines = [ChapterInlineReversed]
     ordering = ['-my_order']
 
 
