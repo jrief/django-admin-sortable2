@@ -18,15 +18,20 @@ class NoteAdmin(SortableAdminMixin, admin.ModelAdmin):
     ordering = ['note']
 
 
-class ChapterInline(SortableInlineAdminMixin, admin.StackedInline):
+class ChapterStackedInline(SortableInlineAdminMixin, admin.StackedInline):
     model = models.Chapter
     extra = 1
 
 
-class ChapterInlineReversed(SortableInlineAdminMixin, admin.StackedInline):
+class ChapterStackedInlineReversed(SortableInlineAdminMixin, admin.StackedInline):
     model = models.Chapter
     extra = 1
     ordering = ['-my_order']
+
+
+class ChapterTabularInline(SortableInlineAdminMixin, admin.TabularInline):
+    model = models.Chapter
+    extra = 1
 
 
 class NotesInline(admin.TabularInline):
@@ -38,20 +43,29 @@ class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_per_page = 12
     list_display = ['author', 'title', 'my_order']
     list_display_links = ['title']
-    inlines = [ChapterInline, NotesInline]
     fields = ['title', 'author']
 
 
 class UpOrderedSortableBookAdmin(SortableBookAdmin):
+    inlines = [ChapterStackedInline, NotesInline]
     ordering = ['my_order']
 
 
 class DownOrderedSortableBookAdmin(SortableBookAdmin):
-    inlines = [ChapterInlineReversed]
+    inlines = [ChapterStackedInlineReversed]
     ordering = ['-my_order']
 
 
+class UnorderedSortableBookAdmin(SortableBookAdmin):
+    inlines = [ChapterTabularInline]
+
+
+class OrderedSortableBookAdmin(SortableBookAdmin):
+    ordering = ['my_order']
+
+
+admin.site.register(models.SortableBook, OrderedSortableBookAdmin)
 admin.site.register(models.SortableBook1, UpOrderedSortableBookAdmin)
 admin.site.register(models.SortableBook2, DownOrderedSortableBookAdmin)
-admin.site.register(models.SortableBook3, SortableBookAdmin)
-admin.site.register(models.SortableBook4, SortableBookAdmin)
+admin.site.register(models.SortableBook3, UnorderedSortableBookAdmin)
+admin.site.register(models.SortableBook4, UnorderedSortableBookAdmin)

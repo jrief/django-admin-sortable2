@@ -8,6 +8,7 @@ from testapp.models import SortableBook
 viewnames = [
     'admin:testapp_sortablebook1_change',
     'admin:testapp_sortablebook2_change',
+    'admin:testapp_sortablebook3_change',
 ]
 the_good_parts_id = 17
 
@@ -36,7 +37,7 @@ def is_fieldset_ordered(inline_elem, direction):
 
 @pytest.fixture
 def direction(viewname):
-    return +1 if viewname in ['admin:testapp_sortablebook1_change'] else -1
+    return +1 if viewname in ['admin:testapp_sortablebook1_change', 'admin:testapp_sortablebook3_change'] else -1
 
 
 @pytest.mark.parametrize('viewname', viewnames)
@@ -45,7 +46,7 @@ def test_drag_down(page, viewname, direction):
     assert is_fieldset_ordered(inline_locator.element_handle(), direction)
     start_order = get_start_order(direction)
     assert inline_locator.locator('#chapter_set-0 input._reorder_').input_value() == str(start_order)
-    drag_handle = inline_locator.locator('#chapter_set-0 > h3')
+    drag_handle = inline_locator.locator('#chapter_set-0 :is(h3, p)')
     drag_handle.drag_to(inline_locator.locator('#chapter_set-4'))
     assert inline_locator.locator('#chapter_set-0 input._reorder_').input_value() == str(start_order + direction * 4)
     assert inline_locator.locator('#chapter_set-1 input._reorder_').input_value() == str(start_order)
@@ -59,7 +60,7 @@ def test_drag_up(page, viewname, direction):
     start_order = get_start_order(direction)
     reorder_field = inline_locator.locator('#chapter_set-5 input._reorder_')
     assert reorder_field.input_value() == str(start_order + direction * 5)
-    drag_handle = inline_locator.locator('#chapter_set-5 > h3')
+    drag_handle = inline_locator.locator('#chapter_set-5 :is(h3, p)')
     drag_handle.drag_to(inline_locator.locator('#chapter_set-1'))
     assert inline_locator.locator('#chapter_set-5 input._reorder_').input_value() == str(start_order + direction)
     assert inline_locator.locator('#chapter_set-1 input._reorder_').input_value() == str(start_order + direction * 2)
