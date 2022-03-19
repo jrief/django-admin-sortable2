@@ -69,14 +69,3 @@ class Chapter(models.Model):
 
     def __unicode__(self):
         return 'Chapter: {0}'.format(self.title)
-
-
-class Notes(models.Model):
-    note = models.CharField('Note', null=True, blank=True, max_length=255)
-    book = models.ForeignKey(SortableBook, null=True, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return 'Note: {0}'.format(self.note)
-
-    def __unicode__(self):
-        return 'Note: {0}'.format(self.note)

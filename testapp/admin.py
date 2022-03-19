@@ -12,12 +12,6 @@ class AuthorAdmin(admin.ModelAdmin):
     list_display = ['name']
 
 
-@admin.register(models.Notes)
-class NoteAdmin(SortableAdminMixin, admin.ModelAdmin):
-    list_display = ['note']
-    ordering = ['note']
-
-
 class ChapterStackedInline(SortableInlineAdminMixin, admin.StackedInline):
     model = models.Chapter
     extra = 1
@@ -34,11 +28,6 @@ class ChapterTabularInline(SortableInlineAdminMixin, admin.TabularInline):
     extra = 1
 
 
-class NotesInline(admin.TabularInline):
-    model = models.Notes
-    extra = 1
-
-
 class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_per_page = 12
     list_display = ['author', 'title', 'my_order']
@@ -47,7 +36,7 @@ class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
 
 
 class UpOrderedSortableBookAdmin(SortableBookAdmin):
-    inlines = [ChapterStackedInline, NotesInline]
+    inlines = [ChapterStackedInline]
     ordering = ['my_order']
 
 
