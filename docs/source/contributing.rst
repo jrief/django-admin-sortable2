@@ -54,7 +54,7 @@ using pytest-django_ as test runner. Run these tests using:
 Quoting
 =======
 
-Please follow this rule when quoting string:
+Please follow this rule when quoting strings:
 
 * A string intended to be read by humans shall be quoted using double quotes: `"…"`.
 * An internal string, such as dictionary keys, etc. not intended to be read by humans
