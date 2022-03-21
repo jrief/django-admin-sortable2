@@ -1,5 +1,6 @@
-import Sortable, { SortableEvent } from 'sortablejs';
+import Sortable, { MultiDrag, SortableEvent } from 'sortablejs';
 
+Sortable.mount(new MultiDrag());
 
 class SortableBase {
 	protected readonly config: any;
@@ -13,6 +14,7 @@ class SortableBase {
 class ListSortable extends SortableBase {
 	private readonly tableBody: HTMLTableSectionElement;
 	private readonly sortable: Sortable;
+	private readonly observer: MutationObserver;
 
 	constructor(table: HTMLTableElement) {
 		super();
@@ -22,8 +24,27 @@ class ListSortable extends SortableBase {
 			handle: '.handle',
 			draggable: 'tr',
 			selectedClass: 'selected',
+			multiDrag: true,
 			onEnd: event => this.onEnd(event),
 		});
+		this.observer = new MutationObserver(mutationsList => this.selectActionChanged(mutationsList));
+		const tableRows = this.tableBody.querySelectorAll('tr');
+		tableRows.forEach(tableRow => this.observer.observe(tableRow, {attributes: true}));
+	}
+
+	private selectActionChanged(mutationsList: Array<MutationRecord>) {
+		for (const mutation of mutationsList) {
+			if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+				const tableRow = mutation.target as HTMLTableRowElement;
+				if (tableRow.classList.contains('selected')) {
+					// @ts-ignore
+					Sortable.utils.select(tableRow);
+				} else {
+					// @ts-ignore
+					Sortable.utils.deselect(tableRow);
+				}
+			}
+		}
 	}
 
 	private async onEnd(evt: SortableEvent) {
@@ -67,7 +88,10 @@ class ListSortable extends SortableBase {
 			return;
 		const actionsEls = this.tableBody.querySelectorAll('tr input.action-select');
 		actionsEls.forEach(elem => {
-			elem.closest('tr')?.classList.remove('selected');
+			const tableRow = elem.closest('tr');
+			// @ts-ignore
+			Sortable.utils.deselect(tableRow);
+			tableRow?.classList.remove('selected');
 			(elem as HTMLInputElement).checked = false;
 		});
 		// @ts-ignore
