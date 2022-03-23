@@ -37,10 +37,8 @@ class ListSortable extends SortableBase {
 			if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
 				const tableRow = mutation.target as HTMLTableRowElement;
 				if (tableRow.classList.contains('selected')) {
-					// @ts-ignore
 					Sortable.utils.select(tableRow);
 				} else {
-					// @ts-ignore
 					Sortable.utils.deselect(tableRow);
 				}
 			}
@@ -54,19 +52,42 @@ class ListSortable extends SortableBase {
 		let endorder;
 		if (evt.newIndex < evt.oldIndex) {
 			// drag up
-			endorder = evt.item.nextElementSibling?.querySelector('.handle')?.getAttribute('order');
+			if (evt.items.length > 0) {
+				endorder = evt.items[evt.items.length - 1].nextElementSibling?.querySelector('.handle')?.getAttribute('order');
+			} else {
+				endorder = evt.item.nextElementSibling?.querySelector('.handle')?.getAttribute('order');
+			}
 		} else if (evt.newIndex > evt.oldIndex) {
 			// drag down
-			endorder = evt.item.previousElementSibling?.querySelector('.handle')?.getAttribute('order');
+			if (evt.items.length > 0) {
+				endorder = evt.items[0].previousElementSibling?.querySelector('.handle')?.getAttribute('order');
+			} else {
+				endorder = evt.item.previousElementSibling?.querySelector('.handle')?.getAttribute('order');
+			}
 		} else {
 			return;
 		}
-		const startorder = evt.item.querySelector('.handle')?.getAttribute('order');
+		const draggedItems = new Array<string>();
+		if (evt.items.length > 0) {
+			evt.items.forEach(elem => {
+				const pk = elem?.querySelector('.handle')?.getAttribute('pk');
+				if (pk) {
+					draggedItems.push(pk);
+				}
+			});
+		} else {
+			const pk = evt.item?.querySelector('.handle')?.getAttribute('pk');
+			if (pk) {
+				draggedItems.push(pk);
+			}
+		}
+		if (draggedItems.length === 0)
+			return;
 		const response = await fetch(this.config.update_url, {
 			method: 'POST',
 			headers: this.headers,
 			body: JSON.stringify({
-				startorder: startorder,
+				draggedItems: draggedItems,
 				endorder: endorder,
 			})
 		});

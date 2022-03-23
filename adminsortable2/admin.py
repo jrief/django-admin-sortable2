@@ -162,7 +162,7 @@ class SortableAdminMixin(SortableAdminBase):
         def func(this, item):
             if this.enable_sorting:
                 order = getattr(item, this.default_order_field)
-                html = '<div class="drag handle" pk="{0}" order="{1}">&nbsp;</div>'.format(item.pk, order)
+                html = f'<div class="drag handle" pk="{item.pk}" order="{order}">&nbsp;</div>'
             else:
                 html = '<div class="drag">&nbsp;</div>'
             return mark_safe(html)
@@ -185,9 +185,9 @@ class SortableAdminMixin(SortableAdminBase):
         if not self.has_change_permission(request):
             return HttpResponseForbidden('Missing permissions to perform this request')
         body = json.loads(request.body)
-        startorder = int(body.get('startorder'))
+        queryset = self.model.objects.filter(pk__in=body.get('draggedItems'))
         endorder = int(body.get('endorder', 0))
-        moved_items = list(self._move_item(request, startorder, endorder))
+        moved_items = self._move_items(request, queryset, endorder)
         return JsonResponse(moved_items, safe=False)
 
     def save_model(self, request, obj, form, change):
@@ -218,11 +218,14 @@ class SortableAdminMixin(SortableAdminBase):
         self._bulk_move(request, queryset, self.LAST)
     move_to_last_page.short_description = _('Move selected to last page')
 
-    def _move_item(self, request, startorder, endorder):
+    def _move_items(self, request, queryset, endorder):
         extra_model_filters = self.get_extra_model_filters(request)
-        return self.move_item(startorder, endorder, extra_model_filters)
+        reordered = {}
+        for startorder in queryset.order_by(self.order_by).values_list(self.default_order_field, flat=True):
+            reordered.update(self._move_item(startorder, endorder, extra_model_filters))
+        return [{'pk': pk, 'order': order} for pk, order in reordered.items()]
 
-    def move_item(self, startorder, endorder, extra_model_filters=None):
+    def _move_item(self, startorder, endorder, extra_model_filters=None):
         model = self.model
         rank_field = self.default_order_field
 
@@ -255,8 +258,8 @@ class SortableAdminMixin(SortableAdminBase):
 
                 # noinspection PyProtectedMember
                 raise model.MultipleObjectsReturned(
-                    "Detected non-unique values in field '{rank_field}' used for sorting this model.\n"
-                    "Consider to run \n    python manage.py reorder {model._meta.label}\n"
+                    f"Detected non-unique values in field '{rank_field}' used for sorting this model.\n"
+                    f"Consider to run \n    python manage.py reorder {model._meta.label}\n"
                     "to adjust this inconsistency."
                 )
 
@@ -290,10 +293,7 @@ class SortableAdminMixin(SortableAdminBase):
             setattr(obj, rank_field, endorder)
             obj.save(update_fields=[rank_field])
 
-        return [{
-            'pk': instance.pk,
-            'order': getattr(instance, rank_field)
-        } for instance in chain(move_objs, [obj])]
+        return {instance.pk: getattr(instance, rank_field) for instance in chain(move_objs, [obj])}
 
     @staticmethod
     def get_extra_model_filters(request):
