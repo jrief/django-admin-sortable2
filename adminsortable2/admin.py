@@ -187,7 +187,8 @@ class SortableAdminMixin(SortableAdminBase):
         body = json.loads(request.body)
         queryset = self.model.objects.filter(pk__in=body.get('draggedItems'))
         endorder = int(body.get('endorder', 0))
-        moved_items = self._move_items(request, queryset, endorder)
+        extra_model_filters = self.get_extra_model_filters(request)
+        moved_items = self._move_items(queryset, endorder, extra_model_filters)
         return JsonResponse(moved_items, safe=False)
 
     def save_model(self, request, obj, form, change):
@@ -218,14 +219,13 @@ class SortableAdminMixin(SortableAdminBase):
         self._bulk_move(request, queryset, self.LAST)
     move_to_last_page.short_description = _('Move selected to last page')
 
-    def _move_items(self, request, queryset, endorder):
-        extra_model_filters = self.get_extra_model_filters(request)
+    def _move_items(self, queryset, endorder, extra_model_filters):
         reordered = {}
         for startorder in queryset.order_by(self.order_by).values_list(self.default_order_field, flat=True):
             reordered.update(self._move_item(startorder, endorder, extra_model_filters))
         return [{'pk': pk, 'order': order} for pk, order in reordered.items()]
 
-    def _move_item(self, startorder, endorder, extra_model_filters=None):
+    def _move_item(self, startorder, endorder, extra_model_filters):
         model = self.model
         rank_field = self.default_order_field
 
@@ -364,9 +364,10 @@ class SortableAdminMixin(SortableAdminBase):
             queryset = queryset.reverse()
             endorders = reversed(endorders)
 
+        extra_model_filters = self.get_extra_model_filters(request)
         for obj, endorder in zip(queryset, endorders):
             startorder = getattr(obj, self.default_order_field)
-            self._move_item(request, startorder, endorder)
+            self._move_item(startorder, endorder, extra_model_filters)
 
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
