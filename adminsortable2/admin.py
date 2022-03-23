@@ -221,7 +221,9 @@ class SortableAdminMixin(SortableAdminBase):
 
     def _move_items(self, queryset, endorder, extra_model_filters):
         reordered = {}
-        for startorder in queryset.order_by(self.order_by).values_list(self.default_order_field, flat=True):
+        for item in queryset.order_by(self.order_by):
+            item.refresh_from_db()  # previous calls to self._move_item may have updated this value
+            startorder = getattr(item, self.default_order_field)
             reordered.update(self._move_item(startorder, endorder, extra_model_filters))
         return [{'pk': pk, 'order': order} for pk, order in reordered.items()]
 
