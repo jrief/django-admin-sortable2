@@ -15,6 +15,8 @@ class ListSortable extends SortableBase {
 	private readonly tableBody: HTMLTableSectionElement;
 	private readonly sortable: Sortable;
 	private readonly observer: MutationObserver;
+	private firstOrder: number | undefined;
+	private orderDirection: number | undefined;
 
 	constructor(table: HTMLTableElement) {
 		super();
@@ -25,6 +27,7 @@ class ListSortable extends SortableBase {
 			draggable: 'tr',
 			selectedClass: 'selected',
 			multiDrag: true,
+			onStart: event => this.onStart(event),
 			onEnd: event => this.onEnd(event),
 		});
 		this.observer = new MutationObserver(mutationsList => this.selectActionChanged(mutationsList));
@@ -45,60 +48,76 @@ class ListSortable extends SortableBase {
 		}
 	}
 
+	private async onStart(evt: SortableEvent) {
+		evt.oldIndex;  // element index within parent
+		const firstOrder = this.tableBody.querySelector('tr:first-child')?.querySelector('.handle')?.getAttribute('order');
+		const lastOrder = this.tableBody.querySelector('tr:last-child')?.querySelector('.handle')?.getAttribute('order');
+		if (firstOrder && lastOrder) {
+			this.firstOrder = parseInt(firstOrder);
+			this.orderDirection = parseInt(lastOrder) > this.firstOrder ? 1 : -1;
+		}
+	}
+
 	private async onEnd(evt: SortableEvent) {
-		if (typeof evt.newIndex !== 'number' || typeof evt.oldIndex !== 'number' || !(evt.item instanceof HTMLTableRowElement))
+		if (typeof evt.newIndex !== 'number' || typeof evt.oldIndex !== 'number'
+			|| typeof this.firstOrder !== 'number'|| typeof this.orderDirection !== 'number'
+			|| !(evt.item instanceof HTMLTableRowElement))
 			return;
 
-		let endorder;
-		if (evt.newIndex < evt.oldIndex) {
-			// drag up
-			if (evt.items.length > 0) {
-				endorder = evt.items[evt.items.length - 1].nextElementSibling?.querySelector('.handle')?.getAttribute('order');
+		let order = this.firstOrder;
+		for (let row of this.tableBody.querySelectorAll('tr')) {
+			row.querySelector('.handle')?.setAttribute('order', String(order));
+			order += this.orderDirection;
+		}
+
+		let firstChild: number, lastChild: number;
+		if (evt.items.length === 0) {
+			// single dragged item
+			if (evt.newIndex < evt.oldIndex) {
+				// drag up
+				firstChild = evt.newIndex;
+				lastChild = evt.oldIndex;
+			} else if (evt.newIndex > evt.oldIndex) {
+				// drag down
+				firstChild = evt.oldIndex;
+				lastChild = evt.newIndex;
 			} else {
-				endorder = evt.item.nextElementSibling?.querySelector('.handle')?.getAttribute('order');
-			}
-		} else if (evt.newIndex > evt.oldIndex) {
-			// drag down
-			if (evt.items.length > 0) {
-				endorder = evt.items[0].previousElementSibling?.querySelector('.handle')?.getAttribute('order');
-			} else {
-				endorder = evt.item.previousElementSibling?.querySelector('.handle')?.getAttribute('order');
+				return;
 			}
 		} else {
-			return;
-		}
-		const draggedItems = new Array<string>();
-		if (evt.items.length > 0) {
-			evt.items.forEach(elem => {
-				const pk = elem?.querySelector('.handle')?.getAttribute('pk');
-				if (pk) {
-					draggedItems.push(pk);
-				}
+			// multiple dragged items
+			firstChild = this.tableBody.querySelectorAll('tr').length;
+			lastChild = 0;
+			evt.oldIndicies.forEach(item => {
+				firstChild = Math.min(firstChild, item.index)
+				lastChild = Math.max(lastChild, item.index)
 			});
-		} else {
-			const pk = evt.item?.querySelector('.handle')?.getAttribute('pk');
-			if (pk) {
-				draggedItems.push(pk);
+			evt.newIndicies.forEach(item => {
+				firstChild = Math.min(firstChild, item.index)
+				lastChild = Math.max(lastChild, item.index)
+			});
+		}
+		const updatedRows = this.tableBody.querySelectorAll(`tr:nth-child(n+${firstChild + 1}):nth-child(-n+${lastChild + 1})`);;
+		if (updatedRows.length === 0)
+			return;
+		console.log(updatedRows);
+ 		const updatedItems = new Map<string, string>();
+		for (let row of updatedRows) {
+			const pk = row.querySelector('.handle')?.getAttribute('pk');
+			const order = row.querySelector('.handle')?.getAttribute('order');
+			if (pk && order) {
+				updatedItems.set(pk, order);
 			}
 		}
-		if (draggedItems.length === 0)
-			return;
+		console.log(updatedItems);
 		const response = await fetch(this.config.update_url, {
 			method: 'POST',
 			headers: this.headers,
 			body: JSON.stringify({
-				draggedItems: draggedItems,
-				endorder: endorder,
+				updatedItems: Array.from(updatedItems.entries()),
 			})
 		});
-		if (response.status === 200) {
-			const movedItems = await response.json();
-			movedItems.forEach((item: any) => {
-				const tableRow = this.tableBody.querySelector(`tr td.field-_reorder_ div[pk="${item.pk}"]`)?.closest('tr');
-				tableRow?.querySelector('.handle')?.setAttribute('order', item.order);
-			});
-			this.resetActions();
-		} else {
+		if (response.status !== 200) {
 			console.error(`The server responded: ${response.statusText}`);
 		}
 	}

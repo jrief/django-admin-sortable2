@@ -16,7 +16,7 @@ from django.db.models.signals import post_save, pre_save
 from django.forms import widgets
 from django.forms.fields import IntegerField
 from django.forms.models import BaseInlineFormSet
-from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.urls import path, reverse
@@ -184,12 +184,21 @@ class SortableAdminMixin(SortableAdminBase):
             return HttpResponseNotAllowed(f"Method {request.method} not allowed")
         if not self.has_change_permission(request):
             return HttpResponseForbidden('Missing permissions to perform this request')
-        body = json.loads(request.body)
-        queryset = self.model.objects.filter(pk__in=body.get('draggedItems'))
-        endorder = int(body.get('endorder', 0))
-        extra_model_filters = self.get_extra_model_filters(request)
-        moved_items = self._move_items(queryset, endorder, extra_model_filters)
-        return JsonResponse(moved_items, safe=False)
+        try:
+            extra_model_filters = self.get_extra_model_filters(request)
+            num_updated = self._update_order(json.loads(request.body).get('updatedItems'), extra_model_filters)
+            return HttpResponse(f"Updated {num_updated} items")
+        except Exception as exc:
+            return HttpResponseBadRequest(f"Invalid POST request: {exc}")
+
+    def _update_order(self, updated_items, extra_model_filters):
+        queryset = self.model.objects.filter(**extra_model_filters)
+        updated_objects = []
+        for item in updated_items:
+            obj = queryset.get(pk=item[0])
+            setattr(obj, self.default_order_field, item[1])
+            updated_objects.append(obj)
+        return self.model.objects.bulk_update(updated_objects, [self.default_order_field])
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -221,10 +230,15 @@ class SortableAdminMixin(SortableAdminBase):
 
     def _move_items(self, queryset, endorder, extra_model_filters):
         reordered = {}
-        for item in queryset.order_by(self.order_by):
-            item.refresh_from_db()  # previous calls to self._move_item may have updated this value
-            startorder = getattr(item, self.default_order_field)
-            reordered.update(self._move_item(startorder, endorder, extra_model_filters))
+        filter_kwargs = {f'{self.default_order_field}__lt': endorder}
+        queryset_down = queryset.filter(**filter_kwargs).order_by(self.default_order_field)
+        filter_kwargs = {f'{self.default_order_field}__gt': endorder}
+        queryset_up = queryset.filter(**filter_kwargs).order_by(f'-{self.default_order_field}')
+        for queryset_mixed in queryset_up, queryset_down:
+            for item in queryset_mixed:
+                item.refresh_from_db()  # previous calls to self._move_item may have updated this value
+                startorder = getattr(item, self.default_order_field)
+                reordered.update(self._move_item(startorder, endorder, extra_model_filters))
         return [{'pk': pk, 'order': order} for pk, order in reordered.items()]
 
     def _move_item(self, startorder, endorder, extra_model_filters):
