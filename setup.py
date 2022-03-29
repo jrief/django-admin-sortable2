@@ -43,9 +43,9 @@ setup(
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
     install_requires=[
-        'Django>=2.2,<4.1',
+        'Django>=4.0',
     ],
-    packages=find_packages(exclude=['example', 'docs']),
+    packages=find_packages(exclude=['testapp', 'docs']),
     include_package_data=True,
     zip_safe=False,
 )

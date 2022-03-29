@@ -8,7 +8,7 @@
   [Sortable.js](https://sortablejs.github.io/Sortable/).
 - Use TypeScript instead of JavaScript for all client side code.
 - Remove all extended Django admin templates: This allows a smoother upgrade
-  in future Django versions.
+  for future Django versions.
 
 
 ### 1.0.4

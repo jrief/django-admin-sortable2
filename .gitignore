@@ -18,3 +18,4 @@ dist
 node_modules/
 htmlcov
 adminsortable2/static/adminsortable2/js/adminsortable2.*
+testapp/test.db
