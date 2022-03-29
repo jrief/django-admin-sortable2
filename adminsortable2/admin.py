@@ -228,19 +228,6 @@ class SortableAdminMixin(SortableAdminBase):
         self._bulk_move(request, queryset, self.LAST)
     move_to_last_page.short_description = _('Move selected to last page')
 
-    def _move_items(self, queryset, endorder, extra_model_filters):
-        reordered = {}
-        filter_kwargs = {f'{self.default_order_field}__lt': endorder}
-        queryset_down = queryset.filter(**filter_kwargs).order_by(self.default_order_field)
-        filter_kwargs = {f'{self.default_order_field}__gt': endorder}
-        queryset_up = queryset.filter(**filter_kwargs).order_by(f'-{self.default_order_field}')
-        for queryset_mixed in queryset_up, queryset_down:
-            for item in queryset_mixed:
-                item.refresh_from_db()  # previous calls to self._move_item may have updated this value
-                startorder = getattr(item, self.default_order_field)
-                reordered.update(self._move_item(startorder, endorder, extra_model_filters))
-        return [{'pk': pk, 'order': order} for pk, order in reordered.items()]
-
     def _move_item(self, startorder, endorder, extra_model_filters):
         model = self.model
         rank_field = self.default_order_field

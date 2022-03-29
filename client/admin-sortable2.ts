@@ -64,12 +64,6 @@ class ListSortable extends SortableBase {
 			|| !(evt.item instanceof HTMLTableRowElement))
 			return;
 
-		let order = this.firstOrder;
-		for (let row of this.tableBody.querySelectorAll('tr')) {
-			row.querySelector('.handle')?.setAttribute('order', String(order));
-			order += this.orderDirection;
-		}
-
 		let firstChild: number, lastChild: number;
 		if (evt.items.length === 0) {
 			// single dragged item
@@ -97,16 +91,28 @@ class ListSortable extends SortableBase {
 				lastChild = Math.max(lastChild, item.index)
 			});
 		}
-		const updatedRows = this.tableBody.querySelectorAll(`tr:nth-child(n+${firstChild + 1}):nth-child(-n+${lastChild + 1})`);;
+
+		const updatedRows = this.tableBody.querySelectorAll(`tr:nth-child(n+${firstChild + 1}):nth-child(-n+${lastChild + 1})`);
 		if (updatedRows.length === 0)
 			return;
 		console.log(updatedRows);
- 		const updatedItems = new Map<string, string>();
+
+		let order;
+		if (firstChild === 0) {
+			order = this.firstOrder;
+		} else {
+			order = this.tableBody.querySelector(`tr:nth-child(${firstChild}) .handle`)?.getAttribute('order');
+			if (!order)
+				return;
+			order = parseInt(order) + this.orderDirection;
+		}
+ 		const updatedItems = new Map<number, number>();
 		for (let row of updatedRows) {
 			const pk = row.querySelector('.handle')?.getAttribute('pk');
-			const order = row.querySelector('.handle')?.getAttribute('order');
-			if (pk && order) {
-				updatedItems.set(pk, order);
+			if (pk) {
+				row.querySelector('.handle')?.setAttribute('order', String(order));
+				updatedItems.set(parseInt(pk), order);
+				order += this.orderDirection;
 			}
 		}
 		console.log(updatedItems);
@@ -117,7 +123,9 @@ class ListSortable extends SortableBase {
 				updatedItems: Array.from(updatedItems.entries()),
 			})
 		});
-		if (response.status !== 200) {
+		if (response.status === 200) {
+			this.resetActions();
+		} else {
 			console.error(`The server responded: ${response.statusText}`);
 		}
 	}
@@ -134,6 +142,10 @@ class ListSortable extends SortableBase {
 			tableRow?.classList.remove('selected');
 			(elem as HTMLInputElement).checked = false;
 		});
+		const elem = document.getElementById('action-toggle');
+		if (elem instanceof HTMLInputElement) {
+			elem.checked = false;
+		}
 		// @ts-ignore
 		window.Actions(actionsEls);
 	}
