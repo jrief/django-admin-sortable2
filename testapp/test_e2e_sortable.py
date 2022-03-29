@@ -66,23 +66,23 @@ def page(live_server, page, viewname, p, o):
 @pytest.mark.parametrize('viewname, p, o', viewnames)
 def test_drag_to_end(page, viewname, p, o, direction):
     table_locator = page.locator('table#result_list')
-    drag_handle = table_locator.locator('tbody tr:nth-of-type(5) div.drag')
+    drag_handle = table_locator.locator('tbody tr:nth-child(5) div.drag')
     if o == 2:
         assert not is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
         assert 'handle' not in drag_handle.get_attribute('class')
         return
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
     drag_row_pk = drag_handle.get_attribute('pk')
-    next_row_pk = table_locator.locator('tbody tr:nth-of-type(6) div.drag.handle').get_attribute('pk')
+    next_row_pk = table_locator.locator('tbody tr:nth-child(6) div.drag.handle').get_attribute('pk')
     update_url = viewname.replace('_changelist', '_sortable_update')
     with page.expect_response(reverse(update_url)) as response_info:
-        drag_handle.drag_to(table_locator.locator('tbody tr:last-of-type'))
+        drag_handle.drag_to(table_locator.locator('tbody tr:last-child'))
     while not (response := response_info.value):
         sleep(0.1)
     assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
-    assert drag_row_pk == table_locator.locator('tbody tr:last-of-type div.drag.handle').get_attribute('pk')
-    assert next_row_pk == table_locator.locator('tbody tr:nth-of-type(5) div.drag.handle').get_attribute('pk')
+    assert drag_row_pk == table_locator.locator('tbody tr:last-child div.drag.handle').get_attribute('pk')
+    assert next_row_pk == table_locator.locator('tbody tr:nth-child(5) div.drag.handle').get_attribute('pk')
 
 
 @pytest.mark.parametrize('viewname, p, o', viewnames)
@@ -91,18 +91,18 @@ def test_drag_down(page, viewname, p, o, direction):
         return
     table_locator = page.locator('table#result_list')
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
-    drag_handle = table_locator.locator('tbody tr:nth-of-type(4) div.drag.handle')
+    drag_handle = table_locator.locator('tbody tr:nth-child(4) div.drag.handle')
     drag_row_pk = drag_handle.get_attribute('pk')
-    next_row_pk = table_locator.locator('tbody tr:nth-of-type(7) div.drag.handle').get_attribute('pk')
+    next_row_pk = table_locator.locator('tbody tr:nth-child(7) div.drag.handle').get_attribute('pk')
     update_url = viewname.replace('_changelist', '_sortable_update')
     with page.expect_response(reverse(update_url)) as response_info:
-        drag_handle.drag_to(table_locator.locator('tbody tr:nth-of-type(9)'))
+        drag_handle.drag_to(table_locator.locator('tbody tr:nth-child(9)'))
     while not (response := response_info.value):
         sleep(0.1)
     assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
-    assert drag_row_pk == table_locator.locator('tbody tr:nth-of-type(9) div.drag.handle').get_attribute('pk')
-    assert next_row_pk == table_locator.locator('tbody tr:nth-of-type(6) div.drag.handle').get_attribute('pk')
+    assert drag_row_pk == table_locator.locator('tbody tr:nth-child(9) div.drag.handle').get_attribute('pk')
+    assert next_row_pk == table_locator.locator('tbody tr:nth-child(6) div.drag.handle').get_attribute('pk')
 
 
 @pytest.mark.parametrize('viewname, p, o', viewnames)
@@ -111,18 +111,18 @@ def test_drag_to_start(page, viewname, p, o, direction):
         return
     table_locator = page.locator('table#result_list')
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
-    drag_handle = table_locator.locator('tbody tr:nth-of-type(5) div.drag.handle')
+    drag_handle = table_locator.locator('tbody tr:nth-child(5) div.drag.handle')
     drag_row_pk = drag_handle.get_attribute('pk')
-    prev_row_pk = table_locator.locator('tbody tr:nth-of-type(4) div.drag.handle').get_attribute('pk')
+    prev_row_pk = table_locator.locator('tbody tr:nth-child(4) div.drag.handle').get_attribute('pk')
     update_url = viewname.replace('_changelist', '_sortable_update')
     with page.expect_response(reverse(update_url)) as response_info:
-        drag_handle.drag_to(table_locator.locator('tbody tr:first-of-type'))
+        drag_handle.drag_to(table_locator.locator('tbody tr:first-child'))
     while not (response := response_info.value):
         sleep(0.1)
     assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
-    assert drag_row_pk == table_locator.locator('tbody tr:first-of-type div.drag.handle').get_attribute('pk')
-    assert prev_row_pk == table_locator.locator('tbody tr:nth-of-type(5) div.drag.handle').get_attribute('pk')
+    assert drag_row_pk == table_locator.locator('tbody tr:first-child div.drag.handle').get_attribute('pk')
+    assert prev_row_pk == table_locator.locator('tbody tr:nth-child(5) div.drag.handle').get_attribute('pk')
 
 
 @pytest.mark.parametrize('viewname, p, o', viewnames)
@@ -131,18 +131,56 @@ def test_drag_up(page, viewname, p, o, direction):
         return
     table_locator = page.locator('table#result_list')
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
-    drag_handle = table_locator.locator('tbody tr:nth-of-type(9) div.drag.handle')
+    drag_handle = table_locator.locator('tbody tr:nth-child(9) div.drag.handle')
     drag_row_pk = drag_handle.get_attribute('pk')
-    prev_row_pk = table_locator.locator('tbody tr:nth-of-type(5) div.drag.handle').get_attribute('pk')
+    prev_row_pk = table_locator.locator('tbody tr:nth-child(5) div.drag.handle').get_attribute('pk')
     update_url = viewname.replace('_changelist', '_sortable_update')
     with page.expect_response(reverse(update_url)) as response_info:
-        drag_handle.drag_to(table_locator.locator('tbody tr:nth-of-type(3)'))
+        drag_handle.drag_to(table_locator.locator('tbody tr:nth-child(3)'))
     while not (response := response_info.value):
         sleep(0.1)
     assert response.ok
     assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
-    assert drag_row_pk == table_locator.locator('tbody tr:nth-of-type(3) div.drag.handle').get_attribute('pk')
-    assert prev_row_pk == table_locator.locator('tbody tr:nth-of-type(6) div.drag.handle').get_attribute('pk')
+    assert drag_row_pk == table_locator.locator('tbody tr:nth-child(3) div.drag.handle').get_attribute('pk')
+    assert prev_row_pk == table_locator.locator('tbody tr:nth-child(6) div.drag.handle').get_attribute('pk')
+
+
+@pytest.mark.parametrize('viewname, p, o', [
+    ('admin:testapp_sortablebook1_changelist', None, None),
+    ('admin:testapp_sortablebook1_changelist', page_3, None),
+    ('admin:testapp_sortablebook1_changelist', page_3, -3),
+    ('admin:testapp_sortablebook2_changelist', None, -3),
+    ('admin:testapp_sortablebook4_changelist', None, None),
+])
+def test_drag_multiple(page, viewname, p, o, direction):
+    table_locator = page.locator('table#result_list')
+    assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
+    book_primary_keys = []
+    for n in (2, 3, 4, 10, 11):
+        book_primary_keys.append(
+            int(table_locator.locator(f'tbody tr:nth-child({n}) div.drag.handle').element_handle().get_attribute('pk')),
+        )
+        table_locator.locator(f'tbody tr:nth-child({n}) input.action-select').click()
+    drag_handle = table_locator.locator('tbody tr:nth-child(10) div.drag.handle')
+    update_url = viewname.replace('_changelist', '_sortable_update')
+    with page.expect_response(reverse(update_url)) as response_info:
+        drag_handle.drag_to(table_locator.locator('tbody tr:nth-child(7)'))
+    while not (response := response_info.value):
+        sleep(0.1)
+    assert response.ok
+    assert is_table_ordered(table_locator.element_handle(), page=p, direction=direction)
+    for order, pk in enumerate(book_primary_keys, 4):
+        handle = table_locator.locator(f'tbody tr:nth-child({order}) div.drag.handle')
+        assert pk == int(handle.get_attribute('pk'))
+        if direction < 0:
+            order = SortableBook.objects.count() - order + 1
+            if p:
+                order -= 12 * (p - 1)
+        else:
+            if p:
+                order += 12 * (p - 1)
+        assert order == int(handle.get_attribute('order'))
+        assert order == SortableBook.objects.get(pk=pk).my_order
 
 
 @pytest.mark.parametrize('viewname, p, o', [
@@ -156,10 +194,10 @@ def test_move_next_page(page, viewname, p, o, direction):
     book_attributes = []
     for n in range(2, 7, 2):
         book_attributes.append((
-            int(table_locator.locator(f'tbody tr:nth-of-type({n}) div.drag.handle').element_handle().get_attribute('pk')),
-            int(table_locator.locator(f'tbody tr:nth-of-type({n}) div.drag.handle').element_handle().get_attribute('order')),
+            int(table_locator.locator(f'tbody tr:nth-child({n}) div.drag.handle').element_handle().get_attribute('pk')),
+            int(table_locator.locator(f'tbody tr:nth-child({n}) div.drag.handle').element_handle().get_attribute('order')),
         ))
-        table_locator.locator(f'tbody tr:nth-of-type({n}) input.action-select').click()
+        table_locator.locator(f'tbody tr:nth-child({n}) input.action-select').click()
     step_input_field = page.query_selector('#changelist-form .actions input[name="step"]')
     assert step_input_field.is_hidden()
     page.query_selector('#changelist-form .actions select[name="action"]').select_option('move_to_forward_page')
