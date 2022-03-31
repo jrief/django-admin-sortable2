@@ -95,7 +95,6 @@ class ListSortable extends SortableBase {
 		const updatedRows = this.tableBody.querySelectorAll(`tr:nth-child(n+${firstChild + 1}):nth-child(-n+${lastChild + 1})`);
 		if (updatedRows.length === 0)
 			return;
-		console.log(updatedRows);
 
 		let order;
 		if (firstChild === 0) {
@@ -115,7 +114,7 @@ class ListSortable extends SortableBase {
 				order += this.orderDirection;
 			}
 		}
-		console.log(updatedItems);
+
 		const response = await fetch(this.config.update_url, {
 			method: 'POST',
 			headers: this.headers,
