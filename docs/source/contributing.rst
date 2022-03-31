@@ -98,10 +98,14 @@ that such a feature is merged.
 
 You can use that extra code to adopt the test suite.
 
-Remember: For UI-centric applications such as this one, where the client- and server-side are
+*Remember*: For UI-centric applications such as this one, where the client- and server-side are
 strongly entangled with each other, I prefer end-to-end tests way more rather than unit tests.
 Reason is, that otherwise I would have to mock the interfaces, which itself is error-prone and
 additional work.
+
+*Don't hide yourself*: I will not accept large pull requests from anonymous users, so please publish
+an email address in your GitHub's profile. Reason is that when refactoring the code, I must be
+able to contact the initial author of a feature not added by myself.
 
 
 Quoting
