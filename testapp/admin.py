@@ -30,9 +30,7 @@ class ChapterTabularInline(SortableInlineAdminMixin, admin.TabularInline):
 
 class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_per_page = 12
-    list_display = ['author', 'title', 'my_order']
-    list_display_links = ['title']
-    fields = ['title', 'author']
+    list_display = ['title', 'author', 'my_order']
 
 
 class UpOrderedSortableBookAdmin(SortableBookAdmin):
