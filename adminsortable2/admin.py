@@ -95,15 +95,23 @@ class SortableAdminMixin(SortableAdminBase):
             list_display.insert(0, '_reorder_')
         else:
             list_display[index] = '_reorder_'
+        if len(list_display) == 1:
+            list_display.append('__str__')
         return list_display
 
     def get_list_display_links(self, request, list_display):
         list_display_links = list(super().get_list_display_links(request, list_display))
-        if self.default_order_field in list_display_links:
-            list_display_links.remove(self.default_order_field)
-            if not list_display_links:
-                list_display_links = [list_display[0]]
+        if '_reorder_' in list_display_links:
+            list_display_links.remove('_reorder_')
+        if len(list_display_links) == 0:
+            list_display_links = [ld for ld in list_display if ld != '_reorder_'][:1]
         return list_display_links
+
+    def get_fields(self, request, obj=None):
+        fields = list(super().get_fields(request, obj))
+        if self.default_order_field in fields:
+            fields.remove(self.default_order_field)
+        return fields
 
     def _get_update_url_name(self):
         return f'{self.model._meta.app_label}_{self.model._meta.model_name}_sortable_update'
