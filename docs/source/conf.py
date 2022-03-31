@@ -14,9 +14,7 @@ import datetime
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.pardir, os.pardir)))
-sys.path.insert(1, os.path.abspath(os.path.join(os.pardir, os.pardir, os.pardir, 'django/docs/_ext')))
-
-print(sys.path)
+#sys.path.insert(1, os.path.abspath(os.path.join(os.pardir, os.pardir, os.pardir, 'django/docs/_ext')))
 
 from adminsortable2 import __version__ as release  # noqa
 
@@ -34,7 +32,6 @@ author = 'Jacob Rief'
 # ones.
 extensions = [
     'sphinx.ext.intersphinx',
-    'djangodocs',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
