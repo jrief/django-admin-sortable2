@@ -3,7 +3,7 @@
 This Django package adds functionality for generic drag-and-drop ordering of items in the List, the Stacked- and the
 Tabular-Inlines Views of the Django Admin interface.
 
-[![Build Status](https://github.com/jrief/django-admin-sortable2/actions/workflows/django.yml/badge.svg)](https://github.com/jrief/django-admin-sortable2/actions/workflows/django.yml)
+[![Build Status](https://github.com/jrief/django-admin-sortable2/actions/workflows/tests.yml/badge.svg)](https://github.com/jrief/django-admin-sortable2/actions/workflows/tests.yml)
 [![PyPI version](https://img.shields.io/pypi/v/django-admin-sortable2.svg)](https://pypi.python.org/pypi/django-admin-sortable2)
 [![Python versions](https://img.shields.io/pypi/pyversions/django-admin-sortable2.svg)](https://pypi.python.org/pypi/django-admin-sortable2)
 [![Django versions](https://img.shields.io/pypi/djversions/django-admin-sortable2)](https://pypi.python.org/pypi/django-admin-sortable2)
