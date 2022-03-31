@@ -15,4 +15,7 @@ local_settings.py
 build
 docs/_build
 dist
+node_modules/
 htmlcov
+adminsortable2/static/adminsortable2/js/adminsortable2.*
+testapp/test.db

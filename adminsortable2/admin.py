@@ -3,26 +3,20 @@ import json
 from itertools import chain
 from types import MethodType
 
-from django import forms
 from django.contrib import admin, messages
-from django.contrib.admin.views.main import ORDER_VAR
-from django.contrib.contenttypes.admin import GenericStackedInline, GenericTabularInline
 from django.contrib.contenttypes.forms import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import router, transaction
 from django.db.models.aggregates import Max
 from django.db.models.expressions import F
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save, pre_save
 from django.forms import widgets
+from django.forms.fields import IntegerField
 from django.forms.models import BaseInlineFormSet
-from django.http import (
-    HttpResponse, HttpResponseBadRequest,
-    HttpResponseNotAllowed, HttpResponseForbidden
-)
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseForbidden
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.urls import path, reverse
@@ -33,7 +27,7 @@ __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 def _get_default_ordering(model, model_admin):
     try:
         # first try with the model admin ordering
-        none, prefix, field_name = model_admin.ordering[0].rpartition('-')
+        _, prefix, field_name = model_admin.ordering[0].rpartition('-')
     except (AttributeError, IndexError, TypeError):
         pass
     else:
@@ -41,7 +35,7 @@ def _get_default_ordering(model, model_admin):
 
     try:
         # then try with the model ordering
-        none, prefix, field_name = model._meta.ordering[0].rpartition('-')
+        _, prefix, field_name = model._meta.ordering[0].rpartition('-')
     except (AttributeError, IndexError):
         raise ImproperlyConfigured(
             f"Model {model.__module__}.{model.__name__} requires a list or tuple 'ordering' in its Meta class"
@@ -51,13 +45,13 @@ def _get_default_ordering(model, model_admin):
 
 
 class MovePageActionForm(admin.helpers.ActionForm):
-    step = forms.IntegerField(
+    step = IntegerField(
         required=False,
         initial=1,
         widget=widgets.NumberInput(attrs={'id': 'changelist-form-step'}),
         label=False
     )
-    page = forms.IntegerField(
+    page = IntegerField(
         required=False,
         widget=widgets.NumberInput(attrs={'id': 'changelist-form-page'}),
         label=False
@@ -68,15 +62,7 @@ class SortableAdminBase:
     @property
     def media(self):
         css = {'all': ['adminsortable2/css/sortable.css']}
-        js = [
-            'admin/js/jquery.init.js',
-            'adminsortable2/js/plugins/admincompat.js',
-            'adminsortable2/js/libs/jquery.ui.core-1.11.4.js',
-            'adminsortable2/js/libs/jquery.ui.widget-1.11.4.js',
-            'adminsortable2/js/libs/jquery.ui.mouse-1.11.4.js',
-            'adminsortable2/js/libs/jquery.ui.touch-punch-0.2.3.js',
-            'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-        ]
+        js = ['adminsortable2/js/adminsortable2.js']
         return super().media + widgets.Media(css=css, js=js)
 
 
@@ -99,46 +85,33 @@ class SortableAdminMixin(SortableAdminBase):
         super().__init__(model, admin_site)
         self.enable_sorting = False
         self.order_by = None
-        if not isinstance(self.exclude, (list, tuple)):
-            self.exclude = [self.default_order_field]
-        elif not self.exclude or self.default_order_field != self.exclude[0]:
-            self.exclude = [self.default_order_field] + list(self.exclude)
-        if isinstance(self.list_display_links, (list, tuple)) and len(self.list_display_links) == 0:
-            self.list_display_links = [self.list_display[0]]
         self._add_reorder_method()
-        self.list_display = list(self.list_display)
 
-        # Insert the magic field into the same position as the first occurrence
-        # of the default_order_field, or, if not present, at the start
+    def get_list_display(self, request):
+        list_display = list(super().get_list_display(request))
         try:
-            self.default_order_field_index = self.list_display.index(
-                self.default_order_field
-            )
+            index = list_display.index(self.default_order_field)
         except ValueError:
-            self.default_order_field_index = 0
-        self.list_display.insert(self.default_order_field_index, '_reorder')
+            list_display.insert(0, '_reorder_')
+        else:
+            list_display[index] = '_reorder_'
+        if len(list_display) == 1:
+            list_display.append('__str__')
+        return list_display
 
-        # Remove *all* occurrences of the field from `list_display`
-        if self.list_display and self.default_order_field in self.list_display:
-            self.list_display = [
-                f for f in self.list_display if f != self.default_order_field
-            ]
+    def get_list_display_links(self, request, list_display):
+        list_display_links = list(super().get_list_display_links(request, list_display))
+        if '_reorder_' in list_display_links:
+            list_display_links.remove('_reorder_')
+        if len(list_display_links) == 0:
+            list_display_links = [ld for ld in list_display if ld != '_reorder_'][:1]
+        return list_display_links
 
-        # Remove *all* occurrences of the field from `list_display_links`
-        if self.list_display_links and self.default_order_field in self.list_display_links:
-            self.list_display_links = [
-                f for f in self.list_display_links if
-                f != self.default_order_field
-            ]
-
-        # Remove *all* occurrences of the field from `ordering`
-        if self.ordering and self.default_order_field in self.ordering:
-            self.ordering = [
-                f for f in self.ordering if f != self.default_order_field
-            ]
-        rev_field = '-' + self.default_order_field
-        if self.ordering and rev_field in self.ordering:
-            self.ordering = [f for f in self.ordering if f != rev_field]
+    def get_fields(self, request, obj=None):
+        fields = list(super().get_fields(request, obj))
+        if self.default_order_field in fields:
+            fields.remove(self.default_order_field)
+        return fields
 
     def _get_update_url_name(self):
         return f'{self.model._meta.app_label}_{self.model._meta.model_name}_sortable_update'
@@ -155,84 +128,54 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_actions(self, request):
         actions = super().get_actions(request)
-        paginator = self.get_paginator(request, self.get_queryset(request), self.list_per_page)
-        if len(paginator.page_range) > 1 and 'all' not in request.GET and self.enable_sorting:
+        qs = self.get_queryset(request)
+        paginator = self.get_paginator(request, qs, self.list_per_page)
+        if paginator.num_pages > 1 and 'all' not in request.GET and self.enable_sorting:
             # add actions for moving items to other pages
-            move_actions = ['move_to_exact_page']
-            cur_page = int(request.GET.get('p', 0)) + 1
-            if len(paginator.page_range) > 2 and cur_page > paginator.page_range[1]:
+            move_actions = []
+            cur_page = int(request.GET.get('p', 1))
+            if cur_page > 1:
                 move_actions.append('move_to_first_page')
-            if cur_page > paginator.page_range[0]:
+            if cur_page > paginator.page_range[1]:
                 move_actions.append('move_to_back_page')
-            if cur_page < paginator.page_range[-1]:
+            if cur_page < paginator.page_range[-2]:
                 move_actions.append('move_to_forward_page')
-            if len(paginator.page_range) > 2 and cur_page < paginator.page_range[-2]:
+            if cur_page < paginator.page_range[-1]:
                 move_actions.append('move_to_last_page')
+            if len(paginator.page_range) > 4:
+                move_actions.append('move_to_exact_page')
             for fname in move_actions:
                 actions.update({fname: self.get_action(fname)})
         return actions
 
-    def get_changelist(self, request, **kwargs):
-        first_order_direction, first_order_field_index = self._get_first_ordering(request)
-        if first_order_field_index == self.default_order_field_index:
+    def get_changelist_instance(self, request):
+        cl = super().get_changelist_instance(request)
+        qs = self.get_queryset(request)
+        _, order_direction, order_field = cl.get_ordering(request, qs)[0].rpartition('-')
+        if order_field == self.default_order_field:
             self.enable_sorting = True
-            self.order_by = f"{first_order_direction}{self.default_order_field}"
+            self.order_by = f'{order_direction}{order_field}'
         else:
             self.enable_sorting = False
-        return super().get_changelist(request, **kwargs)
-
-    def _get_first_ordering(self, request):
-        """
-        Must be consistent with
-        `django.contrib.admin.views.main.ChangeList.get_ordering`.
-        """
-        order_var = request.GET.get(ORDER_VAR)
-        if order_var is None:
-            first_order_field_index = self.default_order_field_index
-            first_order_direction = self.default_order_direction
-        else:
-            first_order_field_index = None
-            first_order_direction = ""
-            for p in order_var.split("."):
-                none, prefix, index = p.rpartition("-")
-                try:
-                    index = int(index)
-                except ValueError:
-                    continue  # skip it
-                else:
-                    first_order_field_index = index - 1
-                    first_order_direction = prefix
-                    break
-        return first_order_direction, first_order_field_index
-
-    @property
-    def media(self):
-        m = super().media
-        if self.enable_sorting:
-            m = m + widgets.Media(js=[
-                'adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-                'adminsortable2/js/list-sortable.js',
-            ])
-        return m
+        return cl
 
     def _add_reorder_method(self):
         """
-        Adds a bound method, named '_reorder' to the current instance of
+        Adds a bound method, named '_reorder_' to the current instance of
         this class, with attributes allow_tags, short_description and
         admin_order_field.
         This can only be done using a function, since it is not possible
         to add dynamic attributes to bound methods.
         """
         def func(this, item):
-            html = ''
             if this.enable_sorting:
-                html = '<div class="drag js-reorder-{1}" order="{0}">' \
-                       '&nbsp;</div>'.format(getattr(item, this.default_order_field), item.pk)
+                order = getattr(item, this.default_order_field)
+                html = f'<div class="drag handle" pk="{item.pk}" order="{order}">&nbsp;</div>'
+            else:
+                html = '<div class="drag">&nbsp;</div>'
             return mark_safe(html)
 
-        setattr(func, 'allow_tags', True)
-        # if the field used for ordering has a verbose name use it,
-        # otherwise default to "Sort"
+        # if the field used for ordering has a verbose name use it, otherwise default to "Sort"
         for order_field in self.model._meta.fields:
             if order_field.name == self.default_order_field:
                 short_description = getattr(order_field, 'verbose_name', None)
@@ -240,24 +183,30 @@ class SortableAdminMixin(SortableAdminBase):
                     setattr(func, 'short_description', short_description)
                     break
         else:
-            setattr(func, 'short_description', _('Sort'))
+            setattr(func, 'short_description', _("Sort"))
         setattr(func, 'admin_order_field', self.default_order_field)
-        setattr(self, '_reorder', MethodType(func, self))
+        setattr(self, '_reorder_', MethodType(func, self))
 
     def update_order(self, request):
-        if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
-            return HttpResponseBadRequest('Not an XMLHttpRequest')
         if request.method != 'POST':
-            return HttpResponseNotAllowed('Must be a POST request')
+            return HttpResponseNotAllowed(f"Method {request.method} not allowed")
         if not self.has_change_permission(request):
             return HttpResponseForbidden('Missing permissions to perform this request')
-        startorder = int(request.POST.get('startorder'))
-        endorder = int(request.POST.get('endorder', 0))
-        moved_items = list(self._move_item(request, startorder, endorder))
-        return HttpResponse(
-            json.dumps(moved_items, cls=DjangoJSONEncoder),
-            content_type='application/json;charset=UTF-8'
-        )
+        try:
+            extra_model_filters = self.get_extra_model_filters(request)
+            num_updated = self._update_order(json.loads(request.body).get('updatedItems'), extra_model_filters)
+            return HttpResponse(f"Updated {num_updated} items")
+        except Exception as exc:
+            return HttpResponseBadRequest(f"Invalid POST request: {exc}")
+
+    def _update_order(self, updated_items, extra_model_filters):
+        queryset = self.model.objects.filter(**extra_model_filters)
+        updated_objects = []
+        for item in updated_items:
+            obj = queryset.get(pk=item[0])
+            setattr(obj, self.default_order_field, item[1])
+            updated_objects.append(obj)
+        return self.model.objects.bulk_update(updated_objects, [self.default_order_field])
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -287,11 +236,7 @@ class SortableAdminMixin(SortableAdminBase):
         self._bulk_move(request, queryset, self.LAST)
     move_to_last_page.short_description = _('Move selected to last page')
 
-    def _move_item(self, request, startorder, endorder):
-        extra_model_filters = self.get_extra_model_filters(request)
-        return self.move_item(startorder, endorder, extra_model_filters)
-
-    def move_item(self, startorder, endorder, extra_model_filters=None):
+    def _move_item(self, startorder, endorder, extra_model_filters):
         model = self.model
         rank_field = self.default_order_field
 
@@ -324,8 +269,8 @@ class SortableAdminMixin(SortableAdminBase):
 
                 # noinspection PyProtectedMember
                 raise model.MultipleObjectsReturned(
-                    "Detected non-unique values in field '{rank_field}' used for sorting this model.\n"
-                    "Consider to run \n    python manage.py reorder {model._meta.label}\n"
+                    f"Detected non-unique values in field '{rank_field}' used for sorting this model.\n"
+                    f"Consider to run \n    python manage.py reorder {model._meta.label}\n"
                     "to adjust this inconsistency."
                 )
 
@@ -359,10 +304,7 @@ class SortableAdminMixin(SortableAdminBase):
             setattr(obj, rank_field, endorder)
             obj.save(update_fields=[rank_field])
 
-        return [{
-            'pk': instance.pk,
-            'order': getattr(instance, rank_field)
-        } for instance in chain(move_objs, [obj])]
+        return {instance.pk: getattr(instance, rank_field) for instance in chain(move_objs, [obj])}
 
     @staticmethod
     def get_extra_model_filters(request):
@@ -381,7 +323,7 @@ class SortableAdminMixin(SortableAdminBase):
             return
         objects = self.model.objects.order_by(self.order_by)
         paginator = self.paginator(objects, self.list_per_page)
-        current_page_number = int(request.GET.get('p', 0)) + 1
+        current_page_number = int(request.GET.get('p', 1))
 
         if method == self.EXACT:
             page_number = int(request.POST.get('page', current_page_number))
@@ -411,35 +353,36 @@ class SortableAdminMixin(SortableAdminBase):
 
         queryset_size = queryset.count()
         page_size = page.end_index() - page.start_index() + 1
-        if queryset_size > page_size:
-            msg = _(f"The target page size is {page_size}. It is too small for {queryset_size} items.")
-            self.message_user(request, msg, level=messages.ERROR)
-            return
-
-        endorders_start = getattr(
-            objects[page.start_index() - 1], self.default_order_field
-        )
         endorders_step = -1 if self.order_by.startswith('-') else 1
-        endorders = range(
-            endorders_start,
-            endorders_start + endorders_step * queryset_size,
-            endorders_step
-        )
+        if queryset_size > page_size:
+            # move objects to last and penultimate page
+            endorders_end = getattr(objects[page.end_index() - 1], self.default_order_field) + endorders_step
+            endorders = range(
+                endorders_end - endorders_step * queryset_size,
+                endorders_end,
+                endorders_step
+            )
+        else:
+            endorders_start = getattr(objects[page.start_index() - 1], self.default_order_field)
+            endorders = range(
+                endorders_start,
+                endorders_start + endorders_step * queryset_size,
+                endorders_step
+            )
 
-        if page.number > current_page_number:  # Move forward (like drag down)
+        if page.number > current_page_number:
+            # Move forward
             queryset = queryset.reverse()
             endorders = reversed(endorders)
 
+        extra_model_filters = self.get_extra_model_filters(request)
         for obj, endorder in zip(queryset, endorders):
             startorder = getattr(obj, self.default_order_field)
-            self._move_item(request, startorder, endorder)
+            self._move_item(startorder, endorder, extra_model_filters)
 
     def changelist_view(self, request, extra_context=None):
-        if extra_context is None:
-            extra_context = {}
-
+        extra_context = extra_context or {}
         extra_context['sortable_update_url'] = self.get_update_url(request)
-        extra_context['default_order_direction'] = self.default_order_direction
         return super().changelist_view(request, extra_context)
 
     def get_update_url(self, request):
@@ -447,6 +390,26 @@ class SortableAdminMixin(SortableAdminBase):
         Returns a callback URL used for updating items via AJAX drag-n-drop
         """
         return reverse(f'{self.admin_site.name}:{self._get_update_url_name()}')
+
+    def get_formset_kwargs(self, request, obj, inline, prefix):
+        formset_params = super().get_formset_kwargs(request, obj, inline, prefix)
+        if hasattr(inline, 'default_order_direction') and hasattr(inline, 'default_order_field'):
+            formset_params.update(
+                default_order_direction=inline.default_order_direction,
+                default_order_field=inline.default_order_field,
+            )
+        return formset_params
+
+    def get_inline_formsets(self, request, formsets, inline_instances, obj=None):
+        inline_admin_formsets = super().get_inline_formsets(request, formsets, inline_instances, obj)
+        for inline_admin_formset in inline_admin_formsets:
+            if hasattr(inline_admin_formset.formset, 'default_order_direction'):
+                classes = inline_admin_formset.classes.split()
+                classes.append('sortable')
+                if inline_admin_formset.formset.default_order_direction == '-':
+                    classes.append('reversed')
+                inline_admin_formset.classes = ' '.join(classes)
+        return inline_admin_formsets
 
 
 class PolymorphicSortableAdminMixin(SortableAdminMixin):
@@ -462,18 +425,19 @@ class PolymorphicSortableAdminMixin(SortableAdminMixin):
 
 
 class CustomInlineFormSetMixin:
-    def __init__(self, *args, **kwargs):
-        self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
+    def __init__(self, default_order_direction=None, default_order_field=None, **kwargs):
+        self.default_order_direction = default_order_direction
+        self.default_order_field = default_order_field
+        if default_order_field:
+            if default_order_field not in self.form.base_fields:
+                self.form.base_fields[default_order_field] = self.model._meta.get_field(default_order_field).formfield()
 
-        if self.default_order_field not in self.form.base_fields:
-            self.form.base_fields[self.default_order_field] = \
-                self.model._meta.get_field(self.default_order_field).formfield()
+            order_field = self.form.base_fields[default_order_field]
+            order_field.is_hidden = True
+            order_field.required = False
+            order_field.widget = widgets.HiddenInput(attrs={'class': '_reorder_'})
 
-        self.form.base_fields[self.default_order_field].is_hidden = True
-        self.form.base_fields[self.default_order_field].required = False
-        self.form.base_fields[self.default_order_field].widget = widgets.HiddenInput()
-
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def get_max_order(self):
         query_set = self.model.objects.filter(
@@ -493,8 +457,8 @@ class CustomInlineFormSetMixin:
         """
         obj = super().save_new(form, commit=False)
 
-        default_order_field = getattr(obj, self.default_order_field, None)
-        if default_order_field is None or default_order_field >= 0:
+        order_field_value = getattr(obj, self.default_order_field, None)
+        if order_field_value is None or order_field_value >= 0:
             max_order = self.get_max_order()
             setattr(obj, self.default_order_field, max_order + 1)
         if commit:
@@ -513,65 +477,9 @@ class CustomInlineFormSet(CustomInlineFormSetMixin, BaseInlineFormSet):
 class SortableInlineAdminMixin(SortableAdminBase):
     formset = CustomInlineFormSet
 
-    def get_fields(self, request, obj=None):
-        fields = super().get_fields(request, obj)
-        _, default_order_field = _get_default_ordering(self.model, self)
-        fields = list(fields)
-
-        if not (default_order_field in fields):
-            # If the order field is not in the field list, add it
-            fields.append(default_order_field)
-        elif fields[0] == default_order_field:
-            """
-            Remove the order field and add it again immediately to ensure it is not on first position.
-            This ensures that django's template for tabular inline renders the first column with colspan="2":
-
-            ```
-            {% for field in inline_admin_formset.fields %}
-                {% if not field.widget.is_hidden %}
-                    <th{% if forloop.first %} colspan="2"{% endif %}
-            ```
-
-            See https://github.com/jrief/django-admin-sortable2/issues/82
-            """
-            fields.append(fields.pop(0))
-
-        return fields
-
-    @property
-    def is_stacked(self):
-        return isinstance(self, admin.StackedInline)
-
-    @property
-    def is_tabular(self):
-        return isinstance(self, admin.TabularInline)
-
-    @property
-    def media(self):
-        shared = (
-            super().media + widgets.Media(
-                js=('adminsortable2/js/libs/jquery.ui.sortable-1.11.4.js',
-                    'adminsortable2/js/inline-sortable.js')))
-        if isinstance(self, admin.StackedInline):
-            return shared + widgets.Media(
-                js=('adminsortable2/js/inline-sortable.js',
-                    'adminsortable2/js/inline-stacked.js'))
-        else:
-            # assume TabularInline (don't return None in any case)
-            return shared + widgets.Media(
-                js=('adminsortable2/js/inline-sortable.js',
-                    'adminsortable2/js/inline-tabular.js'))
-
-    @property
-    def template(self):
-        if self.is_stacked:
-            return 'adminsortable2/stacked.html'
-        elif self.is_tabular:
-            return 'adminsortable2/tabular.html'
-        raise ImproperlyConfigured(
-            f'Class {self.__module__}.{self.__class__} must also derive from admin.TabularInline or '
-            f'admin.StackedInline'
-        )
+    def __init__(self, parent_model, admin_site):
+        self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
+        super().__init__(parent_model, admin_site)
 
 
 class CustomGenericInlineFormSet(CustomInlineFormSetMixin, BaseGenericInlineFormSet):
@@ -592,11 +500,3 @@ class CustomGenericInlineFormSet(CustomInlineFormSetMixin, BaseGenericInlineForm
 
 class SortableGenericInlineAdminMixin(SortableInlineAdminMixin):
     formset = CustomGenericInlineFormSet
-
-    @property
-    def is_stacked(self):
-        return isinstance(self, GenericStackedInline)
-
-    @property
-    def is_tabular(self):
-        return isinstance(self, GenericTabularInline)

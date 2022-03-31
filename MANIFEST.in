@@ -5,3 +5,4 @@ recursive-include adminsortable2/locale *
 recursive-include adminsortable2/static *
 recursive-include adminsortable2/templates *
 recursive-exclude * *.pyc
+recursive-exclude adminsortable2/static *.js.map

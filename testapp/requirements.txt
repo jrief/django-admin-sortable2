@@ -1,0 +1,4 @@
+playwright
+pytest-django
+pytest-mock
+pytest-playwright

@@ -14,6 +14,9 @@ indent_size = 4
 max_line_length = 119
 indent_style = space
 
+[*.rst]
+max_line_length = 100
+
 [*.json]
 indent_style = space
 indent_size = 2

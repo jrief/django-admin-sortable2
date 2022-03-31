@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "strict": true,
+    "esModuleInterop": false,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "rootDir": "./",
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}

@@ -21,13 +21,10 @@ CLASSIFIERS = [
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     'Topic :: Software Development :: Libraries :: Application Frameworks',
     'Development Status :: 5 - Production/Stable',
-    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Framework :: Django',
-    'Framework :: Django :: 2.2',
-    'Framework :: Django :: 3.2',
     'Framework :: Django :: 4.0',
 ]
 
@@ -46,9 +43,9 @@ setup(
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
     install_requires=[
-        'Django>=2.2,<4.1',
+        'Django>=4.0',
     ],
-    packages=find_packages(exclude=['example', 'docs']),
+    packages=find_packages(exclude=['client', 'testapp', 'docs']),
     include_package_data=True,
     zip_safe=False,
 )

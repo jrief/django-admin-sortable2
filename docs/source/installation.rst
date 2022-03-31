@@ -10,21 +10,25 @@ Install **django-admin-sortable2**. The latest stable release can be found on Py
 
 	pip install django-admin-sortable2
 
-or the newest development version from GitHub
-
-.. code-block:: bash
-
-	pip install -e git+https://github.com/jrief/django-admin-sortable2#egg=django-admin-sortable2
 
 Configuration
 =============
 
-Add ``'adminsortable2'`` to the list of ``INSTALLED_APPS`` in your project's ``settings.py`` file
+In the project's ``settings.py`` file add ``'adminsortable2'`` to the list of ``INSTALLED_APPS``:
 
 .. code-block:: python
 
-	INSTALLED_APPS = (
+	INSTALLED_APPS = [
+	    'django.contrib.auth',
+	    'django.contrib.contenttypes',
+	    'django.contrib.sessions',
+	    'django.contrib.admin',
+	    'django.contrib.staticfiles',
+	    'django.contrib.messages',
 	    ...
 	    'adminsortable2',
 	    ...
-	)
+	]
+
+The next step is to adopt the models in order to make them sortable. Please check the page
+:ref:`usage` for details.
