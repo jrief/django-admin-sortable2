@@ -9,6 +9,7 @@
 - Use TypeScript instead of JavaScript for all client side code.
 - Remove all extended Django admin templates: This allows a smoother upgrade
   for future Django versions.
+- New feature: Select multiple rows and drag them to a new position.
 
 
 ### 1.0.4
