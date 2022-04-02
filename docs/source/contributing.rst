@@ -27,10 +27,13 @@ compiler:
 	cd django-admin-sortable2
 	npm install --also=dev
 	npm run build
+	# and optionally for a minimized version
+	npm run uglify
 
 This then builds and bundles the JavaScript file
-``adminsortable2/static/adminsortable2/js/adminsortable2.js`` which later on is included by the
-mixin classes.
+``adminsortable2/static/adminsortable2/js/adminsortable2.js`` which later on is imported by the
+sortable-admin mixin classes. The minimized version can be imported as
+``adminsortable2/static/adminsortable2/js/adminsortable2.min.js``
 
 .. _.editorconfig: https://editorconfig.org/
 .. _esbuild: https://esbuild.github.io/
@@ -50,6 +53,7 @@ Follow these steps to run this demo app.
 	cd django-admin-sortable2
 	npm install --also=dev
 	npm run build
+	python -m pip install Django
 	python -m pip install -r testapp/requirements.txt
 	cd testapp
 	./manage.py migrate
@@ -78,6 +82,7 @@ Follow these steps to run all unit- and end-to-end tests.
 	cd django-admin-sortable2
 	npm install --also=dev
 	npm run build
+	python -m pip install Django
 	python -m pip install -r testapp/requirements.txt
 	python -m playwright install
 	python -m playwright install-deps
