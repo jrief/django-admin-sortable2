@@ -2,6 +2,8 @@ name: Publish django-formset
 
 on:
   push:
+    branches:
+      - master
     tags:
       - '*'
 

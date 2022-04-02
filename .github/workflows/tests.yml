@@ -2,7 +2,7 @@ name: Django CI
 
 on:
   push:
-    branches: [ master, Sortable.js ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
