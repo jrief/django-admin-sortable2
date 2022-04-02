@@ -116,3 +116,32 @@ Please follow these rules when quoting strings:
 * A string intended to be read by humans shall be quoted using double quotes: `"…"`.
 * An internal string, such as dictionary keys, etc. (and thus usually not intended to be read by
   humans), shall be quoted using single quotes: `'…'`.
+
+
+Lists versus Tuples
+===================
+
+Unfortunately in Django, `we developers far too often`_ intermixed lists and tuples without being
+aware of their intention. Therefor please follow this rule:
+
+Always use lists, if there is a theoretical possibility that someday, someone might add an item.
+Therefore ``list_display``, ``list_display_links``, ``fields``, etc. shall always be lists.
+
+Always use tuples, if the number of items is restricted by nature, and there isn't even a
+theoretical possibility of being extended.
+
+Example:
+
+.. code-block:: python
+
+	color = ChoiceField(
+	    label="Color",
+	    choices=[('ff0000', "Red"), ('00ff00', "Green"), ('0000ff', "Blue")],
+	)
+
+A ``ChoiceField`` must provide a list of choices. Attribute ``choices`` must be a list because
+it is eligible for extension. Its inner items however must be tuples, because they can exlusively
+containin the choice value and a human readable label. Here we also intermix single with double
+quotes to distinguish strings intended to be read by the machine versus a human.
+
+.. _we developers far too often: https://groups.google.com/g/django-developers/c/h4FSYWzMJhs

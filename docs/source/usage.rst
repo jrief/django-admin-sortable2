@@ -34,7 +34,7 @@ through the model's ``Meta`` class. Here's an example ``models.py``:
 	        null=False,
 	    )
 
-	    class Meta(object):
+	    class Meta:
 	        ordering = ['my_order']
 
 Here the ordering field is named ``my_order``, but any valid Python variable name will work. There
