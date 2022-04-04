@@ -4,7 +4,7 @@
 Installation
 ============
 
-Install **django-admin-sortable2**. The latest stable release can be found on PyPI
+Install **django-admin-sortable2**. The latest stable release is available on PyPI
 
 .. code-block:: bash
 
@@ -30,5 +30,5 @@ In the project's ``settings.py`` file add ``'adminsortable2'`` to the list of ``
 	    ...
 	]
 
-The next step is to adopt the models in order to make them sortable. Please check the page
-:ref:`usage` for details.
+The next step is to adopt the models to make them sortable. Please check the page :ref:`usage` for
+details.

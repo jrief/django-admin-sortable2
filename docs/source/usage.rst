@@ -4,8 +4,8 @@
 Using Admin Sortable
 ====================
 
-This library tries to not interfere with existing Django models. Instead it can be adopted to any
-class inheriting from :class:`~django.db.models.Model` provided that it offers a field for sorting.
+This library tries to not interfere with existing Django models. Instead it adopts any class
+inheriting from :class:`~django.db.models.Model`, provided it offers a field for sorting.
 
 
 Prepare the Model Classes
