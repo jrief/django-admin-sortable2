@@ -62,7 +62,7 @@ class SortableAdminBase:
     @property
     def media(self):
         css = {'all': ['adminsortable2/css/sortable.css']}
-        js = ['adminsortable2/js/adminsortable2.js']
+        js = ['adminsortable2/js/adminsortable2.min.js']
         return super().media + widgets.Media(css=css, js=js)
 
 
