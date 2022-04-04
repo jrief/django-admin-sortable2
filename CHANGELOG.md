@@ -2,6 +2,11 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.0.1
+- Fix [\#302](https://github.com/jrief/django-admin-sortable2/issues/302):
+  Django's ManifestStaticFilesStorage references missing file `adminsortable2.js.map`.
+
+
 ### 2.0
 - Drop support for Django 3.2 and lower.
 - Replace jQuery-UI's [sortable](https://jqueryui.com/sortable/) against
