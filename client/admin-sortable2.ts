@@ -150,14 +150,13 @@ class ListSortable extends SortableBase {
 	}
 
 	public get headers(): Headers {
-		const value = `; ${document.cookie}`;
-		const parts = value.split('; csrftoken=');
-		const csrfToken = parts.length === 2 ? parts[1].split(';').shift() : null;
 		const headers = new Headers();
 		headers.append('Accept', 'application/json');
 		headers.append('Content-Type', 'application/json');
-		if (csrfToken) {
-			headers.append('X-CSRFToken', csrfToken);
+
+		const inputElement = this.tableBody.closest('form')?.querySelector('input[name="csrfmiddlewaretoken"]') as HTMLInputElement;
+		if (inputElement) {
+			headers.append('X-CSRFToken', inputElement.value);
 		}
 		return headers;
 	}
