@@ -68,6 +68,18 @@ sorting is organized: Somtimes by the model, somtimes for the admin interface an
 directions. So don't be confused about seeing different editors for exactly the same model.
 
 
+Reporting Bugs
+==============
+
+For me it often is very difficult to comprehend why this library does not work with *your* project.
+Therefore wheneever you want to report a bug, report it in a way so that I can reproduce it.
+
+**Checkout the code, build the client and run the demo** as decribed in the previous section.
+Every feature offered by **django-admin-sortable2** is implemented in the demo named ``testapp``.
+If you can reproduce the bug there, report it. Otherwise check why your application behaves
+differently.
+
+
 Running Tests
 =============
 
