@@ -65,6 +65,26 @@ class SortableAdminBase:
         js = ['adminsortable2/js/adminsortable2.min.js']
         return super().media + widgets.Media(css=css, js=js)
 
+    def get_formset_kwargs(self, request, obj, inline, prefix):
+        formset_params = super().get_formset_kwargs(request, obj, inline, prefix)
+        if hasattr(inline, 'default_order_direction') and hasattr(inline, 'default_order_field'):
+            formset_params.update(
+                default_order_direction=inline.default_order_direction,
+                default_order_field=inline.default_order_field,
+            )
+        return formset_params
+
+    def get_inline_formsets(self, request, formsets, inline_instances, obj=None):
+        inline_admin_formsets = super().get_inline_formsets(request, formsets, inline_instances, obj)
+        for inline_admin_formset in inline_admin_formsets:
+            if hasattr(inline_admin_formset.formset, 'default_order_direction'):
+                classes = inline_admin_formset.classes.split()
+                classes.append('sortable')
+                if inline_admin_formset.formset.default_order_direction == '-':
+                    classes.append('reversed')
+                inline_admin_formset.classes = ' '.join(classes)
+        return inline_admin_formsets
+
 
 class SortableAdminMixin(SortableAdminBase):
     BACK, FORWARD, FIRST, LAST, EXACT = range(5)
@@ -391,26 +411,6 @@ class SortableAdminMixin(SortableAdminBase):
         """
         return reverse(f'{self.admin_site.name}:{self._get_update_url_name()}')
 
-    def get_formset_kwargs(self, request, obj, inline, prefix):
-        formset_params = super().get_formset_kwargs(request, obj, inline, prefix)
-        if hasattr(inline, 'default_order_direction') and hasattr(inline, 'default_order_field'):
-            formset_params.update(
-                default_order_direction=inline.default_order_direction,
-                default_order_field=inline.default_order_field,
-            )
-        return formset_params
-
-    def get_inline_formsets(self, request, formsets, inline_instances, obj=None):
-        inline_admin_formsets = super().get_inline_formsets(request, formsets, inline_instances, obj)
-        for inline_admin_formset in inline_admin_formsets:
-            if hasattr(inline_admin_formset.formset, 'default_order_direction'):
-                classes = inline_admin_formset.classes.split()
-                classes.append('sortable')
-                if inline_admin_formset.formset.default_order_direction == '-':
-                    classes.append('reversed')
-                inline_admin_formset.classes = ' '.join(classes)
-        return inline_admin_formsets
-
 
 class PolymorphicSortableAdminMixin(SortableAdminMixin):
     """
@@ -474,10 +474,14 @@ class CustomInlineFormSet(CustomInlineFormSetMixin, BaseInlineFormSet):
     pass
 
 
-class SortableInlineAdminMixin(SortableAdminBase):
+class SortableInlineAdminMixin:
     formset = CustomInlineFormSet
 
     def __init__(self, parent_model, admin_site):
+        assert isinstance(admin_site._registry[parent_model], SortableAdminBase), \
+            "{} must inherit from SortableAdminBase since {} inherits from SortableInlineAdminMixin.".format(
+                admin_site._registry[parent_model], self.__class__.__name__
+            )
         self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
         super().__init__(parent_model, admin_site)
 

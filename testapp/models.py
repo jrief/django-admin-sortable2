@@ -37,6 +37,10 @@ class SortableBook(models.Model):
         on_delete=models.CASCADE,
     )
 
+    class Meta:
+        verbose_name = "Book"
+        verbose_name_plural = "Books"
+
     def __str__(self):
         return self.title
 
@@ -67,6 +71,13 @@ class SortableBook4(SortableBook):
     class Meta:
         proxy = True
         ordering = ['-my_order']
+        verbose_name = "Book"
+        verbose_name_plural = "Books"
+
+
+class SortableBook5(SortableBook):
+    class Meta:
+        proxy = True
         verbose_name = "Book"
         verbose_name_plural = "Books"
 

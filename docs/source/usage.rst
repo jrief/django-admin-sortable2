@@ -152,7 +152,20 @@ we simple use the mixin class :class:`adminsortable2.admin.SortableAdminMixin`. 
 	    ...
 	    inlines = [ChapterStackedInline]
 
-For stacked inlines the editor for the book's detail view looks like:
+In case model ``Chapter`` shall be sortable, but model ``Book`` doesn't have to, rewrite the above
+class as:
+
+.. code-block:: python
+
+	...
+	from adminsortable2.admin import SortableAdminBase
+
+	@admin.register(Book)
+	class SortableBookAdmin(SortableAdminBase, admin.ModelAdmin):
+	    ...
+	    inlines = [ChapterStackedInline]
+
+For stacked inlines, the editor for the book's detail view looks like:
 
 .. image:: _static/stacked-inline-view.png
   :width: 800

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
+from adminsortable2.admin import SortableAdminBase, SortableAdminMixin, SortableInlineAdminMixin
 
 from . import models
 
@@ -51,8 +51,15 @@ class OrderedSortableBookAdmin(SortableBookAdmin):
     ordering = ['my_order']
 
 
+class UnsortedBookAdmin(SortableAdminBase, admin.ModelAdmin):
+    list_per_page = 12
+    list_display = ['title', 'author']
+    inlines = [ChapterTabularInline]
+
+
 admin.site.register(models.SortableBook, OrderedSortableBookAdmin)
 admin.site.register(models.SortableBook1, UpOrderedSortableBookAdmin)
 admin.site.register(models.SortableBook2, DownOrderedSortableBookAdmin)
 admin.site.register(models.SortableBook3, UnorderedSortableBookAdmin)
 admin.site.register(models.SortableBook4, UnorderedSortableBookAdmin)
+admin.site.register(models.SortableBook5, UnsortedBookAdmin)
