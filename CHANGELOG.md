@@ -2,6 +2,11 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.0.3
+- Fix [\#304](https://github.com/jrief/django-admin-sortable2/issues/304):
+  ModelAdmin not inheriting from SortableAdminMixin prevented sortable Stacked-/TabluraInlineAdmin be sortable.
+
+
 ### 2.0.2
 - Fix [\#303](https://github.com/jrief/django-admin-sortable2/issues/303):
   Use CSRF-Token from input field rather than from Cookie.
