@@ -1,8 +1,6 @@
 import os
 import pytest
 
-os.environ.setdefault('DJANGO_ALLOW_ASYNC_UNSAFE', 'true')
-
 
 @pytest.fixture(scope='function')
 def django_db_setup(django_db_blocker):
