@@ -1,4 +1,4 @@
-name: Django CI
+name: Test django-admin-sortable2
 
 on:
   push:
@@ -11,20 +11,19 @@ jobs:
 
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
         Django-version: ["4.0"]
         node-version: ["16.x"]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
