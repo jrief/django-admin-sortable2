@@ -14,7 +14,7 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
-        Django-version: ["<4.1"]
+        Django-version: ["4.0"]
         node-version: ["16.x"]
 
     steps:
@@ -32,7 +32,7 @@ jobs:
         npm ci --also=dev
         npx playwright install --with-deps
         python -m pip install --upgrade pip
-        python -m pip install "Django${{ matrix.Django-version }}"
+        python -m pip install "Django==${{ matrix.Django-version }}.*"
         python -m pip install -r testapp/requirements.txt
         python -m playwright install
         python -m playwright install-deps
