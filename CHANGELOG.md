@@ -2,6 +2,13 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.0.4
+- Fix [\#309](https://github.com/jrief/django-admin-sortable2/issues/309):
+  Prevent JavaScrip error when using *InlineAdmin without sortable list view.
+- Internally use Python's `pathlib` instead of `os.path`.
+- In DEBUG mode, load unminimized JavaScript.
+
+
 ### 2.0.3
 - Fix [\#304](https://github.com/jrief/django-admin-sortable2/issues/304):
   ModelAdmin not inheriting from SortableAdminMixin prevented sortable Stacked-/TabluraInlineAdmin be sortable.
