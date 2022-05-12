@@ -2,25 +2,17 @@ import Sortable, { MultiDrag, SortableEvent } from 'sortablejs';
 
 Sortable.mount(new MultiDrag());
 
-class SortableBase {
-	protected readonly config: any;
-
-	constructor() {
-		this.config = JSON.parse(document.getElementById('admin_sortable2_config')?.textContent ?? '');
-	}
-}
-
-
-class ListSortable extends SortableBase {
+class ListSortable {
 	private readonly tableBody: HTMLTableSectionElement;
+	private readonly config: any;
 	private readonly sortable: Sortable;
 	private readonly observer: MutationObserver;
 	private firstOrder: number | undefined;
 	private orderDirection: number | undefined;
 
-	constructor(table: HTMLTableElement) {
-		super();
+	constructor(table: HTMLTableElement, config: any) {
 		this.tableBody = table.querySelector('tbody')!;
+		this.config = config;
 		this.sortable = Sortable.create(this.tableBody, {
 			animation: 150,
 			handle: '.handle',
@@ -163,15 +155,16 @@ class ListSortable extends SortableBase {
 }
 
 
-class ActionForm extends SortableBase {
+class ActionForm {
 	private readonly selectElement: HTMLSelectElement;
+	private readonly config: any;
 	private readonly stepInput: HTMLInputElement;
 	private readonly pageInput: HTMLInputElement;
 
-	constructor(formElement: HTMLElement) {
-		super();
+	constructor(formElement: HTMLElement, config: any) {
 		formElement.setAttribute('novalidate', 'novalidate');
 		this.selectElement = formElement.querySelector('select[name="action"]')!;
+		this.config = config;
 		this.selectElement.addEventListener('change', () => this.actionChanged());
 
 		this.stepInput = document.getElementById('changelist-form-step') as HTMLInputElement;
@@ -258,14 +251,19 @@ class InlineSortable {
 
 
 window.addEventListener('load', (event) => {
-	const table = document.getElementById('result_list');
-	if (table instanceof HTMLTableElement) {
-		new ListSortable(table);
-	}
+	const configElem = document.getElementById('admin_sortable2_config');
+	if (configElem instanceof HTMLScriptElement && configElem.textContent) {
+		const adminSortableConfig = JSON.parse(configElem.textContent);
 
-	const changelistForm = document.getElementById('changelist-form');
-	if (changelistForm) {
-		new ActionForm(changelistForm);
+		const table = document.getElementById('result_list');
+		if (table instanceof HTMLTableElement) {
+			new ListSortable(table, adminSortableConfig);
+		}
+
+		const changelistForm = document.getElementById('changelist-form');
+		if (changelistForm) {
+			new ActionForm(changelistForm, adminSortableConfig);
+		}
 	}
 
 	for (let inlineFieldSet of document.querySelectorAll('fieldset.sortable')) {
