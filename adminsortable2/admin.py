@@ -1,8 +1,9 @@
-import os
 import json
+from pathlib import Path
 from itertools import chain
 from types import MethodType
 
+from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.contenttypes.forms import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
@@ -62,7 +63,7 @@ class SortableAdminBase:
     @property
     def media(self):
         css = {'all': ['adminsortable2/css/sortable.css']}
-        js = ['adminsortable2/js/adminsortable2.min.js']
+        js = ['adminsortable2/js/adminsortable2{}.js'.format('' if settings.DEBUG else '.min')]
         return super().media + widgets.Media(css=css, js=js)
 
     def get_formset_kwargs(self, request, obj, inline, prefix):
@@ -95,9 +96,9 @@ class SortableAdminMixin(SortableAdminBase):
         opts = self.model._meta
         app_label = opts.app_label
         return [
-            os.path.join('adminsortable2', app_label, opts.model_name, 'change_list.html'),
-            os.path.join('adminsortable2', app_label, 'change_list.html'),
-            'adminsortable2/change_list.html'
+            Path('adminsortable2') / Path(app_label) / Path(opts.model_name) / Path('change_list.html'),
+            Path('adminsortable2') / Path(app_label) / Path('change_list.html'),
+            Path('adminsortable2/change_list.html'),
         ]
 
     def __init__(self, model, admin_site):
