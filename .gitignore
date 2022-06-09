@@ -3,7 +3,7 @@
 *.pot
 *.pyc
 *.egg-info
-*.sqlite
+*.sqlite3
 *.coverage
 *~
 .DS_Store
@@ -18,4 +18,3 @@ dist
 node_modules/
 htmlcov
 adminsortable2/static/adminsortable2/js/adminsortable2.*
-testapp/test.db
