@@ -15,6 +15,7 @@ class AuthorAdmin(admin.ModelAdmin):
 class ChapterStackedInline(SortableInlineAdminMixin, admin.StackedInline):
     model = models.Chapter
     extra = 1
+    template = 'adminsortable2/edit_inline/stacked.html'
 
 
 class ChapterStackedInlineReversed(SortableInlineAdminMixin, admin.StackedInline):
@@ -26,6 +27,7 @@ class ChapterStackedInlineReversed(SortableInlineAdminMixin, admin.StackedInline
 class ChapterTabularInline(SortableInlineAdminMixin, admin.TabularInline):
     model = models.Chapter
     extra = 1
+    template = 'adminsortable2/edit_inline/tabular.html'
 
 
 class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):

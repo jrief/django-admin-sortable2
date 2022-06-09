@@ -30,3 +30,23 @@ fieldset.sortable .inline-related.has_original h3 {
 	background: url(../icons/drag.png) repeat;
 	cursor: ns-resize;
 }
+fieldset.sortable :is(.inline-related, td.original) span.sort {
+	float: right;
+	margin-right: 10px;
+}
+fieldset.sortable :is(.inline-related, td.original) span.sort i {
+	width: 0;
+	height: 0;
+	display: inline-block;
+	border-style: solid;
+	margin: 1px;
+	cursor: pointer;
+}
+fieldset.sortable :is(.inline-related, td.original) span.sort i.move-begin {
+	border-width: 0 5px 5px 5px;
+	border-color: transparent transparent currentColor transparent;
+}
+fieldset.sortable :is(.inline-related, td.original) span.sort i.move-end {
+	border-width: 5px 5px 0 5px;
+	border-color: currentColor transparent transparent transparent;
+}

@@ -219,7 +219,7 @@ class InlineSortable {
 				animation: 150,
 				handle: 'td.original p',
 				draggable: 'tr',
-				onEnd: event => this.onEnd(event),
+				onEnd: event => this.onEnd(),
 			});
 		} else {
 			// stacked inline
@@ -228,12 +228,18 @@ class InlineSortable {
 				animation: 150,
 				handle: 'h3',
 				draggable: '.inline-related.has_original',
-				onEnd: event => this.onEnd(event),
+				onEnd: event => this.onEnd(),
 			});
 		}
+		inlineFieldSet.querySelectorAll('.inline-related .sort i.move-begin').forEach(
+			elem => elem.addEventListener('click', event => this.move(event.target, 'begin'))
+		);
+		inlineFieldSet.querySelectorAll('.inline-related .sort i.move-end').forEach(
+			elem => elem.addEventListener('click', event => this.move(event.target, 'end'))
+		);
 	}
 
-	private onEnd(evt: SortableEvent) {
+	private onEnd() {
 		const originals = this.sortable.el.querySelectorAll(this.itemSelectors);
 		if (this.reversed) {
 			originals.forEach((element: Element, index: number) => {
@@ -246,6 +252,23 @@ class InlineSortable {
 				reorderInputElement.value = `${index + 1}`;
 			});
 		}
+	}
+
+	private move(target: EventTarget | null, direction: 'begin' | 'end') {
+		if (!(target instanceof HTMLElement))
+			return;
+		const inlineRelated = target.closest(this.itemSelectors);
+		if (!inlineRelated)
+			return;
+		const inlineRelatedList = this.sortable.el.querySelectorAll(this.itemSelectors);
+		if (inlineRelatedList.length < 2)
+			return;
+		if (direction === 'begin') {
+			inlineRelatedList[0].insertAdjacentElement('beforebegin', inlineRelated);
+		} else {
+			inlineRelatedList[inlineRelatedList.length - 1].insertAdjacentElement('afterend', inlineRelated);
+		}
+		this.onEnd();
 	}
 }
 
