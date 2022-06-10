@@ -9,6 +9,19 @@ alex_martelli_id = 24
 
 
 @pytest.mark.django_db
+def test_changelist_get():
+    num_books = SortableBook3.objects.count()
+    assert SortableBook3.objects.last().my_order == num_books
+    client = Client()
+    response = client.get(reverse('admin:testapp_sortablebook_changelist'))
+    assert response.status_code == 200, "Unable to add book"
+    assert b'"update_url": "/admin/testapp/sortablebook/adminsortable2_update/"' in response.content
+    assert b'"current_page": 1,' in response.content
+    assert b'<div>Foo value</div>' in response.content  # Test, that original template is used as parent
+    assert b'<a href="/admin/">Django administration</a' in response.content  # Test that also other parts of the template remained
+
+
+@pytest.mark.django_db
 def test_add_book():
     form_data = {
         'title': "Python Cookbook",

@@ -29,6 +29,7 @@ class ChapterTabularInline(SortableInlineAdminMixin, admin.TabularInline):
 
 
 class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
+    change_list_template = "foo_changelist_template.html"
     list_per_page = 12
     list_display = ['title', 'author', 'my_order']
 
