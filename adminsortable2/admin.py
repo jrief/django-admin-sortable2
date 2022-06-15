@@ -479,10 +479,11 @@ class SortableInlineAdminMixin:
     formset = CustomInlineFormSet
 
     def __init__(self, parent_model, admin_site):
-        assert isinstance(admin_site._registry[parent_model], SortableAdminBase), \
-            "{} must inherit from SortableAdminBase since {} inherits from SortableInlineAdminMixin.".format(
-                admin_site._registry[parent_model], self.__class__.__name__
-            )
+        if parent_model in admin_site._registry:
+            assert isinstance(admin_site._registry[parent_model], SortableAdminBase), \
+                "{} must inherit from SortableAdminBase since {} inherits from SortableInlineAdminMixin.".format(
+                    admin_site._registry[parent_model], self.__class__.__name__
+                )
         self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
         super().__init__(parent_model, admin_site)
 
