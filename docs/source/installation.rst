@@ -11,6 +11,15 @@ Install **django-admin-sortable2**. The latest stable release is available on Py
 	pip install django-admin-sortable2
 
 
+Upgrading from version 1
+========================
+
+When upgrading from version 1, check for ``StackedInline``- and ``TabularInline``-classes inheriting
+from ``SortableInlineAdminMixin``. If they do, check the class inheriting from ``ModelAdmin`` and
+using this inline-admin class. Since version 2, this class then also has to inherit from
+``SortableAdminBase`` or a class derived of thereof.
+
+
 Configuration
 =============
 
