@@ -16,7 +16,7 @@ class Author(models.Model):
         return self.name
 
 
-class SortableBook(models.Model):
+class Book(models.Model):
     title = models.CharField(
         "Title",
         null=True,
@@ -37,49 +37,48 @@ class SortableBook(models.Model):
         on_delete=models.CASCADE,
     )
 
-    class Meta:
-        verbose_name = "Book"
-        verbose_name_plural = "Books"
-
     def __str__(self):
         return self.title
 
-
-class SortableBook1(SortableBook):
     class Meta:
-        proxy = True
         verbose_name = "Book"
         verbose_name_plural = "Books"
 
 
-class SortableBook2(SortableBook):
-    class Meta:
-        proxy = True
-        verbose_name = "Book"
-        verbose_name_plural = "Books"
+# class SortableBook2(SortableBook):
+#     class Meta:
+#         proxy = True
+#         verbose_name = "Book"
+#         verbose_name_plural = "Books (reverse ordered by admin)"
 
 
-class SortableBook3(SortableBook):
+class Book1(Book):
     class Meta:
         proxy = True
         ordering = ['my_order']
         verbose_name = "Book"
-        verbose_name_plural = "Books"
+        verbose_name_plural = "Books (ordered by model, no inlines)"
 
 
-class SortableBook4(SortableBook):
+class Book2(Book):
     class Meta:
         proxy = True
         ordering = ['-my_order']
         verbose_name = "Book"
-        verbose_name_plural = "Books"
+        verbose_name_plural="Books (reverse ordered by model, no inlines)"
 
-
-class SortableBook5(SortableBook):
-    class Meta:
-        proxy = True
-        verbose_name = "Book"
-        verbose_name_plural = "Books"
+# class SortableBook5(SortableBook):
+#     class Meta:
+#         proxy = True
+#         verbose_name = "Book"
+#         verbose_name_plural = "Books (unsorted)"
+#
+#
+# class SortableBookA(SortableBook):
+#     class Meta:
+#         proxy = True
+#         verbose_name = "Book"
+#         verbose_name_plural = "Books (extra admin mixin)"
 
 
 class Chapter(models.Model):
@@ -91,7 +90,7 @@ class Chapter(models.Model):
     )
 
     book = models.ForeignKey(
-        SortableBook,
+        Book,
         null=True,
         on_delete=models.CASCADE,
     )
@@ -102,8 +101,17 @@ class Chapter(models.Model):
         db_index=True,
     )
 
-    class Meta:
-        ordering = ['my_order']
-
     def __str__(self):
         return "Chapter: {0}".format(self.title)
+
+
+class Chapter1(Chapter):
+    class Meta:
+        proxy = True
+        ordering = ['my_order']
+
+
+class Chapter2(Chapter):
+    class Meta:
+        proxy = True
+        ordering = ['-my_order']

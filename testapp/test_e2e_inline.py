@@ -1,26 +1,30 @@
 import pytest
 
-from django.urls import reverse
-
-from testapp.models import SortableBook
+from testapp.models import Book
 
 
-viewnames = [
-    'admin:testapp_sortablebook1_change',
-    'admin:testapp_sortablebook2_change',
-    'admin:testapp_sortablebook3_change',
+slugs = [
+    'book1',
+    'book2',
+    'book3',
+    'book4',
+    'book5',
+    'book6',
 ]
-the_good_parts_id = 17
+js_the_good_parts_id = 17
 
 
 def get_start_order(direction):
-    return 1 if direction == 1 else SortableBook.objects.get(id=the_good_parts_id).chapter_set.count()
+    return 1 if direction == 1 else Book.objects.get(id=js_the_good_parts_id).chapter_set.count()
+
+
+def get_end_order(direction):
+    return Book.objects.get(id=js_the_good_parts_id).chapter_set.count() if direction == 1 else 1
 
 
 @pytest.fixture
-def page(live_server, page, viewname):
-    url = reverse(viewname, args=(the_good_parts_id,))
-    page.goto(f'{live_server.url}{url}')
+def adminpage(live_server, page, slug):
+    page.goto(f'{live_server.url}/admin/testapp/{slug}/{js_the_good_parts_id}/change/')
     return page
 
 
@@ -36,32 +40,68 @@ def is_fieldset_ordered(inline_elem, direction):
 
 
 @pytest.fixture
-def direction(viewname):
-    return +1 if viewname in ['admin:testapp_sortablebook1_change', 'admin:testapp_sortablebook3_change'] else -1
+def direction(slug):
+    return +1 if slug in ['book1', 'book3', 'book5', 'book6'] else -1
 
 
-@pytest.mark.parametrize('viewname', viewnames)
-def test_drag_down(page, viewname, direction):
-    inline_locator = page.locator('#chapter_set-group')
+@pytest.fixture
+def chapter(slug):
+    if slug in ['book1', 'book6']:
+        return '#chapter1'
+    if slug in ['book2']:
+        return '#chapter2'
+    return '#chapter'
+
+
+@pytest.mark.parametrize('slug', slugs)
+def test_drag_down(adminpage, slug, direction, chapter):
+    inline_locator = adminpage.locator(f'{chapter}_set-group')
     assert is_fieldset_ordered(inline_locator.element_handle(), direction)
     start_order = get_start_order(direction)
-    assert inline_locator.locator('#chapter_set-0 input._reorder_').input_value() == str(start_order)
-    drag_handle = inline_locator.locator('#chapter_set-0 :is(h3, p)')
-    drag_handle.drag_to(inline_locator.locator('#chapter_set-4'))
-    assert inline_locator.locator('#chapter_set-0 input._reorder_').input_value() == str(start_order + direction * 4)
-    assert inline_locator.locator('#chapter_set-1 input._reorder_').input_value() == str(start_order)
+    assert inline_locator.locator(f'{chapter}_set-0 input._reorder_').input_value() == str(start_order)
+    drag_handle = inline_locator.locator(f'{chapter}_set-0 :is(h3, p)')
+    drag_handle.drag_to(inline_locator.locator(f'{chapter}_set-4'))
+    assert inline_locator.locator(f'{chapter}_set-0 input._reorder_').input_value() == str(start_order + direction * 4)
+    assert inline_locator.locator(f'{chapter}_set-1 input._reorder_').input_value() == str(start_order)
     assert is_fieldset_ordered(inline_locator.element_handle(), direction)
 
 
-@pytest.mark.parametrize('viewname', viewnames)
-def test_drag_up(page, viewname, direction):
-    inline_locator = page.locator('#chapter_set-group')
+@pytest.mark.parametrize('slug', slugs)
+def test_drag_up(adminpage, slug, direction, chapter):
+    inline_locator = adminpage.locator(f'{chapter}_set-group')
     assert is_fieldset_ordered(inline_locator.element_handle(), direction)
     start_order = get_start_order(direction)
-    reorder_field = inline_locator.locator('#chapter_set-5 input._reorder_')
+    reorder_field = inline_locator.locator(f'{chapter}_set-5 input._reorder_')
     assert reorder_field.input_value() == str(start_order + direction * 5)
-    drag_handle = inline_locator.locator('#chapter_set-5 :is(h3, p)')
-    drag_handle.drag_to(inline_locator.locator('#chapter_set-1'))
-    assert inline_locator.locator('#chapter_set-5 input._reorder_').input_value() == str(start_order + direction)
-    assert inline_locator.locator('#chapter_set-1 input._reorder_').input_value() == str(start_order + direction * 2)
+    drag_handle = inline_locator.locator(f'{chapter}_set-5 :is(h3, p)')
+    drag_handle.drag_to(inline_locator.locator(f'{chapter}_set-1'))
+    assert inline_locator.locator(f'{chapter}_set-5 input._reorder_').input_value() == str(start_order + direction)
+    assert inline_locator.locator(f'{chapter}_set-1 input._reorder_').input_value() == str(start_order + direction * 2)
+    assert is_fieldset_ordered(inline_locator.element_handle(), direction)
+
+
+@pytest.mark.parametrize('slug', ['book1', 'book2', 'book5'])
+def test_move_end(adminpage, slug, direction, chapter):
+    inline_locator = adminpage.locator(f'{chapter}_set-group')
+    assert is_fieldset_ordered(inline_locator.element_handle(), direction)
+    start_order = get_start_order(direction)
+    end_order = get_end_order(direction)
+    assert inline_locator.locator(f'{chapter}_set-2 input._reorder_').input_value() == str(start_order + direction * 2)
+    move_end_button = inline_locator.locator(f'{chapter}_set-2 :is(h3, p) .move-end').element_handle()
+    move_end_button.click()
+    assert inline_locator.locator(f'{chapter}_set-2 input._reorder_').input_value() == str(end_order)
+    assert inline_locator.locator(f'{chapter}_set-3 input._reorder_').input_value() == str(start_order + direction * 2)
+    assert is_fieldset_ordered(inline_locator.element_handle(), direction)
+
+
+@pytest.mark.parametrize('slug', ['book1', 'book2', 'book5'])
+def test_move_begin(adminpage, slug, direction, chapter):
+    inline_locator = adminpage.locator(f'{chapter}_set-group')
+    assert is_fieldset_ordered(inline_locator.element_handle(), direction)
+    start_order = get_start_order(direction)
+    assert inline_locator.locator(f'{chapter}_set-8 input._reorder_').input_value() == str(start_order + direction * 8)
+    move_end_button = inline_locator.locator(f'{chapter}_set-8 :is(h3, p) .move-begin').element_handle()
+    move_end_button.click()
+    assert inline_locator.locator(f'{chapter}_set-8 input._reorder_').input_value() == str(start_order)
+    assert inline_locator.locator(f'{chapter}_set-3 input._reorder_').input_value() == str(start_order + direction * 4)
     assert is_fieldset_ordered(inline_locator.element_handle(), direction)

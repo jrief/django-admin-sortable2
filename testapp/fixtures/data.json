@@ -175,7 +175,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 1,
   "fields": {
     "title": "The Mythical Man-Month",
@@ -184,7 +184,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 2,
   "fields": {
     "title": "Design Patterns",
@@ -193,7 +193,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 3,
   "fields": {
     "title": "The Pragmatic Programmer",
@@ -202,7 +202,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 4,
   "fields": {
     "title": "Code Complete",
@@ -211,7 +211,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 5,
   "fields": {
     "title": "Test Driven Development",
@@ -220,7 +220,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 6,
   "fields": {
     "title": "Refactoring",
@@ -229,7 +229,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 7,
   "fields": {
     "title": "Extreme Programming Explained",
@@ -238,7 +238,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 8,
   "fields": {
     "title": "Succeeding with Agile",
@@ -247,7 +247,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 9,
   "fields": {
     "title": "The Deadline",
@@ -256,7 +256,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 10,
   "fields": {
     "title": "Essential Scrum",
@@ -265,7 +265,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 11,
   "fields": {
     "title": "Effective Project Management",
@@ -274,7 +274,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 12,
   "fields": {
     "title": "Effective Work Breakdown Structures",
@@ -283,7 +283,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 13,
   "fields": {
     "title": "Strategic Project Management Made Simple",
@@ -292,7 +292,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 14,
   "fields": {
     "title": "Learning Python",
@@ -301,7 +301,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 15,
   "fields": {
     "title": "Django Design Patterns",
@@ -310,7 +310,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 16,
   "fields": {
     "title": "Learning jQuery",
@@ -319,7 +319,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 17,
   "fields": {
     "title": "JavaScript: The Good Parts",
@@ -328,7 +328,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 18,
   "fields": {
     "title": "The C++ Programming Language",
@@ -337,7 +337,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 19,
   "fields": {
     "title": "C Programming Language",
@@ -346,7 +346,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 20,
   "fields": {
     "title": "Clean Code",
@@ -355,7 +355,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 21,
   "fields": {
     "title": "Peopleware",
@@ -364,7 +364,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 22,
   "fields": {
     "title": "Slack",
@@ -373,7 +373,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 23,
   "fields": {
     "title": "Agile Software Development",
@@ -382,7 +382,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 24,
   "fields": {
     "title": "UML for Java Programmers",
@@ -391,7 +391,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 25,
   "fields": {
     "title": "Designing Object Oriented C++ Applications",
@@ -400,7 +400,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 26,
   "fields": {
     "title": "More C++ Gems",
@@ -409,7 +409,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 27,
   "fields": {
     "title": "Pragmatic Thinking and Learning",
@@ -418,7 +418,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 28,
   "fields": {
     "title": "Practices of an Agile Developer",
@@ -427,7 +427,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 29,
   "fields": {
     "title": "Learn to Program with Minecraft Plugins",
@@ -436,7 +436,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 30,
   "fields": {
     "title": "Two Scoops of Django",
@@ -445,7 +445,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 31,
   "fields": {
     "title": "Python for Data Analysis",
@@ -454,7 +454,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 32,
   "fields": {
     "title": "Effective Pandas",
@@ -463,7 +463,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 33,
   "fields": {
     "title": "Fluent Python",
@@ -472,7 +472,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 34,
   "fields": {
     "title": "Python in a Nutshell",
@@ -481,7 +481,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 35,
   "fields": {
     "title": "Django for Beginners",
@@ -490,7 +490,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 36,
   "fields": {
     "title": "Django for Professionals",
@@ -499,7 +499,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 37,
   "fields": {
     "title": "Django for APIs",
@@ -508,7 +508,7 @@
   }
 },
 {
-  "model": "testapp.sortablebook",
+  "model": "testapp.book",
   "pk": 38,
   "fields": {
     "title": "Full Stack Python Security",
