@@ -6,6 +6,6 @@ build({
   minify: false,
   outfile: 'adminsortable2/static/adminsortable2/js/adminsortable2.js',
   plugins: [],
-  sourcemap: false,
+  sourcemap: true,
   target: ['es2020', 'chrome84', 'firefox84', 'safari14', 'edge84']
 }).catch(() => process.exit(1));
