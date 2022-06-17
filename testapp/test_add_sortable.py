@@ -9,6 +9,13 @@ alex_martelli_id = 24
 
 
 @pytest.mark.django_db
+def test_changelist_template_inheritance():
+    client = Client()
+    response = client.get(reverse('admin:testapp_book7_changelist'))
+    assert b"<!-- Import/Export Mixin -->" in response.content
+
+
+@pytest.mark.django_db
 def test_add_book():
     form_data = {
         'title': "Python Cookbook",

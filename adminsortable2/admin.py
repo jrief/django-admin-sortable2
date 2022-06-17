@@ -404,6 +404,7 @@ class SortableAdminMixin(SortableAdminBase):
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         extra_context['sortable_update_url'] = self.get_update_url(request)
+        extra_context['base_change_list_template'] = super().change_list_template or 'admin/change_list.html'
         return super().changelist_view(request, extra_context)
 
     def get_update_url(self, request):
