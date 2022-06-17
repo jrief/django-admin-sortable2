@@ -38,6 +38,7 @@ jobs:
     - name: Build Client
       run: |
         npm run build
+        npm run uglify
     - name: Test with pytest
       run: |
         python -m pytest testapp
