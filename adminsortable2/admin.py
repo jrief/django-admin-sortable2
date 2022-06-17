@@ -431,10 +431,13 @@ class CustomInlineFormSetMixin:
         self.default_order_direction = default_order_direction
         self.default_order_field = default_order_field
         if default_order_field:
-            if default_order_field not in self.form.base_fields:
-                self.form.base_fields[default_order_field] = self.model._meta.get_field(default_order_field).formfield()
+            if default_order_field in self.form.base_fields:
+                order_field = self.form.base_fields[default_order_field]
+            else:
+                order_field = self.model._meta.get_field(default_order_field).formfield()
+                self.form.base_fields[default_order_field] = order_field
+                self.form.declared_fields[default_order_field] = order_field
 
-            order_field = self.form.base_fields[default_order_field]
             order_field.is_hidden = True
             order_field.required = False
             order_field.widget = widgets.HiddenInput(attrs={'class': '_reorder_'})
@@ -480,12 +483,19 @@ class SortableInlineAdminMixin:
     formset = CustomInlineFormSet
 
     def __init__(self, parent_model, admin_site):
-        assert isinstance(admin_site._registry[parent_model], SortableAdminBase), \
-            "{} must inherit from SortableAdminBase since {} inherits from SortableInlineAdminMixin.".format(
-                admin_site._registry[parent_model], self.__class__.__name__
-            )
+        if parent_model in admin_site._registry:
+            assert isinstance(admin_site._registry[parent_model], SortableAdminBase), \
+                "{} must inherit from SortableAdminBase since {} inherits from SortableInlineAdminMixin.".format(
+                    admin_site._registry[parent_model], self.__class__.__name__
+                )
         self.default_order_direction, self.default_order_field = _get_default_ordering(self.model, self)
         super().__init__(parent_model, admin_site)
+
+    def get_fields(self, *args, **kwargs):
+        fields = super().get_fields(*args, **kwargs)
+        if self.default_order_field not in fields:
+            fields.append(self.default_order_field)
+        return fields
 
 
 class CustomGenericInlineFormSet(CustomInlineFormSetMixin, BaseGenericInlineFormSet):

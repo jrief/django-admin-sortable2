@@ -2,6 +2,12 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.0.5
+- Fix: When using an `InlineAdmin` with a self defined form, the default ordering
+  has been ignored. 
+- Fix: Skip instance check, if model used in an `InlineAdmin` is a proxy model.
+
+
 ### 2.0.4
 - Fix [\#309](https://github.com/jrief/django-admin-sortable2/issues/309):
   Prevent JavaScrip error when using *InlineAdmin without sortable list view.
