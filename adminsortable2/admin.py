@@ -499,11 +499,11 @@ class SortableInlineAdminMixin:
         return fields
 
 
-class SortableStackedInline(admin.StackedInline):
+class SortableStackedInline(SortableInlineAdminMixin, admin.StackedInline):
     template = 'adminsortable2/edit_inline/stacked-django-{0}.{1}.html'.format(*DJANGO_VERSION)
 
 
-class SortableTabularInline(admin.TabularInline):
+class SortableTabularInline(SortableInlineAdminMixin, admin.TabularInline):
     template = 'adminsortable2/edit_inline/tabular-django-{0}.{1}.html'.format(*DJANGO_VERSION)
 
 

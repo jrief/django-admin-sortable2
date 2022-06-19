@@ -16,7 +16,7 @@ jobs:
        name: deploy
 
     env:
-      DJANGO_VERSIONS: ["4.0"]
+      DJANGO_VERSIONS: [4.0, 4.1]
 
     strategy:
       matrix:
@@ -42,14 +42,18 @@ jobs:
       run: |
         npm run build
         npm run uglify
-    -name: Patch templates
+    - name: Patch templates
       run: |
         mkdir --parents adminsortable2/templates/adminsortable2/edit_inline
-        for django_version in $DJANGO_VERSIONS; do
-          curl --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-${django_version}.html https://raw.githubusercontent.com/django/django/stable/${django_version}.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
-          curl --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-${django_version}.html https://raw.githubusercontent.com/django/django/stable/${django_version}.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
-          patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-${django_version}.html patches/stacked-django-${django_version}.patch
-          patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-${django_version}.html patches/tabular-django-${django_version}.patch
+        echo ${DJANGO_VERSIONS[*]}
+        echo ${{ env.DJANGO_VERSIONS[*] }}
+        echo ${{ env.DJANGO_VERSIONS }}
+        for django_version in ${DJANGO_VERSIONS[*]}; do
+          echo $django_version
+          curl --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
+          curl --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
+          patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html patches/stacked-django-$django_version.patch
+          patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html patches/tabular-django-$django_version.patch
         done
     - name: Build 🐍 Python 📦 Package
       run: python -m build --sdist --wheel --outdir dist/
