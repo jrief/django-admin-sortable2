@@ -10,11 +10,12 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
-        Django-version: ["4.0"]
         node-version: ["16.x"]
+        django-version: ["4.0"]
 
     steps:
     - uses: actions/checkout@v3
@@ -31,10 +32,17 @@ jobs:
         npm ci --also=dev
         npx playwright install --with-deps
         python -m pip install --upgrade pip
-        python -m pip install "Django==${{ matrix.Django-version }}.*"
+        python -m pip install "Django==${{ matrix.django-version }}.*"
         python -m pip install -r testapp/requirements.txt
         python -m playwright install
         python -m playwright install-deps
+    - name: Patch templates
+      run: |
+        mkdir --parents adminsortable2/templates/adminsortable2/edit_inline
+        curl --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-${{ matrix.django-version }}.html https://raw.githubusercontent.com/django/django/stable/${{ matrix.django-version }}.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
+        curl --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-${{ matrix.django-version }}.html https://raw.githubusercontent.com/django/django/stable/${{ matrix.django-version }}.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
+        patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-${{ matrix.django-version }}.html patches/stacked-django-${{ matrix.django-version }}.patch
+        patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-${{ matrix.django-version }}.html patches/tabular-django-${{ matrix.django-version }}.patch
     - name: Build Client
       run: |
         npm run build

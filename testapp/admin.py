@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.template.response import TemplateResponse
 
-from adminsortable2.admin import SortableAdminBase, SortableAdminMixin, SortableInlineAdminMixin
+from adminsortable2.admin import SortableAdminBase, SortableAdminMixin, SortableInlineAdminMixin, SortableStackedInline, SortableTabularInline
 
 from testapp.models import Author, Chapter, Chapter1, Chapter2, Book, Book1, Book2
 
@@ -10,16 +10,14 @@ class AuthorAdmin(admin.ModelAdmin):
     list_display = ['name']
 
 
-class ChapterStackedInline(SortableInlineAdminMixin, admin.StackedInline):
+class ChapterStackedInline(SortableStackedInline):
     model = Chapter1  # model is ordered
     extra = 1
-    template = 'adminsortable2/edit_inline/stacked.html'
 
 
-class ChapterStackedInlineReversed(SortableInlineAdminMixin, admin.StackedInline):
+class ChapterStackedInlineReversed(SortableStackedInline):
     model = Chapter2  # model is reverse ordered
     extra = 1
-    template = 'adminsortable2/edit_inline/stacked.html'
 
 
 class ChapterStackedInlineUpOrdered(SortableInlineAdminMixin, admin.StackedInline):
@@ -34,10 +32,9 @@ class ChapterStackedInlineDownOrdered(SortableInlineAdminMixin, admin.StackedInl
     ordering = ['-my_order']
 
 
-class ChapterTabularInline(SortableInlineAdminMixin, admin.TabularInline):
+class ChapterTabularInline(SortableTabularInline):
     model = Chapter
     extra = 1
-    template = 'adminsortable2/edit_inline/tabular.html'
     ordering = ['my_order']
 
 

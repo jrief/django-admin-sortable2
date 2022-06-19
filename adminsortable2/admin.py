@@ -3,6 +3,7 @@ from pathlib import Path
 from itertools import chain
 from types import MethodType
 
+from django import VERSION as DJANGO_VERSION
 from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.contenttypes.forms import BaseGenericInlineFormSet
@@ -496,6 +497,14 @@ class SortableInlineAdminMixin:
         if self.default_order_field not in fields:
             fields.append(self.default_order_field)
         return fields
+
+
+class SortableStackedInline(admin.StackedInline):
+    template = 'adminsortable2/edit_inline/stacked-django-{0}.{1}.html'.format(*DJANGO_VERSION)
+
+
+class SortableTabularInline(admin.TabularInline):
+    template = 'adminsortable2/edit_inline/tabular-django-{0}.{1}.html'.format(*DJANGO_VERSION)
 
 
 class CustomGenericInlineFormSet(CustomInlineFormSetMixin, BaseGenericInlineFormSet):
