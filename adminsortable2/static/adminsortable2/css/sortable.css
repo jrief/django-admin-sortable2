@@ -39,14 +39,22 @@ fieldset.sortable :is(.inline-related, td.original) span.sort i {
 	height: 0;
 	display: inline-block;
 	border-style: solid;
-	margin: 1px;
+	margin: 2px;
 	cursor: pointer;
 }
-fieldset.sortable :is(.inline-related, td.original) span.sort i.move-begin {
+fieldset.sortable .inline-related span.sort i.move-begin {
+	border-width: 0 6px 6px 6px;
+	border-color: transparent transparent currentColor transparent;
+}
+fieldset.sortable .inline-related span.sort i.move-end {
+	border-width: 6px 6px 0 6px;
+	border-color: currentColor transparent transparent transparent;
+}
+fieldset.sortable td.original span.sort i.move-begin {
 	border-width: 0 5px 5px 5px;
 	border-color: transparent transparent currentColor transparent;
 }
-fieldset.sortable :is(.inline-related, td.original) span.sort i.move-end {
+fieldset.sortable td.original span.sort i.move-end {
 	border-width: 5px 5px 0 5px;
 	border-color: currentColor transparent transparent transparent;
 }

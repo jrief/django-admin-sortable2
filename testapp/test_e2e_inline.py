@@ -4,12 +4,12 @@ from testapp.models import Book
 
 
 slugs = [
-    'book1',
-    'book2',
-    'book3',
-    'book4',
-    'book5',
-    'book6',
+    'book1',  # ordered by model, stacked inlines
+    'book2',  # reverse ordered by model, stacked inlines
+    'book3',  # ordered by admin, stacked inlines
+    'book4',  # reverse ordered by admin, stacked inlines
+    'book5',  # ordered by admin, tabular inlines
+    'book6',  # unsorted, sorted stacked inlines
 ]
 js_the_good_parts_id = 17
 

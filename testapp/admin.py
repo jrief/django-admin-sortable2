@@ -119,32 +119,15 @@ class BookAdminSite(admin.AdminSite):
         assert model not in self._registry
         self._registry[model] = admin_class(model, self)
 
-    def get_app_list(self, request):
+    def get_app_list(self, request, app_label=None):
         app_dict = self._build_app_dict(request)
         app_list = sorted(app_dict.values(), key=lambda x: x['name'].lower())
         for app in app_list:
-            app['models'].sort(key=lambda x: x['admin_url'])
+            if app_label == 'testapp':
+                app['models'].sort(key=lambda x: x['admin_url'])
+            else:
+                app['models'].sort(key=lambda x: x['name'])
         return app_list
-
-    def app_index(self, request, app_label, extra_context=None):
-        app_dict = self._build_app_dict(request, app_label)
-        app_dict['models'].sort(key=lambda x: x['admin_url'])
-        context = {
-            **self.each_context(request),
-            "title": f"{app_dict['name']} administration",
-            "subtitle": None,
-            "app_list": [app_dict],
-            "app_label": app_label,
-            **(extra_context or {}),
-        }
-
-        request.current_app = self.name
-
-        return TemplateResponse(
-            request,
-            "admin/app_index.html",
-            context,
-        )
 
 
 admin.site = BookAdminSite()

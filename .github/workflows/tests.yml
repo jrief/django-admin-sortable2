@@ -15,38 +15,37 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
         node-version: ["16.x"]
-        django-version: ["4.0"]
+        django-version: ["4.0.*", "4.1b1"]
 
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
       run: |
         npm ci --also=dev
-        npx playwright install --with-deps
         python -m pip install --upgrade pip
-        python -m pip install "Django==${{ matrix.django-version }}.*"
+        python -m pip install "Django==${{ matrix.django-version }}"
         python -m pip install -r testapp/requirements.txt
         python -m playwright install
         python -m playwright install-deps
-    - name: Patch templates
-      run: |
-        mkdir --parents adminsortable2/templates/adminsortable2/edit_inline
-        curl --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-${{ matrix.django-version }}.html https://raw.githubusercontent.com/django/django/stable/${{ matrix.django-version }}.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
-        curl --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-${{ matrix.django-version }}.html https://raw.githubusercontent.com/django/django/stable/${{ matrix.django-version }}.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
-        patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-${{ matrix.django-version }}.html patches/stacked-django-${{ matrix.django-version }}.patch
-        patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-${{ matrix.django-version }}.html patches/tabular-django-${{ matrix.django-version }}.patch
     - name: Build Client
       run: |
         npm run build
         npm run uglify
+    - name: Patch templates
+      run: |
+        mkdir -p adminsortable2/templates/adminsortable2/edit_inline
+        DJANGO_VERSIONS=("4.0" "4.1")
+        for django_version in ${DJANGO_VERSIONS[@]}; do
+          echo $django_version
+          curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
+          curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
+          patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html patches/stacked-django-4.0.patch
+          patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html patches/tabular-django-4.0.patch
+        done
     - name: Test with pytest
       run: |
         python -m pytest testapp
