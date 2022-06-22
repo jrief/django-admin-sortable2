@@ -137,14 +137,18 @@ If a model on the same page has a parent model, these are called inlines. Suppos
 model for chapters and want to edit the chapter together with the book's title using the same
 editor, then Django admin offers the classes :class:`~django.contrib.admin.StackedInline` and
 :class:`~django.contrib.admin.TabularInline`. To make these inline admin interfaces sortable,
-we simple use the mixin class :class:`adminsortable2.admin.SortableAdminMixin`. Example:
+we simple use the mixin class :class:`adminsortable2.admin.SortableAdminMixin`.
+
+Example:
 
 .. code-block:: python
 
 	...
+	from adminsortable2.admin import SortableStackedInline
+
 	from myapp.models import Chapter
 
-	class ChapterStackedInline(SortableInlineAdminMixin, admin.StackedInline):
+	class ChapterStackedInline(SortableStackedInline):
 	    model = Chapter
 
 	@admin.register(SortableBook)
@@ -171,7 +175,27 @@ For stacked inlines, the editor for the book's detail view looks like:
   :width: 800
   :alt: Stacked Inline View
 
-If we instead use the tabluar inline class, then the editor for the book's detail view looks like:
+.. note:: Since version 2.1, two buttons have been added to the draggable area above each inline
+	form. They serve to move that edited item to the begin or end of the list of inlines.
+
+If we instead want to use the tabluar inline class, then modify the code from above to
+
+.. code-block:: python
+
+	...
+	from adminsortable2.admin import SortableTabularInline
+
+	from myapp.models import Chapter
+
+	class ChapterTabularInline(SortableTabularInline):
+	    model = Chapter
+
+	@admin.register(SortableBook)
+	class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
+	    ...
+	    inlines = [ChapterTabularInline]
+
+the editor for the book's detail view then looks like:
 
 .. image:: _static/tabular-inline-view.png
   :width: 800

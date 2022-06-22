@@ -2,6 +2,11 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.1
+- Introduce classes `adminsortable2.admin.SortableStackedInline` and `adminsortable2.admin.SortableTabularInline`
+  to resort items to the begin or end of the list of those inlines.
+- Add support for Django-4.1.
+
 ### 2.0.5
 - Fix: When using an `InlineAdmin` with a self defined form, the default ordering
   has been ignored. 
