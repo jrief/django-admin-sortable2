@@ -17,36 +17,40 @@ Project home: https://github.com/jrief/django-admin-sortable2
   :alt: django-admin-sortable2 demo
 
 
-Why another adminsortable plugin?
-=================================
+Features
+========
 
-All available plugins which add functionality to make list views for the Django admin interface
-sortable, offer a base class to be used instead of ``models.Model``. This abstract base class then
-contains a hard coded position field, additional methods, and meta directives. The problem with such
-an approach is twofold:
+Must not inherit from any special Model base class
+--------------------------------------------------
 
-First, an *is-a* relationship is abused to enrich the functionality of a class. This is bad OOP
-practice. A base class shall only be used to reflect real *is-a* relations when specializing a
-derived class. For instance: A mammal *is an* animal, a primate *is a* mammal, homo sapiens *is a*
-primate, etc. Here the inheritance model is appropriate, but it would be wrong to derive from
-homo sapiens to reflect a human which is able to hunt using bows and arrows.
+Other plugins offering functionality to make list views for the Django admin interface sortable,
+offer a base class to be used instead of ``models.Model``. This class then contains a hard coded
+position field, additional methods, and meta directives.
 
-Therefore, a sortable model *is not an* unsortable model. Making a Django Model sortable enriches
-its functionality. In OOP design this does not qualify for an *is-a* relationship.
+By using a mixin to enrich an existing class with sorting, we can integrate this Django-app into
+existing projects with minimal modification to the code base.
 
-Fortunately, Python makes it very easy to distinguish between real *is-a* relationships and
-interfaces enriching their functionality. The latter are handled by mixin classes. They
-offer additional methods for classes without inheriting from the given base class.
 
-Also consider the case when we want to augment some other functionality of a model class. If
-we also inherit from ``models.Model``, we would create another abstract intermediate class.
-If we want to use *both* functional augmentations, we now are in trouble. We have to choose
-between one of the two, as we cannot inherit from both of them, because then our Django model
-would inherit from the base class ``models.Model`` twice. This kind of diamond-shaped inheritance
-shall be avoided.
+Intuitive List View
+-------------------
 
-By using a mixin to enrich an existing class with sorting functionality rather than inheriting
-from a special abstract base class, we can avoid these problems.
+By adding a draggable area into one of the columns of the Django admin's list view, sorting rows
+becomes very intuitive. Alternatively, rows can be selected using the checkbox and sorted as a
+group.
+
+If rows have to be sorted accross pages, they can be selected using the checkbox and moved to any
+other page using an `Admin action`_.
+
+.. _Admin action: https://docs.djangoproject.com/en/stable/ref/contrib/admin/actions/
+
+
+Support for Stacked- and Tabular Inlines
+----------------------------------------
+
+If a Django admin view uses `InlineModelAdmin objects`_, and the related model provides an
+ordering field, then those inline models can be sorted in the detail view.
+
+.. _InlineModelAdmin objects: https://docs.djangoproject.com/en/stable/ref/contrib/admin/#inlinemodeladmin-objects
 
 
 Contents:
