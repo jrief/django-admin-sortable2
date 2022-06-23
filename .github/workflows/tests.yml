@@ -2,9 +2,17 @@ name: Test django-admin-sortable2
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+      - '**.rst'
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+      - '**.rst'
 
 jobs:
   build:

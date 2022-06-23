@@ -53,26 +53,33 @@ Follow these steps to run this demo app.
 	cd django-admin-sortable2
 	npm install --also=dev
 	npm run build
+	npm run uglify
 	python -m pip install Django
 	python -m pip install -r testapp/requirements.txt
+	# we use the default template files and patch them, rather than using our own modified one
+	django_version=$(python -c 'from django import VERSION; print("{0}.{1}".format(*VERSION))')
+	curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
+	curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
+	patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html patches/stacked-django-4.0.patch
+	patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html patches/tabular-django-4.0.patch
 	cd testapp
 	./manage.py migrate
 	./manage.py loaddata fixtures/data.json
 	./manage.py runserver
 
 Point a browser onto http://localhost:8000/admin/, and go to **Testapp > Books**. There you
-can test the full set of features available in this library.
+can test the full set of features available in this Django app.
 
-In section **TESTAPP** there are four models named "Book". They only differ in the way their default
-sorting is organized: Somtimes by the model, somtimes for the admin interface and in both sorting
-directions. So don't be confused about seeing different editors for exactly the same model.
+In section **TESTAPP** there are eight entires named "Book". They all manage the same database model
+(ie. ``Book``) and only differ in the way their sorting is organized: Somtimes by the Django model,
+somtimes by the Django admin class and in both sorting directions.
 
 
 Reporting Bugs
 ==============
 
 For me it often is very difficult to comprehend why this library does not work with *your* project.
-Therefore wheneever you want to report a bug, report it in a way so that I can reproduce it.
+Therefore wheneever you want to report a bug, **report it in a way so that I can reproduce it**.
 
 **Checkout the code, build the client and run the demo** as decribed in the previous section.
 Every feature offered by **django-admin-sortable2** is implemented in the demo named ``testapp``.
@@ -99,6 +106,11 @@ Follow these steps to run all unit- and end-to-end tests.
 	python -m playwright install
 	python -m playwright install-deps
 	python -m pytest testapp
+	django_version=$(python -c 'from django import VERSION; print("{0}.{1}".format(*VERSION))')
+	curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
+	curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
+	patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html patches/stacked-django-4.0.patch
+	patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html patches/tabular-django-4.0.patch
 
 .. _Playwright-Python: https://playwright.dev/python/
 .. _pytest-django: https://pytest-django.readthedocs.io/en/latest/
@@ -132,7 +144,8 @@ Please follow these rules when quoting strings:
 
 * A string intended to be read by humans shall be quoted using double quotes: `"…"`.
 * An internal string, such as dictionary keys, etc. (and thus usually not intended to be read by
-  humans), shall be quoted using single quotes: `'…'`.
+  humans), shall be quoted using single quotes: `'…'`. This makes it easier to determine if we have
+  to extra check for wording.
 
 
 Lists versus Tuples
