@@ -4,7 +4,7 @@
            {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}<a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}" class="{% if inline_admin_formset.has_change_permission %}inlinechangelink{% else %}inlineviewlink{% endif %}">{% if inline_admin_formset.has_change_permission %}{% translate "Change" %}{% else %}{% translate "View" %}{% endif %}</a>{% endif %}
            {% endif %}
            {% if inline_admin_form.show_url %}<a href="{{ inline_admin_form.absolute_url }}">{% translate "View on site" %}</a>{% endif %}
-+              <span class="sort"><i class="move-begin" role="button" aria-label="{% translate 'Move to first position' %}"></i><i class="move-end" role="button" aria-label="{% translate 'Move to last position' %}"></i></span>
++              <span class="sort"><i class="move-begin" role="button" {% translate "Move to first position" as move_begin %}aria-label="{{ move_begin }}" title="{{ move_begin }}"></i><i class="move-end" role="button" {% translate "Move to last position" as move_end %}aria-label="{{ move_end }}" title="{{ move_end }}"></i></span>
              </p>{% endif %}
            {% if inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
            {% if inline_admin_form.fk_field %}{{ inline_admin_form.fk_field.field }}{% endif %}

@@ -15,12 +15,12 @@
 	opacity: 0.5;
 }
 #result_list div.drag.handle {
-	cursor: ns-resize;
+	cursor: grab;
 	opacity: 1;
 }
 /* styles for tabular inlines */
 fieldset.sortable table tr.form-row.has_original td.original p {
-	cursor: ns-resize;
+	cursor: grab;
 	background-image: url(../icons/drag.png);
 	background-repeat: repeat;
 	width: calc(100% - 18px);
@@ -28,7 +28,7 @@ fieldset.sortable table tr.form-row.has_original td.original p {
 /* styles for stacked inlines */
 fieldset.sortable .inline-related.has_original h3 {
 	background: url(../icons/drag.png) repeat;
-	cursor: ns-resize;
+	cursor: grab;
 }
 fieldset.sortable :is(.inline-related, td.original) span.sort {
 	float: right;
@@ -39,15 +39,15 @@ fieldset.sortable :is(.inline-related, td.original) span.sort i {
 	height: 0;
 	display: inline-block;
 	border-style: solid;
-	margin: 2px;
+	margin: 2.5px;
 	cursor: pointer;
 }
 fieldset.sortable .inline-related span.sort i.move-begin {
-	border-width: 0 6px 6px 6px;
+	border-width: 0 7.5px 7.5px 7.5px;
 	border-color: transparent transparent currentColor transparent;
 }
 fieldset.sortable .inline-related span.sort i.move-end {
-	border-width: 6px 6px 0 6px;
+	border-width: 7.5px 7.5px 0 7.5px;
 	border-color: currentColor transparent transparent transparent;
 }
 fieldset.sortable td.original span.sort i.move-begin {
