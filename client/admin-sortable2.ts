@@ -97,12 +97,12 @@ class ListSortable {
 				return;
 			order = parseInt(order) + this.orderDirection;
 		}
- 		const updatedItems = new Map<number, number>();
+ 		const updatedItems = new Map<string, number>();
 		for (let row of updatedRows) {
 			const pk = row.querySelector('.handle')?.getAttribute('pk');
 			if (pk) {
 				row.querySelector('.handle')?.setAttribute('order', String(order));
-				updatedItems.set(parseInt(pk), order);
+				updatedItems.set(pk, order);
 				order += this.orderDirection;
 			}
 		}
