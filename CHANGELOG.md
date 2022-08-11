@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.1.1
+- Enlarge top/down buttons on top of header of `SortableTabularInline`.
+
 ### 2.1
 - Introduce classes `adminsortable2.admin.SortableStackedInline` and `adminsortable2.admin.SortableTabularInline`
   to resort items to the begin or end of the list of those inlines.
