@@ -147,15 +147,21 @@ Please follow these rules when quoting strings:
   humans), shall be quoted using single quotes: `'…'`. This makes it easier to determine if we have
   to extra check for wording.
 
+There is a good reason to follow this rule: Strings intended for humans, sometimes contain
+apostrophes, for instance `"This is John's profile"`. By using double quotes, those apostrophes must
+not be escaped. On the other side whenever we write HTML, we have to use double quotes for
+parameters, for instance `'<a href="https://example.org">Click here!</a>'`. By using single quotes,
+those double quotes must not be escaped.
+
 
 Lists versus Tuples
 ===================
 
 Unfortunately in Django, `we developers far too often`_ intermixed lists and tuples without being
-aware of their intention. Therefor please follow this rule:
+aware of their intention. Therefore please follow this rule:
 
-Always use lists, if there is a theoretical possibility that someday, someone might add an item.
-Therefore ``list_display``, ``list_display_links``, ``fields``, etc. shall always be lists.
+Always use lists, if there is a theoretical possibility that someday, someone might add another
+item. Therefore ``list_display``, ``list_display_links``, ``fields``, etc. must always be lists.
 
 Always use tuples, if the number of items is restricted by nature, and there isn't even a
 theoretical possibility of being extended.
