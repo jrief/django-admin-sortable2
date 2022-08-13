@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.1.2
+- Fix #320: Adding Jinja2 as template engine didn't work because it is unable to handle file references using `pathlib.Path`.
+
 ### 2.1.1
 - Enlarge top/down buttons on top of header of `SortableTabularInline`.
 
