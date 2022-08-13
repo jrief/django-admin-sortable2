@@ -96,11 +96,12 @@ class SortableAdminMixin(SortableAdminBase):
     def change_list_template(self):
         opts = self.model._meta
         app_label = opts.app_label
-        return [
+        templates = [
             Path('adminsortable2') / Path(app_label) / Path(opts.model_name) / Path('change_list.html'),
             Path('adminsortable2') / Path(app_label) / Path('change_list.html'),
             Path('adminsortable2/change_list.html'),
         ]
+        return [str(path) for path in templates]
 
     def __init__(self, model, admin_site):
         self.default_order_direction, self.default_order_field = _get_default_ordering(model, self)
