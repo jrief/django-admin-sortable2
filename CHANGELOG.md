@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.1.3
+- Fix #328: Replace `uglify` against `terser` to minify JavaScript files.
+
 ### 2.1.2
 - Fix #320: Adding Jinja2 as template engine didn't work because it is unable to handle file references using `pathlib.Path`.
 
