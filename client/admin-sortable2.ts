@@ -1,4 +1,4 @@
-import Sortable, { MultiDrag, SortableEvent } from 'sortablejs';
+import Sortable, { MoveEvent, MultiDrag, SortableEvent } from 'sortablejs';
 
 Sortable.mount(new MultiDrag());
 
@@ -220,6 +220,7 @@ class InlineSortable {
 				handle: 'td.original p',
 				draggable: 'tr',
 				onEnd: event => this.onEnd(),
+				onMove: event => this.onMove(event),
 			});
 		} else {
 			// stacked inline
@@ -252,6 +253,10 @@ class InlineSortable {
 				reorderInputElement.value = `${index + 1}`;
 			});
 		}
+	}
+
+	private onMove(event: MoveEvent) {
+		return event.related.classList.contains("has_original");
 	}
 
 	private move(target: EventTarget | null, direction: 'begin' | 'end') {
