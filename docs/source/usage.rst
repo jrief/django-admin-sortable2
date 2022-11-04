@@ -315,6 +315,15 @@ then apply the changes to the database using:
 .. note:: If you omit to prepopulate the ordering field with unique values, after adding that field
 	to an existing model, then attempting to reorder items in the admin interface will fail.
 
+If the model does not specify a default ordering field in its ``Meta`` class, define an 
+``_ordering_sortable`` attribute on the model to specify the ordering:
+
+.. code:: python
+
+    class Button(models.Model):
+        _ordering_sortable = ['weight']
+        # .../...
+		
 
 Note on unique indices on the ordering field
 ============================================
