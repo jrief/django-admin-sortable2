@@ -17,10 +17,15 @@ class Command(BaseCommand):
             except ImportError:
                 raise CommandError('Unable to load model "%s"' % modelname)
 
-            if not hasattr(Model._meta, 'ordering') or len(Model._meta.ordering) == 0:
-                raise CommandError(f'Model "{modelname}" does not define field "ordering" in its Meta class')
+            try:
+                orderfield = Model._meta.ordering[0]
+            except IndexError:
+                try:
+                    orderfield = Model._ordering_sortable[0]
+                except AttributeError:
+                    raise CommandError(
+                        f'Model "{modelname}" does not define field "ordering" in its Meta class nor "_ordering_sortable" model attribute')
 
-            orderfield = Model._meta.ordering[0]
             if orderfield[0] == '-':
                 orderfield = orderfield[1:]
 
