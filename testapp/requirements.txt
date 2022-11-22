@@ -7,7 +7,7 @@ greenlet==1.1.2
 idna==3.3
 iniconfig==1.1.1
 packaging==21.3
-Pillow==9.1.1
+Pillow==9.3.0
 playwright==1.22.0
 pluggy==1.0.0
 py==1.11.0
