@@ -1,6 +1,6 @@
 asgiref==3.5.0
 attrs==21.4.0
-certifi==2021.10.8
+certifi==2022.12.7
 charset-normalizer==2.0.12
 jinja2
 greenlet==1.1.2
