@@ -494,7 +494,7 @@ class SortableInlineAdminMixin:
         super().__init__(parent_model, admin_site)
 
     def get_fields(self, *args, **kwargs):
-        fields = super().get_fields(*args, **kwargs)
+        fields = list(super().get_fields(*args, **kwargs))
         if self.default_order_field not in fields:
             fields.append(self.default_order_field)
         return fields
