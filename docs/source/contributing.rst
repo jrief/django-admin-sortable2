@@ -27,8 +27,9 @@ compiler:
 	cd django-admin-sortable2
 	npm install --also=dev
 	npm run build
+
 	# and optionally for a minimized version
-	npm run uglify
+	npm run minify
 
 This then builds and bundles the JavaScript file
 ``adminsortable2/static/adminsortable2/js/adminsortable2.js`` which later on is imported by the
@@ -45,23 +46,26 @@ Run the Demo App
 **django-admin-sotable2** is shipped with a demo app, which shall be used as a reference when
 reporting bugs, proposing new features or to just get a quick first impression of this library.
 
-Follow these steps to run this demo app.
+Follow these steps to run this demo app. Note that in addition to Python, you also need a recent
+version of NodeJS.
 
 .. code:: bash
 
 	git clone https://github.com/jrief/django-admin-sortable2.git
 	cd django-admin-sortable2
-	npm install --also=dev
+	npm install --include=dev
 	npm run build
-	npm run uglify
+	npm run minify
 	python -m pip install Django
 	python -m pip install -r testapp/requirements.txt
+
 	# we use the default template files and patch them, rather than using our own modified one
 	django_version=$(python -c 'from django import VERSION; print("{0}.{1}".format(*VERSION))')
 	curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
 	curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
 	patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html patches/stacked-django-4.0.patch
 	patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html patches/tabular-django-4.0.patch
+
 	cd testapp
 	./manage.py migrate
 	./manage.py loaddata fixtures/data.json

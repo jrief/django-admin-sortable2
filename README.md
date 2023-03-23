@@ -35,7 +35,8 @@ https://github.com/jrief/django-admin-sortable2
 
 Detailled documentation can be found on [ReadTheDocs](https://django-admin-sortable2.readthedocs.org/en/latest/).
 
-To ask questions or reporting bugs, please read the [contributor's guide](https://django-admin-sortable2.readthedocs.io/en/latest/contributing.html).
+Before reporting bugs or asking questions, please read the
+[contributor's guide](https://django-admin-sortable2.readthedocs.io/en/latest/contributing.html).
 
 
 ## License
