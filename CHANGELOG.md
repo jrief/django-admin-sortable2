@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.1.5
+- Fix: In `SortableInlineAdminMixin.get_fields()`, convert potential tuple to list in order to append extra elements.
+
 ### 2.1.4
 - Fix: It not is not possible anymore, to move items beyond the last item, i.e. after an empty extra rows for new items
   or even after the row with the "Add another chapter" link.
