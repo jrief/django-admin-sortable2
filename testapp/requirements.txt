@@ -10,7 +10,7 @@ packaging==21.3
 playwright==1.31.1
 pluggy==1.0.0
 py==1.11.0
-pyee==8.1.0
+pyee==9.0.4
 pyparsing==3.0.9
 pytest==7.2.2
 pytest-base-url==2.0.0
