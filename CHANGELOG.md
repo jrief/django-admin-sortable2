@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.1.6
+- Add support for Django-4.2.
+
 ### 2.1.5
 - Fix: In `SortableInlineAdminMixin.get_fields()`, convert potential tuple to list in order to append extra elements.
 

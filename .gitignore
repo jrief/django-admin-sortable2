@@ -5,6 +5,7 @@
 *.egg-info
 *.sqlite3
 *.coverage
+*.tsbuildinfo
 *~
 .DS_Store
 .tmp*
