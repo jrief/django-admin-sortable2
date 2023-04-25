@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.1.7
+- Fix: pass kwargs to super get_inline_formsets to fix integrations
+
 ### 2.1.6
 - Add support for Django-4.2.
 
