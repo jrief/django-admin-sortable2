@@ -76,8 +76,8 @@ class SortableAdminBase:
             )
         return formset_params
 
-    def get_inline_formsets(self, request, formsets, inline_instances, obj=None):
-        inline_admin_formsets = super().get_inline_formsets(request, formsets, inline_instances, obj)
+    def get_inline_formsets(self, request, formsets, inline_instances, obj=None, **kwargs):
+        inline_admin_formsets = super().get_inline_formsets(request, formsets, inline_instances, obj, **kwargs)
         for inline_admin_formset in inline_admin_formsets:
             if hasattr(inline_admin_formset.formset, 'default_order_direction'):
                 classes = inline_admin_formset.classes.split()
