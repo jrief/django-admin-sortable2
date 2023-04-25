@@ -2,6 +2,10 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.1.7
+- Fix: In combination with [django-nested-admin](https://github.com/theatlantic/django-nested-admin) integration fails
+  with an error in inlien formsets.
+
 ### 2.1.6
 - Add support for Django-4.2.
 
