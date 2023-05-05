@@ -336,3 +336,32 @@ See https://code.djangoproject.com/ticket/20708 for details.
 
 Therefore I strongly advise against setting ``unique=True`` on the position field, unless you want
 unportable code, which only works with Postgres databases.
+
+
+Usage in combination with other libraries
+=========================================
+
+When combining **django-admin-sortable2**'s admin classes with those of other libraries, inheritance order is important.
+
+django-solo
+-----------
+
+When using an admin class that inherits from `django-solo <https://github.com/lazybird/django-solo>`_'s ``SingletonModelAdmin`` class, the ``SortableAdminBase`` class must be specified first.
+
+This first example is incorrect, and will cause an exception of ``TypeError: getattr(): attribute name must be string`` when saving inlines within the admin class.
+
+.. code:: python
+
+	@admin.register(models.Homepage)
+	class HomepageAdmin(SingletonModelAdmin, SortableAdminBase):
+		# ...
+
+The correct inheritance order is:
+
+.. code:: python
+
+	@admin.register(models.Homepage)
+	class HomepageAdmin(SortableAdminBase, SingletonModelAdmin):
+		# ...
+
+Contributions of other examples to this section are welcome.
