@@ -252,7 +252,7 @@ Setup the Tabular Inlines to enable Buttons to be sorted in Django Admin
 .. code:: python
 
 	from django.contrib import admin
-	from adminsortable2.admin import SortableInlineAdminMixin
+	from adminsortable2.admin import SortableInlineAdminMixin, SortableAdminBase
 	from models import Panel
 
 	class ButtonTabularInline(SortableInlineAdminMixin, admin.TabularInline):
@@ -260,7 +260,7 @@ Setup the Tabular Inlines to enable Buttons to be sorted in Django Admin
 	    model = Panel.buttons.through
 
 	@admin.register(Panel)
-	class PanelAdmin(admin.ModelAdmin)
+	class PanelAdmin(SortableAdminBase, admin.ModelAdmin):
 	    inlines = (ButtonTabularInline,)
 
 
