@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.1.9
+- Folder `testapp` is not published on PyPI anymore.
+
 ### 2.1.8
 - Fix: In combination with [django-nested-admin](https://github.com/theatlantic/django-nested-admin) integration fails
   with an error in inlien formsets.
