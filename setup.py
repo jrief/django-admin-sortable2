@@ -47,7 +47,7 @@ setup(
     install_requires=[
         'Django>=4.0',
     ],
-    packages=find_packages(exclude=['client', 'testapp', 'docs']),
+    packages=find_packages(exclude=['client', 'testapp', 'testapp*', 'docs']),
     include_package_data=True,
     zip_safe=False,
 )
