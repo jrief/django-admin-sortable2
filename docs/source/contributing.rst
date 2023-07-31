@@ -43,7 +43,7 @@ sortable-admin mixin classes. The minimized version can be imported as
 Run the Demo App
 ================
 
-**django-admin-sotable2** is shipped with a demo app, which shall be used as a reference when
+**django-admin-sortable2** is shipped with a demo app, which shall be used as a reference when
 reporting bugs, proposing new features or to just get a quick first impression of this library.
 
 Follow these steps to run this demo app. Note that in addition to Python, you also need a recent
