@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import json
 from pathlib import Path
 from itertools import chain
 from types import MethodType
+from typing import Optional
 
 from django import VERSION as DJANGO_VERSION
 from django.conf import settings
@@ -11,8 +14,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
 from django.db import router, transaction
+from django.db.models import OrderBy
 from django.db.models.aggregates import Max
-from django.db.models.expressions import F
+from django.db.models.expressions import BaseExpression, F
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save, pre_save
 from django.forms import widgets
@@ -26,24 +30,39 @@ from django.urls import path, reverse
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
 
+def _parse_ordering_part(part: OrderBy | BaseExpression | F | str) -> tuple[str, Optional[str]]:
+    if isinstance(part, str):
+        return ('-', part[1:]) if part.startswith('-') else ('', part)
+    elif isinstance(part, OrderBy) and isinstance(part.expression, F):
+        return ('-' if part.descending else ''), part.expression.name
+    elif isinstance(part, F):
+        return '', part.name
+    else:
+        return '', None
+
+
 def _get_default_ordering(model, model_admin):
     try:
         # first try with the model admin ordering
-        _, prefix, field_name = model_admin.ordering[0].rpartition('-')
+        prefix, field_name = _parse_ordering_part(model_admin.ordering[0])
     except (AttributeError, IndexError, TypeError):
         pass
     else:
-        return prefix, field_name
+        if field_name is not None:
+            return prefix, field_name
 
     try:
         # then try with the model ordering
-        _, prefix, field_name = model._meta.ordering[0].rpartition('-')
+        prefix, field_name = _parse_ordering_part(model._meta.ordering[0])
     except (AttributeError, IndexError):
-        raise ImproperlyConfigured(
-            f"Model {model.__module__}.{model.__name__} requires a list or tuple 'ordering' in its Meta class"
-        )
+       pass
     else:
-        return prefix, field_name
+        if field_name is not None:
+            return prefix, field_name
+
+    raise ImproperlyConfigured(
+        f"Model {model.__module__}.{model.__name__} requires a list or tuple 'ordering' in its Meta class"
+    )
 
 
 class MovePageActionForm(admin.helpers.ActionForm):
@@ -174,7 +193,9 @@ class SortableAdminMixin(SortableAdminBase):
     def get_changelist_instance(self, request):
         cl = super().get_changelist_instance(request)
         qs = self.get_queryset(request)
-        _, order_direction, order_field = cl.get_ordering(request, qs)[0].rpartition('-')
+        ordering = cl.get_ordering(request, qs)
+        assert len(ordering) > 0 # `ChangeList.get_ordering` always returns deterministic ordering.
+        order_direction, order_field = _parse_ordering_part(ordering[0])
         if order_field == self.default_order_field:
             self.enable_sorting = True
             self.order_by = f'{order_direction}{order_field}'

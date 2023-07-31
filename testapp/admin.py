@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.template.response import TemplateResponse
 
 from adminsortable2.admin import SortableAdminBase, SortableAdminMixin, SortableInlineAdminMixin, SortableStackedInline, SortableTabularInline
 

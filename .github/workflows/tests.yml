@@ -21,9 +21,12 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
         node-version: ["16.x"]
         django-version: ["4.0.*", "4.1.*", "4.2.*"]
+        exclude: # https://docs.djangoproject.com/en/4.2/faq/install/#what-python-version-can-i-use-with-django
+          - python-version: "3.11"
+            django-version: "4.0.*"
 
     steps:
     - uses: actions/checkout@v3

@@ -61,8 +61,9 @@ version of NodeJS.
 
 	# we use the default template files and patch them, rather than using our own modified one
 	django_version=$(python -c 'from django import VERSION; print("{0}.{1}".format(*VERSION))')
-	curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
-	curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
+	mkdir adminsortable2/templates/adminsortable2/edit_inline
+	curl --no-progress-meter --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
+	curl --no-progress-meter --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
 	patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html patches/stacked-django-4.0.patch
 	patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html patches/tabular-django-4.0.patch
 
@@ -103,18 +104,22 @@ Follow these steps to run all unit- and end-to-end tests.
 
 	git clone https://github.com/jrief/django-admin-sortable2.git
 	cd django-admin-sortable2
-	npm install --also=dev
+	npm install --include=dev
 	npm run build
 	python -m pip install Django
 	python -m pip install -r testapp/requirements.txt
 	python -m playwright install
 	python -m playwright install-deps
-	python -m pytest testapp
+
+	# we use the default template files and patch them, rather than using our own modified one
 	django_version=$(python -c 'from django import VERSION; print("{0}.{1}".format(*VERSION))')
-	curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
-	curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
+	mkdir adminsortable2/templates/adminsortable2/edit_inline
+	curl --no-progress-meter --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
+	curl --no-progress-meter --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
 	patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html patches/stacked-django-4.0.patch
 	patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html patches/tabular-django-4.0.patch
+
+	python -m pytest testapp
 
 .. _Playwright-Python: https://playwright.dev/python/
 .. _pytest-django: https://pytest-django.readthedocs.io/en/latest/
