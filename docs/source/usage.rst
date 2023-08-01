@@ -60,7 +60,7 @@ Django. Use one of these models fields:
 * :class:`~django.db.models.PositiveSmallIntegerField` (recommended for small sets)
 * :class:`~django.db.models.SmallIntegerField`
 
-In addition to the reccomended fields, :class:`~django.db.models.DecimalField` or
+In addition to the recommended fields, :class:`~django.db.models.DecimalField` or
 :class:`~django.db.models.FloatField` may work, but haven't been testest.
 
 .. warning:: Do not make this field unique! See below why.
