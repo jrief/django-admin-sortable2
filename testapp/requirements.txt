@@ -22,5 +22,5 @@ requests==2.31.0
 sqlparse==0.4.4
 text-unidecode==1.3
 tomli==2.0.1
-urllib3==1.26.15
+urllib3==1.26.18
 websockets==10.1
