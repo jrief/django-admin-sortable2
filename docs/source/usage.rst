@@ -70,7 +70,7 @@ In Django's Admin, make the List View sortable
 ==============================================
 
 If a models contains an ordering field, all we need to make the Django's Admin List View sortable,
-is adding the mixin class :class:`adminsortable2.admin.SortableAdminMixin`. By inserting from this
+is adding the mixin class :class:`adminsortable2.admin.SortableAdminMixin`. By inheriting from this
 mixin class together with :class:`~django.contrib.admin.ModelAdmin`, we get a list view which
 without any further configuration, owns the functionality to sort its items.
 
