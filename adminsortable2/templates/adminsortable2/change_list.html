@@ -1,4 +1,4 @@
-{% extends base_change_list_template %}
+{% extends base_change_list_template|default:'admin/change_list.html' %}
 
 {% block extrahead %}
 	{{ block.super }}
