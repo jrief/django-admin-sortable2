@@ -21,12 +21,20 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
         node-version: ["16.x"]
-        django-version: ["4.0.*", "4.1.*", "4.2.*"]
+        django-version: ["4.0.*", "4.1.*", "4.2.*", "5.0.*"]
         exclude: # https://docs.djangoproject.com/en/4.2/faq/install/#what-python-version-can-i-use-with-django
+          - python-version: "3.8"
+            django-version: "5.0.*"
+          - python-version: "3.9"
+            django-version: "5.0.*"
           - python-version: "3.11"
             django-version: "4.0.*"
+          - python-version: "3.12"
+            django-version: "4.0.*"
+          - python-version: "3.12"
+            django-version: "4.1.*"
 
     steps:
     - uses: actions/checkout@v3
@@ -49,7 +57,7 @@ jobs:
     - name: Patch templates
       run: |
         mkdir -p adminsortable2/templates/adminsortable2/edit_inline
-        DJANGO_VERSIONS=("4.0" "4.1" "4.2")
+        DJANGO_VERSIONS=("4.0" "4.1" "4.2", "5.0")
         for django_version in ${DJANGO_VERSIONS[@]}; do
           echo $django_version
           curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html

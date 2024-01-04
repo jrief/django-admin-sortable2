@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.1.11
+- Add support for Django 5.0
+
 ### 2.1.10
 - Do not create sourcemaps in production build.
 
