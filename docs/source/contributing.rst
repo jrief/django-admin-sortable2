@@ -25,7 +25,7 @@ compiler:
 
 	git clone https://github.com/jrief/django-admin-sortable2.git
 	cd django-admin-sortable2
-	npm install --also=dev
+	npm install
 	npm run build
 
 	# and optionally for a minimized version
@@ -53,7 +53,7 @@ version of NodeJS.
 
 	git clone https://github.com/jrief/django-admin-sortable2.git
 	cd django-admin-sortable2
-	npm install --include=dev
+	npm install
 	npm run build
 	npm run minify
 	python -m pip install Django
@@ -104,7 +104,7 @@ Follow these steps to run all unit- and end-to-end tests.
 
 	git clone https://github.com/jrief/django-admin-sortable2.git
 	cd django-admin-sortable2
-	npm install --include=dev
+	npm install
 	npm run build
 	python -m pip install Django
 	python -m pip install -r testapp/requirements.txt
