@@ -45,8 +45,10 @@ jobs:
     - name: Install Dependencies
       run: |
         npm ci --include=dev
-        pip install "Django==${{ matrix.django-version }}"
-        pip install -r testapp/requirements.txt
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade setuptools wheel
+        python -m pip install "Django==${{ matrix.django-version }}"
+        python -m pip install -r testapp/requirements.txt
         python -m playwright install
         python -m playwright install-deps
     - name: Build Client
