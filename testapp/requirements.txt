@@ -5,12 +5,12 @@ charset-normalizer==2.0.12
 jinja2
 idna==3.3
 iniconfig==2.0.0
-greenlet==3.0.3
+greenlet==3.0.0
 packaging==21.3
-playwright==1.31.1
+playwright==1.39.0
 pluggy==1.0.0
 py==1.11.0
-pyee==9.0.4
+pyee==11.0.1
 pyparsing==3.0.9
 pytest==7.2.2
 pytest-base-url==2.0.0
