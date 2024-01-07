@@ -5,7 +5,7 @@ charset-normalizer==2.0.12
 jinja2
 idna==3.3
 iniconfig==2.0.0
-greenlet==2.0.1
+greenlet==3.0.3
 packaging==21.3
 playwright==1.31.1
 pluggy==1.0.0
