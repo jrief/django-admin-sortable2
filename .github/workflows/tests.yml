@@ -42,9 +42,10 @@ jobs:
       uses: actions/setup-node@v3
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
       run: |
-        python --version
         npm ci --include=dev
         python -m pip install --upgrade pip
         python -m pip install --upgrade setuptools wheel
