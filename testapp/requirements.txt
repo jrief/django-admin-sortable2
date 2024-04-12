@@ -3,7 +3,7 @@ attrs==21.4.0
 certifi==2023.7.22
 charset-normalizer==2.0.12
 jinja2
-idna==3.3
+idna==3.7
 iniconfig==2.0.0
 greenlet==2.0.1
 packaging==21.3
