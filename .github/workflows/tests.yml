@@ -59,4 +59,5 @@ jobs:
         done
     - name: Test with pytest
       run: |
+        mkdir -p workdir
         python -m pytest testapp
