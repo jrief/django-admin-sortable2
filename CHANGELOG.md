@@ -2,6 +2,15 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.2
+- Add support for Django-5.0
+- Drop support for Python-3.12
+- Drop support for Django-4.1 and lower.
+
+### 2.1.11
+- Upgrade all external dependencies to their latest versions.
+- Adopt E2E tests to use Playwright's `locator`.
+
 ### 2.1.10
 - Do not create sourcemaps in production build.
 
