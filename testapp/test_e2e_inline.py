@@ -1,4 +1,5 @@
 import pytest
+from time import sleep
 from playwright.sync_api import expect
 
 from testapp.models import Book
@@ -69,15 +70,12 @@ def test_drag_down(adminpage, slug, direction, chapter, drag_selector):
     expect_fieldset_is_ordered(group_locator, direction)
     start_order = get_start_order(direction)
     expect(group_locator.locator(f'{chapter}_set-0 input._reorder_')).to_have_value(str(start_order))
-    if slug in ['book6']:
-        adminpage.screenshot(path=f'../workdir/screenshot-{slug}-before.png')
-    drag_kwargs = {'source_position': {'x': 200, 'y': 10}, 'target_position': {'x': 200, 'y': 10}}
+    drag_kwargs = {'source_position': {'x': 190, 'y': 9}, 'target_position': {'x': 200, 'y': 10}}
     drag_handle = group_locator.locator(f'{chapter}_set-0 {drag_selector}')
     expect(drag_handle).to_be_visible()
-    drag_handle.drag_to(group_locator.locator(f'{chapter}_set-4'), **drag_kwargs)
-    if slug in ['book6']:
-        adminpage.screenshot(path=f'../workdir/screenshot-{slug}-after.png')
-    expect(group_locator.locator(f'{chapter}_set-0 input._reorder_')).to_have_value(str(start_order + direction * 4))
+    drag_handle.drag_to(group_locator.locator(f'{chapter}_set-3'), **drag_kwargs)
+    sleep(0.3)  # sortablejs needs some time to update the order
+    expect(group_locator.locator(f'{chapter}_set-0 input._reorder_')).to_have_value(str(start_order + direction * 3))
     expect(group_locator.locator(f'{chapter}_set-1 input._reorder_')).to_have_value(str(start_order))
     expect_fieldset_is_ordered(group_locator, direction)
 
