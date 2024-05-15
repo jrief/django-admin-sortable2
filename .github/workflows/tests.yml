@@ -45,7 +45,6 @@ jobs:
     - name: Build Client
       run: |
         npm run build
-        npm run minify
     - name: Patch templates
       run: |
         mkdir -p adminsortable2/templates/adminsortable2/edit_inline
@@ -59,4 +58,5 @@ jobs:
         done
     - name: Test with pytest
       run: |
+        mkdir -p workdir
         python -m pytest testapp

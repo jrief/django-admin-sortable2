@@ -1,11 +1,14 @@
 const { build } = require('esbuild');
+const buildOptions = require('yargs-parser')(process.argv.slice(2), {
+  boolean: ['debug'],
+});
 
 build({
   entryPoints: ['client/admin-sortable2.ts'],
   bundle: true,
-  minify: false,
-  outfile: 'adminsortable2/static/adminsortable2/js/adminsortable2.js',
+  minify: !buildOptions.debug,
+  sourcemap: buildOptions.debug,
+  outfile: 'adminsortable2/static/adminsortable2/js/adminsortable2' + (buildOptions.debug ? '' : '.min') + '.js',
   plugins: [],
-  sourcemap: false,
   target: ['es2020', 'chrome84', 'firefox84', 'safari14', 'edge84']
 }).catch(() => process.exit(1));

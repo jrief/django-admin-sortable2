@@ -19,22 +19,23 @@ Writing Code
 Before hacking into the code, adopt your IDE to respect the projects's `.editorconfig`_ file.
 
 When installing from GitHub, you *must* build the JavaScript client using the esbuild_ TypeScript
-compiler:
+compiler. Ensure that you have a recent version of NodeJS (18+) installed. Then run the following
+commands:
 
 .. code-block:: shell
 
 	git clone https://github.com/jrief/django-admin-sortable2.git
 	cd django-admin-sortable2
-	npm install --also=dev
+	npm install --include=dev
 	npm run build
 
-	# and optionally for a minimized version
-	npm run minify
+	# for an unminimized version including a sourcemap, run
+	npm run build -- --debug
 
 This then builds and bundles the JavaScript file
-``adminsortable2/static/adminsortable2/js/adminsortable2.js`` which later on is imported by the
-sortable-admin mixin classes. The minimized version can be imported as
-``adminsortable2/static/adminsortable2/js/adminsortable2.min.js``
+``adminsortable2/static/adminsortable2/js/adminsortable2.min.js`` which later on is imported by the
+sortable-admin mixin classes. The unminimized version can be imported as
+``adminsortable2/static/adminsortable2/js/adminsortable2.js``
 
 .. _.editorconfig: https://editorconfig.org/
 .. _esbuild: https://esbuild.github.io/
