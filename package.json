@@ -3,16 +3,15 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "node client/build.cjs",
-    "minify": "terser --compress --mangle --output adminsortable2/static/adminsortable2/js/adminsortable2.min.js -- adminsortable2/static/adminsortable2/js/adminsortable2.js"
+    "build": "node client/build.cjs"
   },
   "devDependencies": {
-    "@types/sortablejs": "^1.10.7",
-    "esbuild": "^0.11.23",
-    "playwright": "^1.20.2",
-    "sortablejs": "^1.15.0",
-    "terser": "^5.15.0",
-    "tslib": "^2.2.0",
-    "typescript": "^4.1.4"
+    "@types/sortablejs": "^1.15.8",
+    "esbuild": "^0.21.2",
+    "playwright": "^1.44.0",
+    "sortablejs": "^1.15.2",
+    "tslib": "^2.6.2",
+    "typescript": "^4.9.5",
+    "yargs-parser": "^21.1.1"
   }
 }
