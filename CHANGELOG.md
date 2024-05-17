@@ -8,8 +8,9 @@
 
 ### 2.2
 - Add support for Django-5.0
-- Drop support for Python-3.12
+- Add support for Python-3.12
 - Drop support for Django-4.1 and lower.
+- Drop support for Python-3.8
 
 ### 2.1.11
 - Upgrade all external dependencies to their latest versions.
