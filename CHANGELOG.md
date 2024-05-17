@@ -2,6 +2,10 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.2.1
+- Fix: With setting `DEBUG = True`, loading the unminimized JavaScript files failed. They now are added during build
+  time.
+
 ### 2.2
 - Add support for Django-5.0
 - Drop support for Python-3.12
