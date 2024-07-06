@@ -1,6 +1,6 @@
 asgiref==3.6.0
 attrs==23.2.0
-certifi==2024.2.2
+certifi==2024.7.4
 charset-normalizer==3.3.2
 jinja2
 idna==3.3
