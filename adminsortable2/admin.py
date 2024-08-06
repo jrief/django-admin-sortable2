@@ -13,7 +13,7 @@ from django.contrib.contenttypes.forms import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage
-from django.db import router, transaction
+from django.db import router, transaction, models
 from django.db.models import OrderBy
 from django.db.models.aggregates import Max
 from django.db.models.expressions import BaseExpression, F
@@ -359,7 +359,7 @@ class SortableAdminMixin(SortableAdminBase):
 
     def get_max_order(self, request, obj=None):
         return self.model.objects.aggregate(
-            max_order=Coalesce(Max(self.default_order_field), 0)
+            max_order=Coalesce(Max(self.default_order_field, output_field=models.IntegerField()), 0),
         )['max_order']
 
     def _bulk_move(self, request, queryset, method):
@@ -445,7 +445,8 @@ class PolymorphicSortableAdminMixin(SortableAdminMixin):
     """
     def get_max_order(self, request, obj=None):
         return self.base_model.objects.aggregate(
-            max_order=Coalesce(Max(self.default_order_field), 0)
+            max_order=Coalesce(Max(self.default_order_field, output_field=IntegerField), 0),
+            output_field=IntegerField,
         )['max_order']
 
 
