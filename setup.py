@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import io
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 from adminsortable2 import __version__
 
 
@@ -48,7 +48,7 @@ setup(
     install_requires=[
         'Django>=4.2',
     ],
-    packages=find_packages(exclude=['client', 'testapp', 'testapp*', 'docs']),
+    packages=find_namespace_packages(exclude=['client', 'testapp', 'testapp*', 'docs']),
     include_package_data=True,
     zip_safe=False,
 )
