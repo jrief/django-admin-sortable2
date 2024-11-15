@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.2.4
+- Fix: Selected ordering is not always preserved when using "Save as new" in inline admin.
+
 ### 2.2.3
 - Add compatibility for Django-5.1
 
