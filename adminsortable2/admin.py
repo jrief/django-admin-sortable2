@@ -308,7 +308,7 @@ class SortableAdminMixin(SortableAdminBase):
 
         with transaction.atomic():
             try:
-                obj = model.objects.get(**obj_filters)
+                obj = model.objects.select_for_update().get(**obj_filters)
             except model.MultipleObjectsReturned:
 
                 # noinspection PyProtectedMember
@@ -318,7 +318,7 @@ class SortableAdminMixin(SortableAdminBase):
                     "to adjust this inconsistency."
                 )
 
-            move_qs = model.objects.filter(**move_filter).order_by(order_by)
+            move_qs = model.objects.select_for_update().filter(**move_filter).order_by(order_by)
             move_objs = list(move_qs)
             for instance in move_objs:
                 setattr(
