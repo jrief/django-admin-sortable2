@@ -23,7 +23,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         node-version: ["18.x"]
         django-version: ["4.2.*", "5.0.*", "5.1.*"]
         exclude:  # https://docs.djangoproject.com/en/5.0/faq/install/#what-python-version-can-i-use-with-django
