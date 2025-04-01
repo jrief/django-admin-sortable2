@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.2.6
+- Fix adding new models with inlines: automatically set order of new entries.
+
 ### 2.2.5
 - Fix sorting in parallel requests.
 - Add support for Python 3.13.
