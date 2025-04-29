@@ -99,6 +99,7 @@ class Chapter(models.Model):
         blank=False,
         null=False,
         db_index=True,
+        default=0,
     )
 
     def __str__(self):
