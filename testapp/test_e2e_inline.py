@@ -2,7 +2,7 @@ import pytest
 from time import sleep
 from playwright.sync_api import expect
 
-from testapp.models import Book
+from testapp.models import Book, Chapter
 
 
 slugs = [
@@ -119,3 +119,26 @@ def test_move_begin(adminpage, slug, direction, chapter, drag_selector):
     expect(inline_locator.locator(f'{chapter}_set-8 input._reorder_')).to_have_value(str(start_order))
     expect(inline_locator.locator(f'{chapter}_set-3 input._reorder_')).to_have_value(str(start_order + direction * 4))
     expect_fieldset_is_ordered(inline_locator, direction)
+
+
+@pytest.mark.parametrize('slug', ["book1"])
+def test_create(adminpage, slug, direction, chapter, drag_selector):
+    adminpage.get_by_role("link", name="Books (ordered by model,").click()
+    adminpage.get_by_role("link", name="Add book1").click()
+    adminpage.locator("#id_title").fill("test")
+    adminpage.get_by_label("Author:").select_option("8")
+    adminpage.locator("#id_chapter1_set-0-title").click()
+    adminpage.locator("#id_chapter1_set-0-title").fill("111")
+    adminpage.get_by_role("link", name="Add another Chapter1").click()
+    adminpage.locator("#id_chapter1_set-1-title").click()
+    adminpage.locator("#id_chapter1_set-1-title").fill("222")
+    adminpage.get_by_role("link", name="Add another Chapter1").click()
+    adminpage.locator("#id_chapter1_set-2-title").click()
+    adminpage.locator("#id_chapter1_set-2-title").fill("333")
+    adminpage.get_by_role("button", name="Save", exact=True).click()
+
+    assert Chapter.objects.get(title="111").my_order == 1
+    assert Chapter.objects.get(title="222").my_order == 2
+    assert Chapter.objects.get(title="333").my_order == 3
+    assert Book.objects.get(title="test").my_order != 0
+    
