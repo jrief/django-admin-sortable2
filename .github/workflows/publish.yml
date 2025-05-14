@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11"]
-        node-version: ["18.x"]
+        node-version: ["20.x"]
 
     steps:
     - uses: actions/checkout@v3
