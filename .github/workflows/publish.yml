@@ -37,7 +37,7 @@ jobs:
     - name: Patch templates
       run: |
         mkdir -p adminsortable2/templates/adminsortable2/edit_inline
-        DJANGO_VERSIONS=("4.2" "5.0" "5.1")
+        DJANGO_VERSIONS=("4.2" "5.0" "5.1" "5.2")
         for django_version in ${DJANGO_VERSIONS[@]}; do
           echo $django_version
           curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html

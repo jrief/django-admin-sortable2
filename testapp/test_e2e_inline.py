@@ -2,6 +2,8 @@ import pytest
 from time import sleep
 from playwright.sync_api import expect
 
+from django import VERSION as DJANGO_VERSION
+
 from testapp.models import Book, Chapter
 
 
@@ -129,10 +131,11 @@ def test_create(adminpage, slug, direction, chapter, drag_selector):
     adminpage.get_by_label("Author:").select_option("8")
     adminpage.locator("#id_chapter1_set-0-title").click()
     adminpage.locator("#id_chapter1_set-0-title").fill("111")
-    adminpage.get_by_role("link", name="Add another Chapter1").click()
+    add_inline_link = "link" if DJANGO_VERSION < (5, 2) else "button"
+    adminpage.get_by_role(add_inline_link, name="Add another Chapter1").click()
     adminpage.locator("#id_chapter1_set-1-title").click()
     adminpage.locator("#id_chapter1_set-1-title").fill("222")
-    adminpage.get_by_role("link", name="Add another Chapter1").click()
+    adminpage.get_by_role(add_inline_link, name="Add another Chapter1").click()
     adminpage.locator("#id_chapter1_set-2-title").click()
     adminpage.locator("#id_chapter1_set-2-title").fill("333")
     adminpage.get_by_role("button", name="Save", exact=True).click()
@@ -141,4 +144,3 @@ def test_create(adminpage, slug, direction, chapter, drag_selector):
     assert Chapter.objects.get(title="222").my_order == 2
     assert Chapter.objects.get(title="333").my_order == 3
     assert Book.objects.get(title="test").my_order != 0
-    
