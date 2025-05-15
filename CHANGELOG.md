@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.2.8
+- Remove paths `docs` and `parler_example` from installable package.
+
 ### 2.2.7
 - Add support for Django-5.2.
 
