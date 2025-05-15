@@ -50,7 +50,7 @@ setup(
     install_requires=[
         'Django>=4.2',
     ],
-    packages=find_namespace_packages(exclude=['client', 'testapp', 'testapp*', 'docs']),
+    packages=find_namespace_packages(include=['adminsortable2']),
     include_package_data=True,
     zip_safe=False,
 )
