@@ -4,5 +4,3 @@ recursive-include adminsortable2 *.py
 recursive-include adminsortable2/locale *
 recursive-include adminsortable2/static *
 recursive-include adminsortable2/templates *
-recursive-exclude testapp *
-recursive-exclude * *.pyc
