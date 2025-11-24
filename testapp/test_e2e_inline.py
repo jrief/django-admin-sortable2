@@ -132,10 +132,10 @@ def test_create(adminpage, slug, direction, chapter, drag_selector):
     adminpage.locator("#id_chapter1_set-0-title").click()
     adminpage.locator("#id_chapter1_set-0-title").fill("111")
     add_inline_link = "link" if DJANGO_VERSION < (5, 2) else "button"
-    adminpage.get_by_role(add_inline_link, name="Add another Chapter1").click()
+    adminpage.get_by_role(add_inline_link, name="Add another Chapter").click()
     adminpage.locator("#id_chapter1_set-1-title").click()
     adminpage.locator("#id_chapter1_set-1-title").fill("222")
-    adminpage.get_by_role(add_inline_link, name="Add another Chapter1").click()
+    adminpage.get_by_role(add_inline_link, name="Add another Chapter").click()
     adminpage.locator("#id_chapter1_set-2-title").click()
     adminpage.locator("#id_chapter1_set-2-title").fill("333")
     adminpage.get_by_role("button", name="Save", exact=True).click()
