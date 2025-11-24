@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.contenttypes.forms import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, FieldDoesNotExist
 from django.core.paginator import EmptyPage
 from django.db import router, transaction, models
 from django.db.models import OrderBy
@@ -503,10 +503,15 @@ class CustomInlineFormSetMixin:
         """
         obj = super().save_new(form, commit=False)
 
-        order_field_value = getattr(obj, self.default_order_field, None)
-        if order_field_value is None or order_field_value <= 0:
-            max_order = self.get_max_order()
-            setattr(obj, self.default_order_field, max_order + 1)
+        try:
+            self.model._meta.get_field(self.default_order_field)
+        except FieldDoesNotExist:
+            pass
+        else:
+            order_field_value = getattr(obj, self.default_order_field)
+            if order_field_value is None or order_field_value <= 0:
+                max_order = self.get_max_order()
+                setattr(obj, self.default_order_field, max_order + 1)
         if commit:
             obj.save()
         # form.save_m2m() can be called via the formset later on
