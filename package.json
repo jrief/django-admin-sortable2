@@ -7,7 +7,7 @@
   },
   "devDependencies": {
     "@types/sortablejs": "^1.15.8",
-    "esbuild": "^0.21.2",
+    "esbuild": "^0.25.0",
     "playwright": "^1.51.0",
     "sortablejs": "^1.15.2",
     "tslib": "^2.6.2",
