@@ -375,13 +375,22 @@ class SortableAdminMixin(SortableAdminBase):
         current_page_number = int(request.GET.get('p', 1))
 
         if method == self.EXACT:
-            page_number = int(request.POST.get('page', current_page_number))
+            try:
+                page_number = int(request.POST.get('page'))
+            except (ValueError, TypeError):
+                page_number = current_page_number
             target_page_number = page_number
         elif method == self.BACK:
-            step = int(request.POST.get('step', 1))
+            try:
+                step = int(request.POST.get('step'))
+            except (ValueError, TypeError):
+                step = 1
             target_page_number = current_page_number - step
         elif method == self.FORWARD:
-            step = int(request.POST.get('step', 1))
+            try:
+                step = int(request.POST.get('step'))
+            except (ValueError, TypeError):
+                step = 1
             target_page_number = current_page_number + step
         elif method == self.FIRST:
             target_page_number = 1
