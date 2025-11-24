@@ -23,14 +23,12 @@ class Book(models.Model):
         blank=True,
         max_length=255,
     )
-
     my_order = models.PositiveIntegerField(
         default=0,
         blank=False,
         null=False,
         db_index=True,
     )
-
     author = models.ForeignKey(
         Author,
         null=True,

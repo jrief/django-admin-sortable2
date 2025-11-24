@@ -175,6 +175,20 @@
   }
 },
 {
+  "model": "testapp.author",
+  "pk": 27,
+  "fields": {
+    "name": "David Gries"
+  }
+},
+{
+  "model": "testapp.author",
+  "pk": 28,
+  "fields": {
+    "name": "Adam Johnson"
+  }
+},
+{
   "model": "testapp.book",
   "pk": 1,
   "fields": {
@@ -514,6 +528,42 @@
     "title": "Full Stack Python Security",
     "my_order": 33,
     "author": 26
+  }
+},
+{
+  "model": "testapp.book",
+  "pk": 39,
+  "fields": {
+    "title": "The Science of Programming",
+    "my_order": 42,
+    "author": 27
+  }
+},
+{
+  "model": "testapp.book",
+  "pk": 40,
+  "fields": {
+    "title": "Speed Up Your Django Tests",
+    "my_order": 39,
+    "author": 28
+  }
+},
+{
+  "model": "testapp.book",
+  "pk": 41,
+  "fields": {
+    "title": "Boost Your Django DX",
+    "my_order": 40,
+    "author": 28
+  }
+},
+{
+  "model": "testapp.book",
+  "pk": 42,
+  "fields": {
+    "title": "Boost Your GitHub DX",
+    "my_order": 41,
+    "author": 28
   }
 },
 {
