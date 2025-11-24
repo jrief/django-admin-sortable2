@@ -86,13 +86,11 @@ class Chapter(models.Model):
         blank=True,
         max_length=255,
     )
-
     book = models.ForeignKey(
         Book,
         null=True,
         on_delete=models.CASCADE,
     )
-
     my_order = models.PositiveIntegerField(
         blank=False,
         null=False,
@@ -101,16 +99,18 @@ class Chapter(models.Model):
     )
 
     def __str__(self):
-        return "Chapter: {0}".format(self.title)
+        return "#{0} – {1}".format(self.my_order, self.title)
 
 
 class Chapter1(Chapter):
     class Meta:
         proxy = True
         ordering = ['my_order']
+        verbose_name = "Chapter"
 
 
 class Chapter2(Chapter):
     class Meta:
         proxy = True
         ordering = ['-my_order']
+        verbose_name = "Chapter"
