@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import json
 from pathlib import Path
 from itertools import chain
@@ -19,6 +17,7 @@ from django.db.models.aggregates import Max
 from django.db.models.expressions import BaseExpression, F
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save, pre_save
+from django.db.utils import IntegrityError
 from django.forms import widgets
 from django.forms.fields import IntegerField
 from django.forms.models import BaseInlineFormSet
@@ -240,6 +239,12 @@ class SortableAdminMixin(SortableAdminBase):
             extra_model_filters = self.get_extra_model_filters(request)
             num_updated = self._update_order(json.loads(request.body).get('updatedItems'), extra_model_filters)
             return HttpResponse(f"Updated {num_updated} items")
+        except IntegrityError as exc:
+            msg = (
+                f"{exc}. Run 'manage.py reorder "
+                f"{self.model._meta.app_label}.{self.model._meta.model_name}' to fix the ordering."
+            )
+            return HttpResponseBadRequest(msg)
         except Exception as exc:
             return HttpResponseBadRequest(f"Invalid POST request: {exc}")
 
