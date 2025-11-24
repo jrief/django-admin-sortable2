@@ -171,7 +171,10 @@ class SortableAdminMixin(SortableAdminBase):
         actions = super().get_actions(request)
         qs = self.get_queryset(request)
         paginator = self.get_paginator(request, qs, self.list_per_page)
-        if paginator.num_pages > 1 and 'all' not in request.GET and self.enable_sorting:
+        if (
+            self.has_change_permission(request) and
+            paginator.num_pages > 1 and 'all' not in request.GET and self.enable_sorting
+        ):
             # add actions for moving items to other pages
             move_actions = []
             cur_page = int(request.GET.get('p', 1))
