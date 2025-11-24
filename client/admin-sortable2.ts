@@ -161,9 +161,8 @@ class ActionForm {
 	private readonly stepInput: HTMLInputElement;
 	private readonly pageInput: HTMLInputElement;
 
-	constructor(formElement: HTMLElement, config: any) {
-		formElement.setAttribute('novalidate', 'novalidate');
-		this.selectElement = formElement.querySelector('select[name="action"]')!;
+	constructor(formElement: HTMLFormElement, selectElement: HTMLSelectElement, config: any) {
+		this.selectElement = selectElement;
 		this.config = config;
 		this.selectElement.addEventListener('change', () => this.actionChanged());
 
@@ -289,8 +288,11 @@ window.addEventListener('load', (event) => {
 		}
 
 		const changelistForm = document.getElementById('changelist-form');
-		if (changelistForm) {
-			new ActionForm(changelistForm, adminSortableConfig);
+		if (changelistForm instanceof HTMLFormElement) {
+			const selectElement = changelistForm.querySelector('select[name="action"]');
+			if (selectElement instanceof HTMLSelectElement) {
+				new ActionForm(changelistForm, selectElement, adminSortableConfig);
+			}
 		}
 	}
 
