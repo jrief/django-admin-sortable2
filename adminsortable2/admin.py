@@ -81,9 +81,16 @@ class MovePageActionForm(admin.helpers.ActionForm):
 class SortableAdminBase:
     @property
     def media(self):
-        css = {'all': ['adminsortable2/css/sortable.css']}
-        js = ['adminsortable2/js/adminsortable2{}.js'.format('' if settings.DEBUG else '.min')]
-        return super().media + widgets.Media(css=css, js=js)
+        media = super().media
+        css = dict(media._css)
+        css.setdefault('all', [])
+        css['all'].append('adminsortable2/css/sortable.css')
+        js = list(media._js)
+        # replace actions.js with our patched version until https://code.djangoproject.com/ticket/36757 is fixed
+        if 'admin/js/actions.js' in js:
+            js[js.index('admin/js/actions.js')] = 'adminsortable2/js/actions-{0}.{1}.js'.format(*DJANGO_VERSION)
+        js.append('adminsortable2/js/adminsortable2{}.js'.format('' if settings.DEBUG else '.min'))
+        return widgets.Media(css=css, js=js)
 
     def get_formset_kwargs(self, request, obj, inline, prefix):
         formset_params = super().get_formset_kwargs(request, obj, inline, prefix)

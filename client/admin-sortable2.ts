@@ -48,9 +48,11 @@ class ListSortable {
 			this.firstOrder = parseInt(firstOrder);
 			this.orderDirection = parseInt(lastOrder) > this.firstOrder ? 1 : -1;
 		}
+		this.tableBody.classList.add('ignore-list-changes');
 	}
 
 	private async onEnd(evt: SortableEvent) {
+		this.tableBody.classList.remove('ignore-list-changes');
 		if (typeof evt.newIndex !== 'number' || typeof evt.oldIndex !== 'number'
 			|| typeof this.firstOrder !== 'number'|| typeof this.orderDirection !== 'number'
 			|| !(evt.item instanceof HTMLTableRowElement))

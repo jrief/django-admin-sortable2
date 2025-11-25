@@ -1,0 +1,11 @@
+--- django/contrib/admin/static/admin/js/actions.js
++++ adminsortable2/static/adminsortable2/js/actions.js
+@@ -151,7 +151,7 @@
+                     updateCounter(actionCheckboxes, options);
+                     lastChecked = target;
+                 } else {
+-                    list_editable_changed = true;
++                    list_editable_changed = !target.classList.contains('ignore-list-changes');
+                 }
+             });
+         });

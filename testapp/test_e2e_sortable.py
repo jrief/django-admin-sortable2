@@ -1,6 +1,8 @@
 import pytest
 from time import sleep
 
+from django.urls import resolve
+
 from testapp.models import Book
 
 
@@ -219,3 +221,33 @@ def test_move_next_page(adminpage, slug, p, o, direction):
             assert book.my_order == 25 + index
         else:
             assert book.my_order == Book.objects.count() - 24 - index
+
+
+@pytest.mark.parametrize('slug, p, o', slugs)
+def test_drag_then_delete(adminpage, slug, p, o, direction, update_url):
+    if o == 2:
+        return
+    table_locator = adminpage.locator('table#result_list')
+    drag_handle = table_locator.locator('tbody tr:nth-child(9) div.drag.handle')
+    with adminpage.expect_response(update_url) as response_info:
+        drag_handle.drag_to(table_locator.locator('tbody tr:nth-child(3)'))
+    while not (response := response_info.value):
+        sleep(0.1)
+    assert response.ok
+    table_row = table_locator.locator('tbody tr:nth-child(2)')
+    action_checkbox = table_row.locator('td.action-checkbox input[type="checkbox"]')
+    detail_anchor = table_row.locator('th.field-title a[href]')
+    change_url = detail_anchor.get_attribute('href')
+    if '?' in change_url:
+        change_url = change_url[:change_url.index('?')]
+    book = Book.objects.get(id=resolve(change_url).kwargs['object_id'])
+    action_checkbox.click()
+    action_select = adminpage.locator('#changelist-form select[name="action"]')
+    action_select.select_option('delete_selected')
+    with adminpage.expect_response(adminpage.url) as response_info:
+        adminpage.locator('#changelist-form button[name="index"]').click()
+    assert response_info.value.ok
+    html_response = response_info.value.text()
+    assert f'<a href="{change_url}">{book.title}</a>' in html_response
+    for chapter in book.chapter_set.all():
+        assert f'<li>Chapter: {chapter}</li>' in html_response

@@ -60,14 +60,17 @@ jobs:
     - name: Build Client
       run: |
         npm run build
-    - name: Patch templates
+    - name: Patch Django templates and JavaScript files
       run: |
+        mkdir -p adminsortable2/static/adminsortable2/js
         mkdir -p adminsortable2/templates/adminsortable2/edit_inline
-        DJANGO_VERSIONS=("4.2" "5.0" "5.1" "5.2")
+        DJANGO_VERSIONS=("4.2" "5.0" "5.1" "5.2" "6.0")
         for django_version in ${DJANGO_VERSIONS[@]}; do
           echo $django_version
+          curl --silent --output adminsortable2/static/adminsortable2/js/actions-$django_version.js https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/static/admin/js/actions.js
           curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
           curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
+          patch -p0 adminsortable2/static/adminsortable2/js/actions-$django_version.js patches/actions-django-5.2.patch
           patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html patches/stacked-django-4.0.patch
           patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html patches/tabular-django-4.0.patch
         done

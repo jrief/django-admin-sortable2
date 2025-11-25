@@ -18,5 +18,6 @@ dist
 node_modules/
 workdir/*
 htmlcov
+adminsortable2/static/adminsortable2/js/actions-*
 adminsortable2/static/adminsortable2/js/adminsortable2.*
 adminsortable2/templates/adminsortable2/edit_inline
