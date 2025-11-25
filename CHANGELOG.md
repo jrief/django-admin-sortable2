@@ -2,6 +2,16 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.3
+- Prepare for Django-6.0.
+- fix #397: Remove Django popup when using list action after dragging items in list view.
+- fix #417: Increase height of drag area in Stacked-Inlines.
+- fix #371: `default_order_field` might not be set on model.
+- fix #400: Check for change permission when rendering "Move" actions in list view.
+- fix #408: Validate POST request from action form.
+- fix #423: Remove novalidate from action form in list view.
+- fix #425: Give better explanation what to do if ordering numbers get negative.
+
 ### 2.2.8
 - Remove paths `docs` and `parler_example` from installable package.
 
