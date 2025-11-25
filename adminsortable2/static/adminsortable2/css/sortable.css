@@ -29,11 +29,12 @@ fieldset.sortable table tr.form-row.has_original td.original p {
 fieldset.sortable .inline-related.has_original h3 {
 	background: url(../icons/drag.png) repeat;
 	cursor: grab;
-	height: 20px;
+	height: 24px;
+	padding-top: 4px;
 }
 fieldset.sortable :is(.inline-related, td.original) span.sort {
 	float: right;
-	margin-right: 10px;
+	margin: 2px 10px 0 0;
 }
 fieldset.sortable :is(.inline-related, td.original) span.sort i {
 	width: 0;
