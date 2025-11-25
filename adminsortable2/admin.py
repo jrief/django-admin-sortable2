@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 from itertools import chain
 from types import MethodType
-from typing import Optional
 
 from django import VERSION as DJANGO_VERSION
 from django.conf import settings
@@ -29,7 +28,7 @@ from django.urls import path, reverse
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
 
-def _parse_ordering_part(part: OrderBy | BaseExpression | F | str) -> tuple[str, Optional[str]]:
+def _parse_ordering_part(part):
     if isinstance(part, str):
         return ('-', part[1:]) if part.startswith('-') else ('', part)
     elif isinstance(part, OrderBy) and isinstance(part.expression, F):
