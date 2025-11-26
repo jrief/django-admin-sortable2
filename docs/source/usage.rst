@@ -22,6 +22,8 @@ through the model's ``Meta`` class. Here's an example ``models.py``:
 
 .. code:: python
 
+	from django.db import models
+
 	class SortableBook(models.Model):
 	    title = models.CharField(
 	        "Title",
@@ -141,6 +143,35 @@ we simple use the mixin class :class:`adminsortable2.admin.SortableAdminMixin`.
 
 Example:
 
+A typical use case is a model ``Book`` which contains multiple chapters. Each chapter shall be
+sortable inside the book's detail view. The chapter model could look like this:
+
+.. code-block:: python
+
+	from django.db import models
+
+	class Chapter(models.Model):
+	    book = models.ForeignKey(
+	        SortableBook,
+	        on_delete=models.CASCADE,
+	        related_name='chapters',
+	    )
+	    title = models.CharField(
+	        "Title",
+	        max_length=255,
+	    )
+	    my_order = models.PositiveIntegerField(
+	        default=0,
+	        blank=False,
+	        null=False,
+	    )
+
+	    class Meta:
+	        ordering = ['my_order']
+
+
+Then we can create a sortable stacked inline admin interface for the chapter model using:
+
 .. code-block:: python
 
 	...
@@ -150,11 +181,13 @@ Example:
 
 	class ChapterStackedInline(SortableStackedInline):
 	    model = Chapter
+	    extra = 1
 
 	@admin.register(SortableBook)
 	class SortableBookAdmin(SortableAdminMixin, admin.ModelAdmin):
 	    ...
 	    inlines = [ChapterStackedInline]
+
 
 In case model ``Chapter`` shall be sortable, but model ``Book`` doesn't have to, rewrite the above
 class as:
@@ -178,7 +211,7 @@ For stacked inlines, the editor for the book's detail view looks like:
 .. note:: Since version 2.1, two buttons have been added to the draggable area above each inline
 	form. They serve to move that edited item to the begin or end of the list of inlines.
 
-If we instead want to use the tabluar inline class, then modify the code from above to
+If we instead want to use the tabular inline class, then modify the code from above to
 
 .. code-block:: python
 
@@ -262,6 +295,11 @@ Setup the Tabular Inlines to enable Buttons to be sorted in Django Admin
 	@admin.register(Panel)
 	class PanelAdmin(SortableAdminBase, admin.ModelAdmin):
 	    inlines = (ButtonTabularInline,)
+
+If you need a dual list box with a sortable destination list, have a look at my other library
+django-formset_ implementing this feature.
+
+.. _django-formset: https://django-formset.fly.dev/dual-selector/#sortable-dual-selector-widget
 
 
 Initial data
