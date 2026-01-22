@@ -2,6 +2,10 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.3.1
+- fix #370: `django-compress` and `django-sass-processor` raises errors during run of compress or compilescss
+  management command. 
+
 ### 2.3
 - Prepare for Django-6.0.
 - fix #397: Remove Django popup when using list action after dragging items in list view.
