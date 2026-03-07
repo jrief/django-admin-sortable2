@@ -150,7 +150,7 @@ class ListSortable {
 
 		const inputElement = this.tableBody.closest('form')?.querySelector('input[name="csrfmiddlewaretoken"]') as HTMLInputElement;
 		if (inputElement) {
-			headers.append('X-CSRFToken', inputElement.value);
+			headers.append(this.config.csrf_header || 'X-CSRFToken', inputElement.value);
 		}
 		return headers;
 	}
