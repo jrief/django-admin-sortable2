@@ -2,6 +2,9 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.3.2
+- fix #434: Respect Django's `CSRF_HEADER_NAME` for sortable update requests in the admin changelist.
+
 ### 2.3.1
 - fix #370: `django-compress` and `django-sass-processor` raises errors during run of compress or compilescss
   management command. 

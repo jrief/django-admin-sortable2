@@ -1,6 +1,9 @@
+import json
+import re
+
 import pytest
 
-from django.test import Client
+from django.test import Client, override_settings
 from django.urls import reverse
 
 from testapp.models import Book1
@@ -58,3 +61,50 @@ def test_add_chapter():
     assert python_in_a_nutshell.chapter_set.count() == 2
     assert python_in_a_nutshell.chapter_set.first().my_order == 1
     assert python_in_a_nutshell.chapter_set.last().my_order == 2
+
+
+@pytest.mark.django_db
+@override_settings(CSRF_USE_SESSIONS=True, CSRF_HEADER_NAME='HTTP_X_AUTH_CSRFTOKEN')
+def test_sortable_respects_custom_csrf_header_name():
+    client = Client(enforce_csrf_checks=True)
+    changelist_response = client.get(reverse('admin:testapp_book1_changelist'))
+    assert changelist_response.status_code == 200
+
+    content = changelist_response.content.decode('utf-8')
+    config_match = re.search(
+        r'<script type="application/json" id="admin_sortable2_config">\s*(\{.*?\})\s*</script>',
+        content,
+        re.S,
+    )
+    assert config_match is not None
+
+    config = json.loads(config_match.group(1))
+    assert config['csrf_header'] == 'X-AUTH-CSRFTOKEN'
+
+    token_match = re.search(r'name="csrfmiddlewaretoken" value="([^"]+)"', content)
+    assert token_match is not None
+    csrf_token = token_match.group(1)
+
+    book = Book1.objects.order_by('my_order').first()
+    assert book is not None
+
+    update_payload = json.dumps({'updatedItems': [[book.pk, book.my_order]]})
+    update_url = config['update_url']
+
+    # Default header must fail when CSRF_HEADER_NAME is customized.
+    default_header_response = client.post(
+        update_url,
+        data=update_payload,
+        content_type='application/json',
+        HTTP_X_CSRFTOKEN=csrf_token,
+    )
+    assert default_header_response.status_code == 403
+
+    # Custom header succeeds and keeps the endpoint compatible with Django settings.
+    custom_header_response = client.post(
+        update_url,
+        data=update_payload,
+        content_type='application/json',
+        HTTP_X_AUTH_CSRFTOKEN=csrf_token,
+    )
+    assert custom_header_response.status_code == 200

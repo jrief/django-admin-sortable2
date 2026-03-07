@@ -450,6 +450,7 @@ class SortableAdminMixin(SortableAdminBase):
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         extra_context['sortable_update_url'] = self.get_update_url(request)
+        extra_context['sortable_csrf_header_name'] = self.get_csrf_header_name(request)
         extra_context['base_change_list_template'] = super().change_list_template or 'admin/change_list.html'
         return super().changelist_view(request, extra_context)
 
@@ -458,6 +459,15 @@ class SortableAdminMixin(SortableAdminBase):
         Returns a callback URL used for updating items via AJAX drag-n-drop
         """
         return reverse(f'{self.admin_site.name}:{self._get_update_url_name()}')
+
+    def get_csrf_header_name(self, request):
+        """
+        Returns the HTTP header expected by Django's CSRF middleware.
+        """
+        csrf_header_name = getattr(settings, 'CSRF_HEADER_NAME', 'HTTP_X_CSRFTOKEN')
+        if csrf_header_name.startswith('HTTP_'):
+            csrf_header_name = csrf_header_name[5:]
+        return csrf_header_name.replace('_', '-')
 
 
 class PolymorphicSortableAdminMixin(SortableAdminMixin):
