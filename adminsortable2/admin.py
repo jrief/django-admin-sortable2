@@ -25,6 +25,11 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.urls import path, reverse
 
+try:
+    from django.contrib.admin import ActionLocation
+except ImportError:  # Django < 6.1
+    ActionLocation = None
+
 __all__ = ['SortableAdminMixin', 'SortableInlineAdminMixin']
 
 
@@ -173,8 +178,14 @@ class SortableAdminMixin(SortableAdminBase):
         ]
         return my_urls + super().get_urls()
 
-    def get_actions(self, request):
-        actions = super().get_actions(request)
+    def get_actions(self, request, action_location=None):
+        if action_location is None:
+            actions = super().get_actions(request)
+        else:
+            # Django >= 6.1 passes action_location; the move actions only apply to the changelist
+            actions = super().get_actions(request, action_location=action_location)
+            if action_location != ActionLocation.CHANGE_LIST:
+                return actions
         qs = self.get_queryset(request)
         paginator = self.get_paginator(request, qs, self.list_per_page)
         if (
