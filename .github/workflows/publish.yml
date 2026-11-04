@@ -38,7 +38,7 @@ jobs:
       run: |
         mkdir -p adminsortable2/static/adminsortable2/js
         mkdir -p adminsortable2/templates/adminsortable2/edit_inline
-        DJANGO_VERSIONS=("4.2" "5.0" "5.1" "5.2" "6.0" "6.1")
+        DJANGO_VERSIONS=("5.2" "6.0" "6.1")
         for django_version in ${DJANGO_VERSIONS[@]}; do
           echo $django_version
           curl --silent --output adminsortable2/static/adminsortable2/js/actions-$django_version.js https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/static/admin/js/actions.js

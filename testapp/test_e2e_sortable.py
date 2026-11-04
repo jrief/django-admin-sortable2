@@ -1,7 +1,10 @@
 import pytest
+from re import compile as regex
 from time import sleep
 
 from django.urls import resolve
+
+from playwright.sync_api import expect
 
 from testapp.models import Book
 
@@ -229,8 +232,10 @@ def test_drag_then_delete(adminpage, slug, p, o, direction, update_url):
         return
     table_locator = adminpage.locator('table#result_list')
     drag_handle = table_locator.locator('tbody tr:nth-child(9) div.drag.handle')
+    expect(drag_handle).to_be_visible()
+    drag_kwargs = {'source_position': {'x': 5, 'y': 5}, 'target_position': {'x': 500, 'y': 5}}
     with adminpage.expect_response(update_url) as response_info:
-        drag_handle.drag_to(table_locator.locator('tbody tr:nth-child(3)'))
+        drag_handle.drag_to(table_locator.locator('tbody tr:nth-child(3)'), **drag_kwargs)
     while not (response := response_info.value):
         sleep(0.1)
     assert response.ok
