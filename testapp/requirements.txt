@@ -9,7 +9,7 @@ greenlet==3.1.1
 packaging==26.3
 playwright==1.64.1
 pluggy==1.7.0
-py==1.11.0
+py==1.10.0
 pyee==14.0.0
 pyparsing==3.3.3
 pytest==8.4.2
