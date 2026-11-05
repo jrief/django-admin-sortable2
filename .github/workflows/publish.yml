@@ -17,8 +17,8 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.12"]
-        node-version: ["22.x"]
+        python-version: ["3.13"]
+        node-version: ["24.x"]
 
     steps:
     - uses: actions/checkout@v3
@@ -54,6 +54,6 @@ jobs:
       run: python -m build --sdist --wheel --outdir dist/
     - name: Publish 🐍 Python 📦 Package to PyPI
       if: startsWith(github.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@v1
+      uses: pypa/gh-action-pypi-publish@release/v1
       with:
         password: ${{ secrets.PYPI_API_TOKEN_SORTABLE2 }}

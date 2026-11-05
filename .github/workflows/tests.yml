@@ -23,7 +23,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.12", "3.13", "3.14"]
         node-version: ["24.x"]
         django-version: ["5.2.*", "6.0.*", "6.1.*"]
         exclude:  # https://docs.djangoproject.com/en/6.1/faq/install/#what-python-version-can-i-use-with-django
@@ -35,6 +35,8 @@ jobs:
             django-version: "6.1.*"
           - python-version: "3.11"
             django-version: "6.1.*"
+          - python-version: "3.13"
+            django-version: "5.2.*"
           - python-version: "3.14"
             django-version: "5.2.*"
 
@@ -62,13 +64,15 @@ jobs:
       run: |
         mkdir -p adminsortable2/static/adminsortable2/js
         mkdir -p adminsortable2/templates/adminsortable2/edit_inline
-        DJANGO_VERSIONS=("4.2" "5.0" "5.1" "5.2" "6.0")
+        DJANGO_VERSIONS=("5.2" "6.0" "6.1")
         for django_version in ${DJANGO_VERSIONS[@]}; do
           echo $django_version
           curl --silent --output adminsortable2/static/adminsortable2/js/actions-$django_version.js https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/static/admin/js/actions.js
           curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/stacked.html
           curl --silent --output adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html https://raw.githubusercontent.com/django/django/stable/$django_version.x/django/contrib/admin/templates/admin/edit_inline/tabular.html
-          patch -p0 adminsortable2/static/adminsortable2/js/actions-$django_version.js patches/actions-django-5.2.patch
+          actions_patch=patches/actions-django-5.2.patch
+          if [ -f patches/actions-django-$django_version.patch ]; then actions_patch=patches/actions-django-$django_version.patch; fi
+          patch -p0 adminsortable2/static/adminsortable2/js/actions-$django_version.js $actions_patch
           patch -p0 adminsortable2/templates/adminsortable2/edit_inline/stacked-django-$django_version.html patches/stacked-django-4.0.patch
           patch -p0 adminsortable2/templates/adminsortable2/edit_inline/tabular-django-$django_version.html patches/tabular-django-4.0.patch
         done
