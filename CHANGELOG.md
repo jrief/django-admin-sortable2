@@ -2,6 +2,10 @@
 
 ## Release history of [django-admin-sortable2](https://github.com/jrief/django-admin-sortable2/)
 
+### 2.4
+- Adopt to Django-6.0.
+- Drop support for Django-5.0 and lower.
+
 ### 2.3.1
 - fix #370: `django-compress` and `django-sass-processor` raises errors during run of compress or compilescss
   management command. 
